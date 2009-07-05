@@ -6,8 +6,9 @@ TARGET = PiTCH
 TEMPLATE = app
 SOURCES += main.cpp \
     PiTCHWindow.cpp \
-    itchcommand.cpp
+    iTCHMethod.cpp \
+    iTCHClient.cpp
 HEADERS += PiTCHWindow.h \
     iTCHClient.h \
-    itchcommand.h
+    iTCHMethod.h
 FORMS += PiTCHWindow.ui
