@@ -72,7 +72,7 @@ QString iTCHMethod::toJsonRpc() const
   }
 
   // Append the id number
-  json += QString("], \"id\": %1}").arg((id_ > 0) ? QString::number(id_) : "nil");
+  json += QString("], \"id\": %1}").arg((id_ > 0) ? QString::number(id_) : "null");
 
   return json;
 }
@@ -103,5 +103,5 @@ void iTCHMethod::fromJsonRpc(const QString& json)
 
   QString id = jsonMethodRegExp_.cap(3);
   bool valid;
-  id_ = (id == "nil") ? 0 : id.toInt(&valid);
+  id_ = (id == "null") ? 0 : id.toInt(&valid);
 }
