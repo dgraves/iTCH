@@ -1,6 +1,8 @@
 #ifndef ITCHCLIENT_H
 #define ITCHCLIENT_H
 
+#include <QtCore/QObject>
+
 class iTCHClient : public QObject
 {
   Q_OBJECT
