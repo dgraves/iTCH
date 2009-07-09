@@ -20,6 +20,9 @@ public:
 
   ~PiTCHWindow();
 
+protected:
+  void changeEvent(QEvent *e);
+
 protected slots:
   // Slots to handle signals from iTCHClient
   void resolvedHostname();

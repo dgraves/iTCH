@@ -24,6 +24,19 @@ PiTCHWindow::~PiTCHWindow()
   delete ui_;
 }
 
+void PiTCHWindow::changeEvent(QEvent *e)
+{
+  QMainWindow::changeEvent(e);
+  switch (e->type())
+  {
+  case QEvent::LanguageChange:
+    ui_->retranslateUi(this);
+    break;
+  default:
+    break;
+  }
+}
+
 void PiTCHWindow::resolvedHostname()
 {
   // Host was found, now QTcpSocket is connecting
