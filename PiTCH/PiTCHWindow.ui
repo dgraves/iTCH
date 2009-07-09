@@ -16,12 +16,18 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>420</width>
+    <height>177</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>PiTCH</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -111,7 +117,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer">
+       <spacer name="horizontalSpacer_1">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -158,12 +164,15 @@
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="settingsMenuButton">
+       <widget class="QToolButton" name="networkButton">
+        <property name="contextMenuPolicy">
+         <enum>Qt::DefaultContextMenu</enum>
+        </property>
         <property name="text">
          <string>...</string>
         </property>
         <property name="popupMode">
-         <enum>QToolButton::MenuButtonPopup</enum>
+         <enum>QToolButton::DelayedPopup</enum>
         </property>
        </widget>
       </item>
@@ -186,30 +195,14 @@
  <resources/>
  <connections>
   <connection>
-   <sender>timeSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>PiTCHWindow</receiver>
-   <slot>timeSliderValueChanged()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>103</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>43</x>
-     <y>74</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>backButton</sender>
    <signal>pressed()</signal>
    <receiver>PiTCHWindow</receiver>
    <slot>backButtonPressed()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>35</x>
-     <y>131</y>
+     <x>41</x>
+     <y>124</y>
     </hint>
     <hint type="destinationlabel">
      <x>9</x>
@@ -224,8 +217,8 @@
    <slot>backButtonReleased()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>16</x>
-     <y>130</y>
+     <x>26</x>
+     <y>124</y>
     </hint>
     <hint type="destinationlabel">
      <x>26</x>
@@ -241,7 +234,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>79</x>
-     <y>133</y>
+     <y>124</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -257,7 +250,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>117</x>
-     <y>133</y>
+     <y>124</y>
     </hint>
     <hint type="destinationlabel">
      <x>123</x>
@@ -273,27 +266,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>117</x>
-     <y>133</y>
+     <y>124</y>
     </hint>
     <hint type="destinationlabel">
      <x>136</x>
      <y>53</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>muteButton</sender>
-   <signal>clicked()</signal>
-   <receiver>PiTCHWindow</receiver>
-   <slot>muteButtonClicked()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>203</x>
-     <y>131</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>226</x>
-     <y>119</y>
     </hint>
    </hints>
   </connection>
@@ -304,8 +281,8 @@
    <slot>fullVolumeButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>324</x>
-     <y>131</y>
+     <x>318</x>
+     <y>123</y>
     </hint>
     <hint type="destinationlabel">
      <x>410</x>
@@ -317,11 +294,11 @@
    <sender>volumeSlider</sender>
    <signal>valueChanged(int)</signal>
    <receiver>PiTCHWindow</receiver>
-   <slot>volumeSliderValueChanged()</slot>
+   <slot>volumeSliderValueChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>293</x>
-     <y>131</y>
+     <x>287</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
      <x>351</x>
@@ -329,9 +306,73 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>timeSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PiTCHWindow</receiver>
+   <slot>timeSliderValueChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>73</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>43</x>
+     <y>74</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>networkButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PiTCHWindow</receiver>
+   <slot>networkButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>389</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>361</x>
+     <y>103</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>muteButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PiTCHWindow</receiver>
+   <slot>muteButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>197</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>226</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PiTCHWindow</receiver>
+   <slot>timeSliderValueChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>137</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>77</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>timeSliderValueChanged()</slot>
+  <slot>timeSliderValueChanged(int)</slot>
   <slot>backButtonPressed()</slot>
   <slot>backButtonReleased()</slot>
   <slot>playPauseButtonToggled(bool)</slot>
@@ -339,6 +380,7 @@
   <slot>forwardButtonReleased()</slot>
   <slot>muteButtonClicked()</slot>
   <slot>fullVolumeButtonClicked()</slot>
-  <slot>volumeSliderValueChanged()</slot>
+  <slot>volumeSliderValueChanged(int)</slot>
+  <slot>networkButtonClicked()</slot>
  </slots>
 </ui>

@@ -40,24 +40,24 @@ void __createSupportedMethodsMap()
   }
 }
 
-iTCHMethod::iTCHMethod(const iTCHMethod& method)
-  : method_(method.method_),
-    params_(method.params_),
-    id_(method.id_)
+iTCHMethod::iTCHMethod(const iTCHMethod& method) :
+  method_(method.method_),
+  params_(method.params_),
+  id_(method.id_)
 {
   __createSupportedMethodsMap();
 }
 
-iTCHMethod::iTCHMethod(SupportedMethods method, const QStringList &params, unsigned int id)
-  : params_(params),
-    id_(id)
+iTCHMethod::iTCHMethod(SupportedMethods method, const QStringList &params, unsigned int id) :
+  params_(params),
+  id_(id)
 {
   __createSupportedMethodsMap();
   setMethod(method);
 }
 
-iTCHMethod::iTCHMethod(const QString &json)
-  : id_(0)
+iTCHMethod::iTCHMethod(const QString &json) :
+  id_(0)
 {
   __createSupportedMethodsMap();
   fromJsonRpc(json);

@@ -7,8 +7,12 @@ TEMPLATE = app
 SOURCES += main.cpp \
     PiTCHWindow.cpp \
     iTCHMethod.cpp \
-    iTCHClient.cpp
+    iTCHClient.cpp \
+    PiTCHNetworkDialog.cpp
 HEADERS += PiTCHWindow.h \
     iTCHClient.h \
-    iTCHMethod.h
-FORMS += PiTCHWindow.ui
+    iTCHMethod.h \
+    PiTCHNetworkDialog.h \
+    iTCHNetworkInfo.h
+FORMS += PiTCHWindow.ui \
+    PiTCHNetworkDialog.ui

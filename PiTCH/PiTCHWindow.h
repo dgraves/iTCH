@@ -4,6 +4,7 @@
 #include <QtGui/QMainWindow>
 #include "iTCHMethod.h"
 #include "iTCHClient.h"
+#include "iTCHNetworkInfo.h"
 
 namespace Ui
 {
@@ -21,13 +22,14 @@ public:
 
 protected slots:
   // Slots to handle signals from iTCHClient
+  void resolvedHostname();
   void connectedToServer();
-  void disconnectedFromServer(bool closedByServer);
+  void disconnectedFromServer(bool closedByServer, const QString &message);
   void receivedMethod(const iTCHMethod &method);
   void error(const QString &message);
 
   // Slots to handle signals from widgets
-  void timeSliderValueChanged();
+  void timeSliderValueChanged(int);
   void backButtonPressed();
   void backButtonReleased();
   void forwardButtonPressed();
@@ -35,11 +37,18 @@ protected slots:
   void playPauseButtonToggled(bool);
   void muteButtonClicked();
   void fullVolumeButtonClicked();
-  void volumeSliderValueChanged();
+  void volumeSliderValueChanged(int);
+  void networkButtonClicked();
 
 protected:
-  Ui::PiTCHWindow *ui;
-  iTCHClient client_;
+  iTCHClient       client_;
+  iTCHNetworkInfo  serverInfo_;
+  unsigned int     autoConnectInterval_;
+  bool             autoConnect_;
+  bool             buttonHeld_;
+
+private:
+  Ui::PiTCHWindow *ui_;
 };
 
 #endif // PITCHWINDOW_H
