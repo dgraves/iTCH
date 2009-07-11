@@ -5,6 +5,11 @@ QT += network
 TARGET = STiTCH
 TEMPLATE = app
 SOURCES += main.cpp \
-    STiTCHDialog.cpp
-HEADERS += STiTCHDialog.h
+    STiTCHDialog.cpp \
+    ../common/iTCHServer.cpp \
+    ../common/iTCHController.cpp
+HEADERS += STiTCHDialog.h \
+    ../common/iTCHServer.h \
+    ../common/iTCHController.h
 FORMS += STiTCHDialog.ui
+INCLUDEPATH += ../common

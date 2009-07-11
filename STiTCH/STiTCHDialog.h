@@ -3,7 +3,7 @@
 
 #include <QtGui/QDialog>
 #include <QtGui/QStandardItemModel>
-#include <QtNetwork/QTcpServer>
+#include "iTCHServer.h"
 
 namespace Ui {
   class STiTCHDialog;
@@ -32,7 +32,7 @@ protected slots:
 
 private:
   Ui::STiTCHDialog *ui_;
-  QTcpServer servevr_;
+  iTCHServer server_;
   bool serverSettingsChanged_;
 };
 
