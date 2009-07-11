@@ -1,13 +1,12 @@
 #ifndef ITCHNETWORKINFO_H
 #define ITCHNETWORKINFO_H
 
-#include <QtCore/QObject>
 #include <QtCore/QString>
 
-class iTCHNetworkInfo : public QObject
+class iTCHNetworkInfo
 {
 public:
-  iTCHNetworkInfo(const QString &hostname, unsigned short port, QObject *parent = 0) : QObject(parent), hostname_(hostname), port_(port) { }
+  iTCHNetworkInfo(const QString &hostname, unsigned short port) : hostname_(hostname), port_(port) { }
 
   QString getHostname() const { return hostname_; }
 
