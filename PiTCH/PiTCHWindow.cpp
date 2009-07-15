@@ -14,9 +14,9 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
 
   connect(&client_, SIGNAL(hostnameResolved()), this, SLOT(resolvedHostname()));
   connect(&client_, SIGNAL(connected()), this, SLOT(connectedToServer()));
-  connect(&client_, SIGNAL(disconnected(bool, const QString &)), this, SLOT(disconnectedFromServer(bool, const QString &)));
-  connect(&client_, SIGNAL(receivedMethod(const iTCHMethod &)), this, SLOT(receivedMethod(const iTCHMethod &)));
-  connect(&client_, SIGNAL(error(const QString &)), this, SLOT(error(const QString &)));
+  connect(&client_, SIGNAL(disconnected(bool,QString)), this, SLOT(disconnectedFromServer(bool,QString)));
+  connect(&client_, SIGNAL(receivedMethod(iTCHMethod)), this, SLOT(processMethod(iTCHMethod)));
+  connect(&client_, SIGNAL(error(QString)), this, SLOT(error(QString)));
 }
 
 PiTCHWindow::~PiTCHWindow()
@@ -62,7 +62,7 @@ void PiTCHWindow::disconnectedFromServer(bool closedByServer, const QString &mes
   }
 }
 
-void PiTCHWindow::receivedMethod(const iTCHMethod &method)
+void PiTCHWindow::processMethod(const iTCHMethod &method)
 {
 }
 

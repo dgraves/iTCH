@@ -28,7 +28,7 @@ protected slots:
   void resolvedHostname();
   void connectedToServer();
   void disconnectedFromServer(bool closedByServer, const QString &message);
-  void receivedMethod(const iTCHMethod &method);
+  void processMethod(const iTCHMethod &method);
   void error(const QString &message);
 
   // Slots to handle signals from widgets
