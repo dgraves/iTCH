@@ -82,6 +82,18 @@
         <property name="selectionMode">
          <enum>QAbstractItemView::ExtendedSelection</enum>
         </property>
+        <property name="rootIsDecorated">
+         <bool>false</bool>
+        </property>
+        <property name="itemsExpandable">
+         <bool>false</bool>
+        </property>
+        <property name="allColumnsShowFocus">
+         <bool>true</bool>
+        </property>
+        <property name="expandsOnDoubleClick">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -101,6 +113,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="disconnectButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Disconnect</string>
           </property>
@@ -177,9 +192,58 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>clicked(QAbstractButton*)</signal>
+   <receiver>STiTCHDialog</receiver>
+   <slot>apply(QAbstractButton*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>174</x>
+     <y>277</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>198</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>STiTCHDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>358</x>
+     <y>274</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>397</x>
+     <y>269</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>STiTCHDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>268</x>
+     <y>273</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>276</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>serverSettingsChanged()</slot>
   <slot>disconnectButtonClicked()</slot>
+  <slot>apply(QAbstractButton*)</slot>
  </slots>
 </ui>

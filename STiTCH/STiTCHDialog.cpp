@@ -1,5 +1,6 @@
-#include <QtCore/QDateTime>
+#include <QtGui/QMessageBox>
 #include <QtNetwork/QNetworkInterface>
+#include "iTCHConnection.h"
 #include "STiTCHDialog.h"
 #include "ui_STiTCHDialog.h"
 
@@ -12,6 +13,14 @@ STiTCHDialog::STiTCHDialog(QWidget *parent) :
   initializeConnectionList();
 
   fillInterfaceBox();
+
+  connect(&server_, SIGNAL(connectionReceived(iTCHConnection*)), this, SLOT(connectionReceived(iTCHConnection*)));
+  connect(&server_, SIGNAL(connectionLost(iTCHConnection*,bool, QString)), this, SLOT(connectionLost(iTCHConnection*,bool,QString)));
+  connect(&server_, SIGNAL(receivedMethod(iTCHConnection*,iTCHMethod)), this, SLOT(processMethod(iTCHConnection*,iTCHMethod)));
+  connect(ui_->connectionsList->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateDisconnectButton()));
+
+  // Start server listening on the default port
+  setupServer();
 }
 
 STiTCHDialog::~STiTCHDialog()
@@ -35,13 +44,12 @@ void STiTCHDialog::changeEvent(QEvent *e)
 void STiTCHDialog::initializeConnectionList()
 {
   // Setup the list columns
-  QStandardItemModel *model = new QStandardItemModel(0, 3, this);
+  model_ = new QStandardItemModel(0, 2, this);
 
-  model->setHeaderData(0, Qt::Horizontal, QObject::tr("Host"));
-  model->setHeaderData(1, Qt::Horizontal, QObject::tr("Port"));
-  model->setHeaderData(2, Qt::Horizontal, QObject::tr("Connection Date"));
+  model_->setHeaderData(0, Qt::Horizontal, QObject::tr("Host"));
+  model_->setHeaderData(1, Qt::Horizontal, QObject::tr("Connection Time"));
 
-  ui_->connectionsList->setModel(model);
+  ui_->connectionsList->setModel(model_);
 }
 
 void STiTCHDialog::fillInterfaceBox()
@@ -70,22 +78,138 @@ void STiTCHDialog::fillInterfaceBox()
   }
 }
 
-void STiTCHDialog::addConnectionToList()
+void STiTCHDialog::addConnectionToList(iTCHConnection *connection)
 {
-  QAbstractItemModel * model = ui_->connectionsList->model();
-
-  model->insertRow(model->rowCount());
-  model->setData(model->index(0, 0), "dakinemobile");
-  model->setData(model->index(0, 1), "Test");
-  model->setData(model->index(0, 2), QDateTime::currentDateTime());
+  iTCHConnectionItem *item = new iTCHConnectionItem(connection);
+  model_->appendRow(item);
+  model_->setData(model_->index(0, 0), connection->getConnectionAddress().toString());
+  model_->setData(model_->index(0, 1), connection->getConnectionTime());
 
   ui_->connectionsList->resizeColumnToContents(0);
+  ui_->connectionsList->resizeColumnToContents(1);
+
+  connectionIndexes_.insert(connection, item->index());
+}
+
+void STiTCHDialog::removeConnectionFromList(iTCHConnection *connection)
+{
+  QMap<iTCHConnection *, QModelIndex>::iterator index = connectionIndexes_.find(connection);
+  if (index != connectionIndexes_.end())
+  {
+    model_->removeRow((*index).row());
+  }
+}
+
+void STiTCHDialog::setupServer()
+{
+  QString ifstring = ui_->interfaceComboBox->currentText();
+  QHostAddress iface = (ifstring == "Any") ? QHostAddress::Any : QHostAddress(ifstring);
+  quint16 port = ui_->portSpinBox->value();
+
+  if (server_.isListening())
+  {
+    server_.close();
+  }
+
+  if (!server_.listen(iface, port))
+  {
+    QMessageBox::critical(this, tr("Server Error"), QString(tr("The server could not be started: ")) + server_.errorString());
+
+    // Ensure the apply button is enabled so that the user can try to connect to this address again
+    ui_->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(true);
+  }
+  else
+  {
+    // Apply button is disabled when listening and the server settings have not changed
+    ui_->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
+  }
+}
+
+void STiTCHDialog::connectionReceived(iTCHConnection *connection)
+{
+  addConnectionToList(connection);
+}
+
+void STiTCHDialog::connectionLost(iTCHConnection *connection, bool closedByPeer, const QString &message)
+{
+  removeConnectionFromList(connection);
+}
+
+void STiTCHDialog::processMethod(iTCHConnection *connection, const iTCHMethod &method)
+{
+  controller_.callMethod(method);
+}
+
+void STiTCHDialog::connectionError(iTCHConnection *connection, const QString &message)
+{
 }
 
 void STiTCHDialog::serverSettingsChanged()
 {
+  QString ifstring = ui_->interfaceComboBox->currentText();
+  QHostAddress iface = (ifstring == "Any") ? QHostAddress::Any : QHostAddress(ifstring);
+  quint16 port = ui_->portSpinBox->value();
+
+  // If either the interface or the server port has changed, the server settings changed flag is asserted
+  if ((port == server_.getServerPort()) && (iface == server_.getServerAddress()))
+  {
+    serverSettingsChanged_ = false;
+  }
+  else
+  {
+    serverSettingsChanged_ = true;
+  }
+
+  // Update the apply button when the server settings are changed (is only disabled when server is running and there is no change)
+  if (server_.isListening() && !serverSettingsChanged_)
+  {
+    ui_->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
+  }
+  else
+  {
+    ui_->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(true);
+  }
 }
 
 void STiTCHDialog::disconnectButtonClicked()
 {
+  // Remove all selected connections from the list and from the server
+  QModelIndexList indexes = ui_->connectionsList->selectionModel()->selectedRows();
+  for (QModelIndexList::iterator index = indexes.begin(); index != indexes.end(); ++index)
+  {
+    iTCHConnectionItem *item = dynamic_cast<iTCHConnectionItem *>(model_->item((*index).row()));
+    server_.closeConnection(item->getConnection());
+  }
+}
+
+void STiTCHDialog::updateDisconnectButton()
+{
+  if (ui_->connectionsList->selectionModel()->hasSelection())
+  {
+    ui_->disconnectButton->setEnabled(true);
+  }
+  else
+  {
+    ui_->disconnectButton->setEnabled(false);
+  }
+}
+
+void STiTCHDialog::accept()
+{
+  setupServer();
+  close();
+}
+
+void STiTCHDialog::rejet()
+{
+  close();
+}
+
+void STiTCHDialog::apply(QAbstractButton *button)
+{
+  // Determine if apply button was clicked and apply the server settings if they have changed
+  if (ui_->buttonBox->buttonRole(button) == QDialogButtonBox::ApplyRole && serverSettingsChanged_)
+  {
+    setupServer();
+  }
 }
