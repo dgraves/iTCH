@@ -15,6 +15,8 @@ public:
 
   ~iTCHClient();
 
+  bool isOpen() const;
+
   bool isConnected() const;
 
   void openConnection(const iTCHNetworkInfo &info);

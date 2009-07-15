@@ -13,10 +13,15 @@ iTCHClient::iTCHClient(QObject *parent) :
 
 iTCHClient::~iTCHClient()
 {
-  if (isConnected())
+  if (isOpen())
   {
     closeConnection();
   }
+}
+
+bool iTCHClient::isOpen() const
+{
+  return socket_.isOpen();
 }
 
 bool iTCHClient::isConnected() const
@@ -55,7 +60,7 @@ void iTCHClient::connectedToServer()
 
 void iTCHClient::receiveMethod()
 {
-  if (socket_.canReadLine())
+  while (socket_.canReadLine())
   {
     QByteArray message = socket_.readLine();
 
