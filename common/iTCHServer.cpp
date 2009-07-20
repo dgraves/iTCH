@@ -57,7 +57,7 @@ void iTCHServer::disconnectedFromPeer(bool closedByPeer, const QString &message)
   if (connection)
   {
     connectionLost(connection, closedByPeer, message);
-    delete connection;
+    connection->deleteLater();  // Delete the connection after signal handling is complete
   }
 }
 

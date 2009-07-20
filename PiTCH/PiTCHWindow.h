@@ -37,7 +37,7 @@ protected slots:
   void backButtonReleased();
   void forwardButtonPressed();
   void forwardButtonReleased();
-  void playPauseButtonToggled(bool);
+  void playPauseButtonClicked();
   void muteButtonClicked();
   void fullVolumeButtonClicked();
   void volumeSliderValueChanged(int);

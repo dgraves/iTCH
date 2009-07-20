@@ -12,6 +12,7 @@ iTCHConnection::iTCHConnection(QTcpSocket *socket, QDateTime time, QObject *pare
 
 iTCHConnection::~iTCHConnection()
 {
+  socket_->disconnect();
   delete socket_;
 }
 

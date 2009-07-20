@@ -13,10 +13,7 @@ iTCHClient::iTCHClient(QObject *parent) :
 
 iTCHClient::~iTCHClient()
 {
-  if (isOpen())
-  {
-    closeConnection();
-  }
+  socket_.disconnect();
 }
 
 bool iTCHClient::isOpen() const

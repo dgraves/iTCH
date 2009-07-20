@@ -51,14 +51,11 @@ void PiTCHWindow::connectedToServer()
 void PiTCHWindow::disconnectedFromServer(bool closedByServer, const QString &message)
 {
   QString status(tr("Unconnected"));
+  ui_->statusBar->showMessage(QString("%1: %2").arg(status).arg(message));
 
-  if (closedByServer)
+  if (!closedByServer)
   {
-    ui_->statusBar->showMessage(QString("%1: %2").arg(status).arg(message));
-  }
-  else
-  {
-    ui_->statusBar->showMessage(QString("%1: %2").arg(status).arg(message));
+    // Start auto-connect
   }
 }
 
@@ -112,7 +109,7 @@ void PiTCHWindow::forwardButtonReleased()
   }
 }
 
-void PiTCHWindow::playPauseButtonToggled(bool)
+void PiTCHWindow::playPauseButtonClicked()
 {
   client_.sendMethod(iTCHMethod(iTCHMethod::METHOD_IITUNES_PLAYPAUSE, QStringList(), 0));
 }

@@ -97,6 +97,7 @@ void STiTCHDialog::removeConnectionFromList(iTCHConnection *connection)
   if (index != connectionIndexes_.end())
   {
     model_->removeRow((*index).row());
+    connectionIndexes_.erase(index);
   }
 }
 
@@ -178,7 +179,9 @@ void STiTCHDialog::disconnectButtonClicked()
   for (QModelIndexList::iterator index = indexes.begin(); index != indexes.end(); ++index)
   {
     iTCHConnectionItem *item = dynamic_cast<iTCHConnectionItem *>(model_->item((*index).row()));
+    connectionIndexes_.erase(connectionIndexes_.find(item->getConnection()));
     server_.closeConnection(item->getConnection());
+    model_->removeRow((*index).row());
   }
 }
 
