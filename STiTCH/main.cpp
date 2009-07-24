@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-//  QApplication::setQuitOnLastWindowClosed(false);
+  QApplication::setQuitOnLastWindowClosed(false);
 
   STiTCHDialog d;
   d.show();

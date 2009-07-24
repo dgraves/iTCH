@@ -1,4 +1,5 @@
 #include <QtGui/QMessageBox>
+#include <QtGui/QMenu>
 #include <QtNetwork/QNetworkInterface>
 #include "iTCHConnection.h"
 #include "STiTCHDialog.h"
@@ -10,22 +11,42 @@ STiTCHDialog::STiTCHDialog(QWidget *parent) :
 {
   ui_->setupUi(this);
 
+  createTrayIcon();
   initializeConnectionList();
-
   fillInterfaceBox();
 
   connect(&server_, SIGNAL(connectionReceived(iTCHConnection*)), this, SLOT(connectionReceived(iTCHConnection*)));
   connect(&server_, SIGNAL(connectionLost(iTCHConnection*,bool, QString)), this, SLOT(connectionLost(iTCHConnection*,bool,QString)));
   connect(&server_, SIGNAL(receivedMethod(iTCHConnection*,iTCHMethod)), this, SLOT(processMethod(iTCHConnection*,iTCHMethod)));
+  connect(&controller_, SIGNAL(createdInstance()), this, SLOT(createdInstance()));
+  connect(&controller_, SIGNAL(destroyedInstance()), this, SLOT(destroyedInstance()));
   connect(ui_->connectionsList->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateDisconnectButton()));
+  connect(ui_->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
+
+  // Create iTunes instance
+  controller_.createInstance();
 
   // Start server listening on the default port
   setupServer();
+
+  trayIcon->show();
 }
 
 STiTCHDialog::~STiTCHDialog()
 {
+  QList<iTCHConnection *> keys = connectionIndexes_.keys();
+  for (QList<iTCHConnection *>::iterator iter = keys.begin(); iter != keys.end(); ++iter)
+  {
+    server_.closeConnection(*iter);
+  }
+
+  server_.close();
+  controller_.destroyInstance();
   delete ui_;
+}
+
+void STiTCHDialog::closeEvent(QCloseEvent *e)
+{
 }
 
 void STiTCHDialog::changeEvent(QEvent *e)
@@ -41,49 +62,12 @@ void STiTCHDialog::changeEvent(QEvent *e)
   }
 }
 
-void STiTCHDialog::initializeConnectionList()
-{
-  // Setup the list columns
-  model_ = new QStandardItemModel(0, 2, this);
-
-  model_->setHeaderData(0, Qt::Horizontal, QObject::tr("Host"));
-  model_->setHeaderData(1, Qt::Horizontal, QObject::tr("Connection Time"));
-
-  ui_->connectionsList->setModel(model_);
-}
-
-void STiTCHDialog::fillInterfaceBox()
-{
-  // Clear any existing interfaces from the box (for regenerating list when a device becomes enabled/disabled)
-  ui_->interfaceComboBox->clear();
-
-  // Fill the interface combobox with all enabled devices
-  ui_->interfaceComboBox->addItem("Any");
-
-  QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-  for (QList<QNetworkInterface>::iterator interface = interfaces.begin(); interface != interfaces.end(); ++interface)
-  {
-    if ((*interface).isValid() && ((*interface).flags() & QNetworkInterface::IsUp))
-    {
-      // Extract the IPv4 address for device
-      QList<QNetworkAddressEntry> addresses = (*interface).addressEntries();
-      for (QList<QNetworkAddressEntry>::iterator address = addresses.begin(); address != addresses.end(); ++address)
-      {
-        if ((*address).ip().toIPv4Address() != 0)
-        {
-          ui_->interfaceComboBox->addItem((*address).ip().toString());
-        }
-      }
-    }
-  }
-}
-
 void STiTCHDialog::addConnectionToList(iTCHConnection *connection)
 {
   iTCHConnectionItem *item = new iTCHConnectionItem(connection);
   model_->appendRow(item);
-  model_->setData(model_->index(0, 0), connection->getConnectionAddress().toString());
-  model_->setData(model_->index(0, 1), connection->getConnectionTime());
+  model_->setData(model_->index(item->row(), 0), connection->getConnectionAddress().toString());
+  model_->setData(model_->index(item->row(), 1), connection->getConnectionTime());
 
   ui_->connectionsList->resizeColumnToContents(0);
   ui_->connectionsList->resizeColumnToContents(1);
@@ -145,6 +129,28 @@ void STiTCHDialog::connectionError(iTCHConnection *connection, const QString &me
 {
 }
 
+void STiTCHDialog::createdInstance()
+{
+  ui_->actionConnect->setEnabled(false);
+  ui_->actionDisconnect->setEnabled(true);
+}
+
+void STiTCHDialog::destroyedInstance()
+{
+  ui_->actionConnect->setEnabled(true);
+  ui_->actionDisconnect->setEnabled(false);
+}
+
+void STiTCHDialog::connectController()
+{
+  controller_.createInstance();
+}
+
+void STiTCHDialog::disconnectController()
+{
+  controller_.destroyInstance();
+}
+
 void STiTCHDialog::serverSettingsChanged()
 {
   QString ifstring = ui_->interfaceComboBox->currentText();
@@ -179,9 +185,7 @@ void STiTCHDialog::disconnectButtonClicked()
   for (QModelIndexList::iterator index = indexes.begin(); index != indexes.end(); ++index)
   {
     iTCHConnectionItem *item = dynamic_cast<iTCHConnectionItem *>(model_->item((*index).row()));
-    connectionIndexes_.erase(connectionIndexes_.find(item->getConnection()));
     server_.closeConnection(item->getConnection());
-    model_->removeRow((*index).row());
   }
 }
 
@@ -203,7 +207,7 @@ void STiTCHDialog::accept()
   close();
 }
 
-void STiTCHDialog::rejet()
+void STiTCHDialog::reject()
 {
   close();
 }
@@ -214,5 +218,56 @@ void STiTCHDialog::apply(QAbstractButton *button)
   if (ui_->buttonBox->buttonRole(button) == QDialogButtonBox::ApplyRole && serverSettingsChanged_)
   {
     setupServer();
+  }
+}
+
+void STiTCHDialog::createTrayIcon()
+{
+  trayIconMenu = new QMenu(this);
+  trayIconMenu->addAction(ui_->actionSettings);
+  trayIconMenu->addSeparator();
+  trayIconMenu->addAction(ui_->actionConnect);
+  trayIconMenu->addAction(ui_->actionDisconnect);
+  trayIconMenu->addSeparator();
+  trayIconMenu->addAction(ui_->actionQuit);
+
+  trayIcon = new QSystemTrayIcon(this);
+  trayIcon->setContextMenu(trayIconMenu);
+}
+
+void STiTCHDialog::initializeConnectionList()
+{
+  // Setup the list columns
+  model_ = new QStandardItemModel(0, 2, this);
+
+  model_->setHeaderData(0, Qt::Horizontal, QObject::tr("Host"));
+  model_->setHeaderData(1, Qt::Horizontal, QObject::tr("Connection Time"));
+
+  ui_->connectionsList->setModel(model_);
+}
+
+void STiTCHDialog::fillInterfaceBox()
+{
+  // Clear any existing interfaces from the box (for regenerating list when a device becomes enabled/disabled)
+  ui_->interfaceComboBox->clear();
+
+  // Fill the interface combobox with all enabled devices
+  ui_->interfaceComboBox->addItem("Any");
+
+  QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+  for (QList<QNetworkInterface>::iterator interface = interfaces.begin(); interface != interfaces.end(); ++interface)
+  {
+    if ((*interface).isValid() && ((*interface).flags() & QNetworkInterface::IsUp))
+    {
+      // Extract the IPv4 address for device
+      QList<QNetworkAddressEntry> addresses = (*interface).addressEntries();
+      for (QList<QNetworkAddressEntry>::iterator address = addresses.begin(); address != addresses.end(); ++address)
+      {
+        if ((*address).ip().toIPv4Address() != 0)
+        {
+          ui_->interfaceComboBox->addItem((*address).ip().toString());
+        }
+      }
+    }
   }
 }

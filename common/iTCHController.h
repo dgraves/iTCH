@@ -15,12 +15,17 @@ public:
 
   ~iTCHController();
 
+  bool hasInstance() const;
+
   void callMethod(const iTCHMethod& method);
 
-protected:
   void createInstance();
 
   void destroyInstance();
+
+signals:
+  void createdInstance();
+  void destroyedInstance();
 
 protected:
   IiTunes* itunes_;
