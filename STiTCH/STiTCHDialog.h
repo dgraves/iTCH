@@ -4,6 +4,7 @@
 #include <QtGui/QDialog>
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
+#include <QtGui/QSystemTrayIcon>
 #include <QtCore/QModelIndex>
 #include <QtCore/QMap>
 #include "iTCHServer.h"
@@ -38,11 +39,9 @@ public:
   ~STiTCHDialog();
 
 protected:
+  void closeEvent(QCloseEvent *e);
+
   void changeEvent(QEvent *e);
-
-  void initializeConnectionList();
-
-  void fillInterfaceBox();
 
   void addConnectionToList(iTCHConnection *connection);
 
@@ -57,12 +56,18 @@ protected slots:
   void processMethod(iTCHConnection *connection, const iTCHMethod &method);
   void connectionError(iTCHConnection *connection, const QString &message);
 
+  // Slots to handle signals from iTCHController
+  void createdInstance();
+  void destroyedInstance();
+
   // Slots to handle signals from widgets
+  void connectController();
+  void disconnectController();
   void serverSettingsChanged();
   void disconnectButtonClicked();
   void updateDisconnectButton();
   void accept();
-  void rejet();
+  void reject();
   void apply(QAbstractButton *button);
 
 protected:
@@ -73,7 +78,13 @@ protected:
   bool                                 serverSettingsChanged_;
 
 private:
+  void createTrayIcon();
+  void initializeConnectionList();
+  void fillInterfaceBox();
+
   Ui::STiTCHDialog *ui_;
+  QSystemTrayIcon *trayIcon;
+  QMenu *trayIconMenu;
 };
 
 #endif // STITCHDIALOG_H

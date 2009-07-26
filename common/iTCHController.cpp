@@ -4,20 +4,24 @@
 iTCHController::iTCHController() :
   itunes_(NULL)
 {
-  createInstance();
 }
 
 iTCHController::~iTCHController()
 {
-  if (itunes_)
+  if (hasInstance())
   {
     destroyInstance();
   }
 }
 
+bool iTCHController::hasInstance() const
+{
+  return itunes_ != NULL;
+}
+
 void iTCHController::callMethod(const iTCHMethod &method)
 {
-  if (!itunes_)
+  if (!hasInstance())
   {
     // throw exception
   }
@@ -57,6 +61,7 @@ void iTCHController::callMethod(const iTCHMethod &method)
   case iTCHMethod::METHOD_IITUNES_GET_SOUNDVOLUME:                  // Returns a long (0-100%)
     break;
   case iTCHMethod::METHOD_IITUNES_PUT_SOUNDVOLUME:                  // Takes a long (0-100%); No value is returned
+    itunes_->put_SoundVolume(method.getParams()[0].toLong());
     break;
   case iTCHMethod::METHOD_IITUNES_GET_MUTE:                         // Returns a bool
     break;
@@ -65,6 +70,7 @@ void iTCHController::callMethod(const iTCHMethod &method)
   case iTCHMethod::METHOD_IITUNES_GET_PLAYERPOSITION:               // Returns a long (0-100%)
     break;
   case iTCHMethod::METHOD_IITUNES_PUT_PLAYERPOSITION:               // Takes a long (0-100%); No value is returned
+    itunes_->put_PlayerPosition(method.getParams()[0].toLong());
     break;
   case iTCHMethod::METHOD_IITCHSERVER_GET_PLAYERSTATE:              // Returns an iTCHPlayerState enumeration value (generated from ITPlayserState)
     break;
@@ -102,6 +108,8 @@ void iTCHController::createInstance()
   {
     // throw exception
   }
+
+  createdInstance();
 }
 
 void iTCHController::destroyInstance()
@@ -110,4 +118,6 @@ void iTCHController::destroyInstance()
   ::CoUninitialize();
 
   itunes_ = NULL;
+
+  destroyedInstance();
 }

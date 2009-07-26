@@ -21,6 +21,7 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
 
 PiTCHWindow::~PiTCHWindow()
 {
+  client_.closeConnection();
   delete ui_;
 }
 
