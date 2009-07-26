@@ -23,7 +23,7 @@ protected:
   void destroyInstance();
 
 protected:
-  IiTunes* itunes_;
+  IiTunes *itunes_;
 };
 
 #endif // ITCHCONTROLLER_H

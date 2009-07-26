@@ -78,6 +78,17 @@ void iTCHController::callMethod(const iTCHMethod &method)
   }
 }
 
+/*
+HRESULT hres;
+DWORD d;
+IConnectionPoint * icp;
+IConnectionPointContainer * icpc;
+hres = iITunes->QueryInterface(IID_IConnectionPointContainer,(PVOID *)&icpc);
+hres = icpc->FindConnectionPoint(DIID__IiTunesEvents,&icp);
+eventSink = new ITunesEventSink();
+hres = icp->Advise((IUnknown*)&eventSink,&d);
+*/
+
 void iTCHController::createInstance()
 {
   HRESULT result = ::CoInitialize(0);
