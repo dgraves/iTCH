@@ -1,8 +1,11 @@
 #include "iTunesCOMInterface.h"
+#include "iTCHEventSink.h"
 #include "iTCHController.h"
 
 iTCHController::iTCHController() :
-  itunes_(NULL)
+  itunes_(NULL),
+  events_(NULL),
+  eventsCookie_(0)
 {
 }
 
@@ -84,29 +87,68 @@ void iTCHController::callMethod(const iTCHMethod &method)
   }
 }
 
-/*
-HRESULT hres;
-DWORD d;
-IConnectionPoint * icp;
-IConnectionPointContainer * icpc;
-hres = iITunes->QueryInterface(IID_IConnectionPointContainer,(PVOID *)&icpc);
-hres = icpc->FindConnectionPoint(DIID__IiTunesEvents,&icp);
-eventSink = new ITunesEventSink();
-hres = icp->Advise((IUnknown*)&eventSink,&d);
-*/
-
 void iTCHController::createInstance()
 {
   HRESULT result = ::CoInitialize(0);
   if(FAILED(result))
   {
     // throw exception
+      int t;
+      t = 0;
   }
 
-  result = ::CoCreateInstance(CLSID_iTunesApp, NULL, CLSCTX_LOCAL_SERVER, IID_IiTunes, (PVOID*)&itunes_);
+  result = ::CoCreateInstance(CLSID_iTunesApp, NULL, CLSCTX_LOCAL_SERVER, IID_IiTunes, (PVOID *)&itunes_);
   if(FAILED(result))
   {
+    ::CoUninitialize();
+    itunes_ = NULL;
     // throw exception
+      int t;
+      t = 0;
+  }
+
+  try
+  {
+    IConnectionPointContainer *icpc;
+    result = itunes_->QueryInterface(IID_IConnectionPointContainer, (PVOID *)&icpc);
+    if(FAILED(result))
+    {
+      // throw exception
+      int t;
+      t = 0;
+    }
+
+    IConnectionPoint *icp;
+    result = icpc->FindConnectionPoint(DIID__IiTunesEvents, &icp);
+    icpc->Release();
+    if(FAILED(result))
+    {
+      // throw exception
+      int t;
+      t = 0;
+    }
+
+    events_ = new iTCHEventSink(this);
+    events_->AddRef();
+    result = icp->Advise((IUnknown *)events_, &eventsCookie_);
+    if(FAILED(result))
+    {
+      events_->Release();
+      events_ = NULL;
+
+      // throw exception
+      int t;
+      t = 0;
+    }
+  }
+  catch(...)
+  {
+    itunes_->Release();
+    ::CoUninitialize();
+
+    itunes_ = NULL;
+
+    // Rethrow exception
   }
 
   createdInstance();
@@ -120,4 +162,30 @@ void iTCHController::destroyInstance()
   itunes_ = NULL;
 
   destroyedInstance();
+}
+
+void iTCHController::play()
+{
+}
+
+void iTCHController::stop()
+{
+}
+
+void iTCHController::playingTrackChanged()
+{
+}
+
+void iTCHController::volumeChanged(long newVolume)
+{
+}
+
+void iTCHController::aboutToQuit()
+{
+  destroyInstance();
+}
+
+void iTCHController::quitting()
+{
+  destroyInstance();
 }

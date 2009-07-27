@@ -69,7 +69,7 @@ public:
 
   void fromJsonRpc(const QString &json);
 
-protected:
+private:
   SupportedMethods method_;
   QStringList params_;                       // Place strings inside doublequotes, to distinguish between strings and numbers (for JSON)
   unsigned int id_;

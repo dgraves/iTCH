@@ -70,21 +70,19 @@ protected slots:
   void reject();
   void apply(QAbstractButton *button);
 
-protected:
-  iTCHServer                           server_;
-  iTCHController                       controller_;
-  QStandardItemModel                  *model_;
-  QMap<iTCHConnection *, QModelIndex>  connectionIndexes_;
-  bool                                 serverSettingsChanged_;
-
 private:
   void createTrayIcon();
   void initializeConnectionList();
   void fillInterfaceBox();
 
-  Ui::STiTCHDialog *ui_;
-  QSystemTrayIcon *trayIcon;
-  QMenu *trayIconMenu;
+private:
+  Ui::STiTCHDialog                    *ui_;
+  iTCHServer                           server_;
+  iTCHController                       controller_;
+  QSystemTrayIcon                     *trayIcon;
+  QMenu                               *trayIconMenu;
+  QStandardItemModel                  *model_;
+  QMap<iTCHConnection *, QModelIndex>  connectionIndexes_;
 };
 
 #endif // STITCHDIALOG_H
