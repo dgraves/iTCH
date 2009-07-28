@@ -17,7 +17,8 @@ HEADERS += STiTCHDialog.h \
     ../common/iTCHController.h \
     ../common/iTCHConnection.h \
     ../iTunesCOMWindowsSDK/iTunesCOMInterface.h
-
 FORMS += STiTCHDialog.ui
-INCLUDEPATH += ../common ../iTunesCOMWindowsSDK
+INCLUDEPATH += ../common \
+    ../iTunesCOMWindowsSDK
 LIBS += ole32.lib
+RESOURCES += STiTCH.qrc

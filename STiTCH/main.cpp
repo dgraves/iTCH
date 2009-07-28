@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-//  Q_INIT_RESOURCE(STiTCH);
+  Q_INIT_RESOURCE(STiTCH);
 
   QApplication a(argc, argv);
 
