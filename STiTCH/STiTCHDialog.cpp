@@ -1,3 +1,4 @@
+#include <QtCore/QList>
 #include <QtGui/QMessageBox>
 #include <QtGui/QMenu>
 #include <QtNetwork/QNetworkInterface>
@@ -156,19 +157,16 @@ void STiTCHDialog::serverSettingsChanged()
   QString ifstring = ui_->interfaceComboBox->currentText();
   QHostAddress iface = (ifstring == "Any") ? QHostAddress::Any : QHostAddress(ifstring);
   quint16 port = ui_->portSpinBox->value();
+  bool serverSettingsChanged = true;
 
-  // If either the interface or the server port has changed, the server settings changed flag is asserted
+  // If the user has just reset the UI values to the current values, the server settings changed flag is unasserted
   if ((port == server_.getServerPort()) && (iface == server_.getServerAddress()))
   {
-    serverSettingsChanged_ = false;
-  }
-  else
-  {
-    serverSettingsChanged_ = true;
+    serverSettingsChanged = false;
   }
 
   // Update the apply button when the server settings are changed (is only disabled when server is running and there is no change)
-  if (server_.isListening() && !serverSettingsChanged_)
+  if (server_.isListening() && !serverSettingsChanged)
   {
     ui_->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
   }
@@ -214,8 +212,8 @@ void STiTCHDialog::reject()
 
 void STiTCHDialog::apply(QAbstractButton *button)
 {
-  // Determine if apply button was clicked and apply the server settings if they have changed
-  if (ui_->buttonBox->buttonRole(button) == QDialogButtonBox::ApplyRole && serverSettingsChanged_)
+  // Determine if apply button was clicked and apply the server settings
+  if (ui_->buttonBox->buttonRole(button) == QDialogButtonBox::ApplyRole)
   {
     setupServer();
   }
@@ -255,12 +253,12 @@ void STiTCHDialog::fillInterfaceBox()
   ui_->interfaceComboBox->addItem("Any");
 
   QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-  for (QList<QNetworkInterface>::iterator interface = interfaces.begin(); interface != interfaces.end(); ++interface)
+  for (QList<QNetworkInterface>::iterator iface = interfaces.begin(); iface != interfaces.end(); ++iface)
   {
-    if ((*interface).isValid() && ((*interface).flags() & QNetworkInterface::IsUp))
+    if ((*iface).isValid() && ((*iface).flags() & QNetworkInterface::IsUp))
     {
       // Extract the IPv4 address for device
-      QList<QNetworkAddressEntry> addresses = (*interface).addressEntries();
+      QList<QNetworkAddressEntry> addresses = (*iface).addressEntries();
       for (QList<QNetworkAddressEntry>::iterator address = addresses.begin(); address != addresses.end(); ++address)
       {
         if ((*address).ip().toIPv4Address() != 0)

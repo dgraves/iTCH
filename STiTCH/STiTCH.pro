@@ -10,15 +10,17 @@ SOURCES += main.cpp \
     ../common/iTCHServer.cpp \
     ../common/iTCHController.cpp \
     ../common/iTCHConnection.cpp \
-    ../iTunesCOMWindowsSDK/iTunesCOMInterface_i.c
+    ../iTunesCOMWindowsSDK/iTunesCOMInterface_i.c \
+    ../common/iTCHEventSink.cpp
 HEADERS += STiTCHDialog.h \
     ../common/iTCHMethod.h \
     ../common/iTCHServer.h \
     ../common/iTCHController.h \
     ../common/iTCHConnection.h \
-    ../iTunesCOMWindowsSDK/iTunesCOMInterface.h
+    ../iTunesCOMWindowsSDK/iTunesCOMInterface.h \
+    ../common/iTCHEventSink.h
 FORMS += STiTCHDialog.ui
 INCLUDEPATH += ../common \
     ../iTunesCOMWindowsSDK
-LIBS += ole32.lib
+LIBS += ole32.lib oleaut32.lib
 RESOURCES += STiTCH.qrc

@@ -40,6 +40,8 @@ protected slots:
 
 protected:
   QTcpSocket *socket_;
+
+private:
   QDateTime   time_;
 };
 
