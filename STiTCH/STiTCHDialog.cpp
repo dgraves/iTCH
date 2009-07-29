@@ -74,6 +74,9 @@ void STiTCHDialog::addConnectionToList(iTCHConnection *connection)
   ui_->connectionsList->resizeColumnToContents(1);
 
   connectionIndexes_.insert(connection, item->index());
+
+  // Update the icon
+  setIcon();
 }
 
 void STiTCHDialog::removeConnectionFromList(iTCHConnection *connection)
@@ -84,6 +87,9 @@ void STiTCHDialog::removeConnectionFromList(iTCHConnection *connection)
     model_->removeRow((*index).row());
     connectionIndexes_.erase(index);
   }
+
+  // Update the icon
+  setIcon();
 }
 
 void STiTCHDialog::setupServer()
@@ -109,6 +115,46 @@ void STiTCHDialog::setupServer()
     // Apply button is disabled when listening and the server settings have not changed
     ui_->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
   }
+
+  // Update the icon
+  setIcon();
+}
+
+void STiTCHDialog::setIcon()
+{
+  // Default to the server error icon
+  QIcon icon = QIcon(":/tray/icons/noserver.svg");
+  QString message = "Server failed to open port and can not receive connections";
+
+  if (server_.isListening())
+  {
+    if (controller_.hasInstance() && !connectionIndexes_.empty())
+    {
+      // Have client connections and iTunes is active
+      icon = QIcon(":/tray/icons/active_connections.svg");
+      message = "iTunes link is active and clients are connected";
+    }
+    else if (controller_.hasInstance())
+    {
+      // Have no client connections, but iTunes is active
+      icon = QIcon(":/tray/icons/active_noconnections.svg");
+      message = "iTunes link is active but no clients are connected";
+    }
+    else if (!connectionIndexes_.empty())
+    {
+      icon = QIcon(":/tray/icons/inactive_connections.svg");
+      message = "Clients are connected but iTunes link is inactive";
+    }
+    else
+    {
+      icon = QIcon(":/tray/icons/inactive_noconnections.svg");
+      message = "No clients are connected and iTunes link is inactive";
+    }
+  }    
+
+  trayIcon->setIcon(icon);
+  trayIcon->setToolTip(message);
+  setWindowIcon(icon);
 }
 
 void STiTCHDialog::connectionReceived(iTCHConnection *connection)
@@ -134,12 +180,14 @@ void STiTCHDialog::createdInstance()
 {
   ui_->actionConnect->setEnabled(false);
   ui_->actionDisconnect->setEnabled(true);
+  setIcon();
 }
 
 void STiTCHDialog::destroyedInstance()
 {
   ui_->actionConnect->setEnabled(true);
   ui_->actionDisconnect->setEnabled(false);
+  setIcon();
 }
 
 void STiTCHDialog::connectController()
@@ -216,6 +264,18 @@ void STiTCHDialog::apply(QAbstractButton *button)
   if (ui_->buttonBox->buttonRole(button) == QDialogButtonBox::ApplyRole)
   {
     setupServer();
+  }
+}
+
+void STiTCHDialog::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+  switch (reason)
+  {
+  case QSystemTrayIcon::DoubleClick:
+    show();
+    break;
+  default:
+    break;
   }
 }
 

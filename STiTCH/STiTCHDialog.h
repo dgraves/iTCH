@@ -49,6 +49,8 @@ protected:
 
   void setupServer();
 
+  void setIcon();
+
 protected slots:
   // Slots to handle signals from iTCHServer
   void connectionReceived(iTCHConnection *connection);
@@ -69,6 +71,7 @@ protected slots:
   void accept();
   void reject();
   void apply(QAbstractButton *button);
+  void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
 private:
   void createTrayIcon();
