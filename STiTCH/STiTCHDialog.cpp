@@ -24,7 +24,7 @@ STiTCHDialog::STiTCHDialog(QWidget *parent) :
   connect(&controller_, SIGNAL(destroyedInstance()), this, SLOT(destroyedInstance()));
   connect(ui_->connectionsList->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateDisconnectButton()));
   connect(ui_->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
-  connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+  connect(trayIcon_, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
   // Create iTunes instance
   controller_.createInstance();
@@ -32,7 +32,7 @@ STiTCHDialog::STiTCHDialog(QWidget *parent) :
   // Start server listening on the default port
   setupServer();
 
-  trayIcon->show();
+  trayIcon_->show();
 }
 
 STiTCHDialog::~STiTCHDialog()
@@ -53,6 +53,9 @@ STiTCHDialog::~STiTCHDialog()
     controller_.destroyInstance();
   }
 
+  trayIcon_->hide();
+  delete trayIconMenu_;
+  delete trayIcon_;
   delete ui_;
 }
 
@@ -164,8 +167,8 @@ void STiTCHDialog::setIcon()
     }
   }    
 
-  trayIcon->setIcon(icon);
-  trayIcon->setToolTip(message);
+  trayIcon_->setIcon(icon);
+  trayIcon_->setToolTip(message);
   setWindowIcon(icon);
 }
 
@@ -176,7 +179,7 @@ void STiTCHDialog::connectionReceived(iTCHConnection *connection)
   // Show task tray notification
   if (ui_->connectCheckBox->isChecked())
   {
-    trayIcon->showMessage(tr("Client Connected"), QString("New connection received from %1").arg(connection->getConnectionAddress().toString()), QSystemTrayIcon::Information, ui_->durationSpinBox->value() * 1000);
+    trayIcon_->showMessage(tr("Client Connected"), QString("New connection received from %1").arg(connection->getConnectionAddress().toString()), QSystemTrayIcon::Information, ui_->durationSpinBox->value() * 1000);
   }
 }
 
@@ -187,7 +190,7 @@ void STiTCHDialog::connectionLost(iTCHConnection *connection, bool closedByPeer,
   // Show task tray notification
   if (ui_->disconnectCheckBox->isChecked())
   {
-    trayIcon->showMessage(tr("Client Disconnected"), QString("Client from %1 has disconnected").arg(connection->getConnectionAddress().toString()), QSystemTrayIcon::Information, ui_->durationSpinBox->value() * 1000);
+    trayIcon_->showMessage(tr("Client Disconnected"), QString("Client from %1 has disconnected").arg(connection->getConnectionAddress().toString()), QSystemTrayIcon::Information, ui_->durationSpinBox->value() * 1000);
   }
 }
 
@@ -318,16 +321,16 @@ void STiTCHDialog::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void STiTCHDialog::createTrayIcon()
 {
-  trayIconMenu = new QMenu(this);
-  trayIconMenu->addAction(ui_->actionSettings);
-  trayIconMenu->addSeparator();
-  trayIconMenu->addAction(ui_->actionConnect);
-  trayIconMenu->addAction(ui_->actionDisconnect);
-  trayIconMenu->addSeparator();
-  trayIconMenu->addAction(ui_->actionQuit);
+  trayIconMenu_ = new QMenu(this);
+  trayIconMenu_->addAction(ui_->actionSettings);
+  trayIconMenu_->addSeparator();
+  trayIconMenu_->addAction(ui_->actionConnect);
+  trayIconMenu_->addAction(ui_->actionDisconnect);
+  trayIconMenu_->addSeparator();
+  trayIconMenu_->addAction(ui_->actionQuit);
 
-  trayIcon = new QSystemTrayIcon(this);
-  trayIcon->setContextMenu(trayIconMenu);
+  trayIcon_ = new QSystemTrayIcon(this);
+  trayIcon_->setContextMenu(trayIconMenu_);
 }
 
 void STiTCHDialog::initializeConnectionList()

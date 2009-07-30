@@ -82,8 +82,8 @@ private:
   Ui::STiTCHDialog                    *ui_;
   iTCHServer                           server_;
   iTCHController                       controller_;
-  QSystemTrayIcon                     *trayIcon;
-  QMenu                               *trayIconMenu;
+  QSystemTrayIcon                     *trayIcon_;
+  QMenu                               *trayIconMenu_;
   QStandardItemModel                  *model_;
   QMap<iTCHConnection *, QModelIndex>  connectionIndexes_;
 };
