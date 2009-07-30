@@ -1,6 +1,7 @@
 #include <QtCore/QList>
 #include <QtGui/QMessageBox>
 #include <QtGui/QMenu>
+#include <QtGui/QCloseEvent>
 #include <QtNetwork/QNetworkInterface>
 #include "iTCHConnection.h"
 #include "STiTCHDialog.h"
@@ -23,6 +24,7 @@ STiTCHDialog::STiTCHDialog(QWidget *parent) :
   connect(&controller_, SIGNAL(destroyedInstance()), this, SLOT(destroyedInstance()));
   connect(ui_->connectionsList->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateDisconnectButton()));
   connect(ui_->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
+  connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
   // Create iTunes instance
   controller_.createInstance();
@@ -41,13 +43,23 @@ STiTCHDialog::~STiTCHDialog()
     server_.closeConnection(*iter);
   }
 
-  server_.close();
-  controller_.destroyInstance();
+  if (server_.isListening())
+  {
+    server_.close();
+  }
+
+  if (controller_.hasInstance())
+  {
+    controller_.destroyInstance();
+  }
+
   delete ui_;
 }
 
 void STiTCHDialog::closeEvent(QCloseEvent *e)
 {
+  hide();
+  e->ignore();
 }
 
 void STiTCHDialog::changeEvent(QEvent *e)
@@ -272,7 +284,7 @@ void STiTCHDialog::iconActivated(QSystemTrayIcon::ActivationReason reason)
   switch (reason)
   {
   case QSystemTrayIcon::DoubleClick:
-    show();
+    setVisible(true);
     break;
   default:
     break;

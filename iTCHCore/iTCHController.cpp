@@ -5,6 +5,7 @@
 iTCHController::iTCHController() :
   itunes_(NULL),
   events_(NULL),
+  eventsConnectionPoint_(NULL),
   eventsCookie_(0)
 {
 }
@@ -89,6 +90,11 @@ void iTCHController::callMethod(const iTCHMethod &method)
 
 void iTCHController::createInstance()
 {
+  if (hasInstance())
+  {
+    // Throw exception
+  }
+
   HRESULT result = ::CoInitialize(0);
   if(FAILED(result))
   {
@@ -118,8 +124,7 @@ void iTCHController::createInstance()
       t = 0;
     }
 
-    IConnectionPoint *icp;
-    result = icpc->FindConnectionPoint(DIID__IiTunesEvents, &icp);
+    result = icpc->FindConnectionPoint(DIID__IiTunesEvents, &eventsConnectionPoint_);
     icpc->Release();
     if(FAILED(result))
     {
@@ -130,7 +135,7 @@ void iTCHController::createInstance()
 
     events_ = new iTCHEventSink(this);
     events_->AddRef();
-    result = icp->Advise((IUnknown *)events_, &eventsCookie_);
+    result = eventsConnectionPoint_->Advise((IUnknown *)events_, &eventsCookie_);
     if(FAILED(result))
     {
       events_->Release();
@@ -156,9 +161,19 @@ void iTCHController::createInstance()
 
 void iTCHController::destroyInstance()
 {
+  if (!hasInstance())
+  {
+    // Throw exception
+  }
+
+  eventsConnectionPoint_->Unadvise(eventsCookie_);
+  eventsConnectionPoint_->Release();
+  events_->Release();
   itunes_->Release();
   ::CoUninitialize();
 
+  eventsConnectionPoint_ = NULL;
+  events_ = NULL;
   itunes_ = NULL;
 
   destroyedInstance();
@@ -182,10 +197,16 @@ void iTCHController::volumeChanged(long newVolume)
 
 void iTCHController::aboutToQuit()
 {
-  destroyInstance();
+  if (hasInstance())
+  {
+    destroyInstance();
+  }
 }
 
 void iTCHController::quitting()
 {
-  destroyInstance();
+  if (hasInstance())
+  {
+    destroyInstance();
+  }
 }

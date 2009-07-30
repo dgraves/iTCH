@@ -136,7 +136,10 @@
   </layout>
   <action name="actionSettings">
    <property name="text">
-    <string>Open &amp;Settings Dialog</string>
+    <string>Show &amp;Settings Dialog</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Settings Dialog</string>
    </property>
    <property name="font">
     <font>

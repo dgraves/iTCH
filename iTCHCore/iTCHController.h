@@ -5,6 +5,7 @@
 #include "iTCHMethod.h"
 
 struct IiTunes;
+struct IConnectionPoint;
 
 class iTCHController : public QObject
 {
@@ -43,6 +44,7 @@ protected slots:
 private:
   IiTunes       *itunes_;
   iTCHEventSink *events_;
+  IConnectionPoint *eventsConnectionPoint_;
   unsigned long  eventsCookie_;
 };
 
