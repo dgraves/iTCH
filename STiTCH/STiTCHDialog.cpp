@@ -136,7 +136,7 @@ void STiTCHDialog::setIcon()
 {
   // Default to the server error icon
   QIcon icon = QIcon(":/tray/icons/noserver.svg");
-  QString message = "Server failed to open port and can not receive connections";
+  QString message = tr("Server failed to open port and can not receive connections");
 
   if (server_.isListening())
   {
@@ -144,23 +144,23 @@ void STiTCHDialog::setIcon()
     {
       // Have client connections and iTunes is active
       icon = QIcon(":/tray/icons/active_connections.svg");
-      message = "iTunes link is active and clients are connected";
+      message = tr("iTunes link is active and clients are connected");
     }
     else if (controller_.hasInstance())
     {
       // Have no client connections, but iTunes is active
       icon = QIcon(":/tray/icons/active_noconnections.svg");
-      message = "iTunes link is active but no clients are connected";
+      message = tr("iTunes link is active but no clients are connected");
     }
     else if (!connectionIndexes_.empty())
     {
       icon = QIcon(":/tray/icons/inactive_connections.svg");
-      message = "Clients are connected but iTunes link is inactive";
+      message = tr("Clients are connected but iTunes link is inactive");
     }
     else
     {
       icon = QIcon(":/tray/icons/inactive_noconnections.svg");
-      message = "No clients are connected and iTunes link is inactive";
+      message = tr("No clients are connected and iTunes link is inactive");
     }
   }    
 
@@ -172,16 +172,41 @@ void STiTCHDialog::setIcon()
 void STiTCHDialog::connectionReceived(iTCHConnection *connection)
 {
   addConnectionToList(connection);
+
+  // Show task tray notification
+  if (ui_->connectCheckBox->isChecked())
+  {
+    trayIcon->showMessage(tr("Client Connected"), QString("New connection received from %1").arg(connection->getConnectionAddress().toString()), QSystemTrayIcon::Information, ui_->durationSpinBox->value() * 1000);
+  }
 }
 
 void STiTCHDialog::connectionLost(iTCHConnection *connection, bool closedByPeer, const QString &message)
 {
   removeConnectionFromList(connection);
+
+  // Show task tray notification
+  if (ui_->disconnectCheckBox->isChecked())
+  {
+    trayIcon->showMessage(tr("Client Disconnected"), QString("Client from %1 has disconnected").arg(connection->getConnectionAddress().toString()), QSystemTrayIcon::Information, ui_->durationSpinBox->value() * 1000);
+  }
 }
 
 void STiTCHDialog::processMethod(iTCHConnection *connection, const iTCHMethod &method)
 {
-  controller_.callMethod(method);
+  // Attempt to recreate an inactive instance, if configuration dictates
+  if (!controller_.hasInstance() && ui_->activationCheckBox->isChecked())
+  {
+    controller_.createInstance();
+  }
+
+  if (controller_.hasInstance())
+  {
+    controller_.callMethod(method);
+  }
+  else
+  {
+    // Send error response to client
+  }
 }
 
 void STiTCHDialog::connectionError(iTCHConnection *connection, const QString &message)
