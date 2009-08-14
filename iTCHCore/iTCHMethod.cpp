@@ -81,7 +81,7 @@ QString iTCHMethod::toJsonRpc() const
     QStringList::const_iterator paramsIterator = params_.constBegin();
 
     // Add first parameter to list
-    json += (*paramsIterator);
+    json += (*paramsIterator++);
 
     // Add remaining parameters with comma separation
     for (; paramsIterator != params_.constEnd(); ++paramsIterator)
@@ -125,7 +125,7 @@ void iTCHMethod::fromJsonRpc(const QString &json)
 
   // Extract the
   QString params = __jsonMethodRegExp.cap(2);
-  params_ = params.split(" ,", QString::SkipEmptyParts);
+  params_ = params.split(QRegExp("\\s*,\\s*"), QString::SkipEmptyParts);
 
   QString id = __jsonMethodRegExp.cap(3);
   bool valid;
