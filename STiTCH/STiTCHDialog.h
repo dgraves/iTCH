@@ -51,12 +51,15 @@ protected:
 
   void setIcon();
 
+public slots:
+  void appendLogMessage(const QString &message);
+
 protected slots:
   // Slots to handle signals from iTCHServer
   void connectionReceived(iTCHConnection *connection);
   void connectionLost(iTCHConnection *connection, bool closedByPeer, const QString &message);
   void processMethod(iTCHConnection *connection, const iTCHMethod &method);
-  void connectionError(iTCHConnection *connection, const QString &message);
+  void communicationError(iTCHConnection *connection, const QString &message);                    // Receive JSON error messages
 
   // Slots to handle signals from iTCHController
   void createdInstance();
@@ -68,6 +71,7 @@ protected slots:
   void serverSettingsChanged();
   void disconnectButtonClicked();
   void updateDisconnectButton();
+  void setMaxLogEntries(int maxEntries);
   void accept();
   void reject();
   void apply(QAbstractButton *button);

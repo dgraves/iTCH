@@ -129,6 +129,9 @@
               <property name="enabled">
                <bool>false</bool>
               </property>
+              <property name="toolTip">
+               <string>Disconnect the selected clients</string>
+              </property>
               <property name="text">
                <string>Disconnect</string>
               </property>
@@ -214,18 +217,51 @@
        <item>
         <widget class="QGroupBox" name="activationGroupBox">
          <property name="title">
-          <string>Link Activation</string>
+          <string>Connection to Music Player</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0" colspan="3">
            <widget class="QCheckBox" name="activationCheckBox">
             <property name="text">
-             <string>Reactivate inactive link when commands are received</string>
+             <string>Reconnect to player when commands are received</string>
             </property>
             <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="disconnectPlayerButton">
+            <property name="toolTip">
+             <string>Disconnect from iTunes</string>
+            </property>
+            <property name="text">
+             <string>Disconnect</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="connectPlayerButton">
+            <property name="toolTip">
+             <string>Connect to iTunes</string>
+            </property>
+            <property name="text">
+             <string>Connect</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -245,13 +281,13 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="securityTab">
       <attribute name="title">
        <string>Security</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="pinGroupBox">
          <property name="title">
           <string>Require PIN Authentication</string>
          </property>
@@ -263,14 +299,14 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="pinLabel">
             <property name="text">
              <string>PIN:</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="pinLineEdit">
             <property name="text">
              <string>12345</string>
             </property>
@@ -307,6 +343,85 @@
           </size>
          </property>
         </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="logTab">
+      <attribute name="title">
+       <string>Log</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QGroupBox" name="eventLogGroupBox">
+         <property name="title">
+          <string>Event Log</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0" colspan="5">
+           <widget class="QTextEdit" name="logTextEdit">
+            <property name="undoRedoEnabled">
+             <bool>false</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="4">
+           <widget class="QPushButton" name="saveLogButton">
+            <property name="toolTip">
+             <string>Save log to file</string>
+            </property>
+            <property name="text">
+             <string>Save</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="maxLogEntriesLabel">
+            <property name="text">
+             <string>Max Log Entries:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="maxLogEntriesSpinBox">
+            <property name="suffix">
+             <string> </string>
+            </property>
+            <property name="minimum">
+             <number>8</number>
+            </property>
+            <property name="maximum">
+             <number>4096</number>
+            </property>
+            <property name="value">
+             <number>64</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2" colspan="2">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="logAllCheckBox">
+         <property name="text">
+          <string>Log all communication with clients</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -362,6 +477,19 @@
   <tabstop>connectionsList</tabstop>
   <tabstop>disconnectButton</tabstop>
   <tabstop>buttonBox</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>connectCheckBox</tabstop>
+  <tabstop>disconnectCheckBox</tabstop>
+  <tabstop>durationSpinBox</tabstop>
+  <tabstop>activationCheckBox</tabstop>
+  <tabstop>connectPlayerButton</tabstop>
+  <tabstop>disconnectPlayerButton</tabstop>
+  <tabstop>pinGroupBox</tabstop>
+  <tabstop>pinLineEdit</tabstop>
+  <tabstop>logTextEdit</tabstop>
+  <tabstop>maxLogEntriesSpinBox</tabstop>
+  <tabstop>saveLogButton</tabstop>
+  <tabstop>logAllCheckBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -372,8 +500,8 @@
    <slot>serverSettingsChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
-     <y>41</y>
+     <x>116</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel">
      <x>83</x>
@@ -388,8 +516,8 @@
    <slot>serverSettingsChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>318</x>
-     <y>44</y>
+     <x>367</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel">
      <x>288</x>
@@ -404,8 +532,8 @@
    <slot>disconnectButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>330</x>
-     <y>236</y>
+     <x>366</x>
+     <y>311</y>
     </hint>
     <hint type="destinationlabel">
      <x>199</x>
@@ -420,8 +548,8 @@
    <slot>apply(QAbstractButton*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>174</x>
-     <y>277</y>
+     <x>183</x>
+     <y>390</y>
     </hint>
     <hint type="destinationlabel">
      <x>198</x>
@@ -436,8 +564,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>358</x>
-     <y>274</y>
+     <x>367</x>
+     <y>390</y>
     </hint>
     <hint type="destinationlabel">
      <x>397</x>
@@ -452,8 +580,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>268</x>
-     <y>273</y>
+     <x>277</x>
+     <y>390</y>
     </hint>
     <hint type="destinationlabel">
      <x>103</x>
@@ -509,6 +637,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>connectPlayerButton</sender>
+   <signal>clicked()</signal>
+   <receiver>STiTCHDialog</receiver>
+   <slot>connectController()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>223</x>
+     <y>206</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>disconnectPlayerButton</sender>
+   <signal>clicked()</signal>
+   <receiver>STiTCHDialog</receiver>
+   <slot>disconnectController()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>342</x>
+     <y>209</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>392</x>
+     <y>212</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>maxLogEntriesSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>STiTCHDialog</receiver>
+   <slot>setMaxLogEntries(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>129</x>
+     <y>303</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>7</x>
+     <y>297</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>serverSettingsChanged()</slot>
@@ -516,5 +692,6 @@
   <slot>apply(QAbstractButton*)</slot>
   <slot>connectController()</slot>
   <slot>disconnectController()</slot>
+  <slot>setMaxLogEntries(int)</slot>
  </slots>
 </ui>
