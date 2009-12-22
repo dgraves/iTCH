@@ -119,6 +119,7 @@ HRESULT STDMETHODCALLTYPE iTCHEventSink::Invoke(DISPID dispIdMember, REFIID riid
   UINT uArgErr;
   HRESULT hresult;
   VARIANTARG varg;
+  IITTrack* track = NULL;
 
   if (!::IsEqualIID(riid, IID_NULL))
   {
@@ -140,10 +141,33 @@ HRESULT STDMETHODCALLTYPE iTCHEventSink::Invoke(DISPID dispIdMember, REFIID riid
   switch (dispIdMember)
   {
   case ITEventPlayerPlay:
+    hresult = ::DispGetParam(pDispParams, 0, VT_DISPATCH, &varg, puArgErr);
+    if(hresult != NOERROR)
+    {
+      return hresult;
+    }
+
+    hresult = V_DISPATCH(&varg)->QueryInterface(IID_IITTrack, (void **)&track);
+    if(hresult != NOERROR)
+    {
+      return hresult;
+    }
+
+    track->Release();
     break;
   case ITEventPlayerStop:
+    hresult = ::DispGetParam(pDispParams, 0, VT_DISPATCH, &varg, puArgErr);
+    if(hresult != NOERROR)
+    {
+      return hresult;
+    }
     break;
   case ITEventPlayerPlayingTrackChanged:
+    hresult = ::DispGetParam(pDispParams, 0, VT_DISPATCH, &varg, puArgErr);
+    if(hresult != NOERROR)
+    {
+      return hresult;
+    }
     break;
   case ITEventAboutToPromptUserToQuit:
     controller_->aboutToQuit();

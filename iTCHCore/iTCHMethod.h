@@ -43,7 +43,10 @@ public:
     METHOD_IITCHSERVER_GET_PLAYERSTATE     = 17,    // Returns an iTCHPlayerState enumeration value (generated from ITPlayserState)
     METHOD_IITCHSERVER_GET_CURRENTTRACK    = 18,    // Returns an iTCHTrack object (generated from IITTrack)
     METHOD_IITCHSERVER_GET_CURRENTPLAYLIST = 19,    // Returns an iTCHPlayList object (generated from IITPlayList)
-    METHOD_IITCHCLIENT_CHANGENOTIFICATION  = 20     // Takes a list of changed values (volume, mute, playerposition, state, track, playlist)
+    METHOD_IITCHCLIENT_VOLUMECHANGED       = 20,    // Sends a volume changed message to client
+    METHOD_IITCHCLIENT_PLAYINGSTARTED      = 21,    // Sends a playing started notification to client
+    METHOD_IITCHCLIENT_PLAYINGSTOPPED      = 22,    // Sends a playing stopped notification to client
+    METHOD_IITCHCLIENT_TRACKINFOCHANGED    = 23     // Sends a notification that the currently playing track's info has changed to client
   };
 
 public:
