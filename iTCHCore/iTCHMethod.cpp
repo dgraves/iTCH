@@ -30,7 +30,10 @@ public:
     (*this)[iTCHMethod::METHOD_IITCHSERVER_GET_PLAYERSTATE] = "iTCHServer::getPlayserState";
     (*this)[iTCHMethod::METHOD_IITCHSERVER_GET_CURRENTTRACK] = "iTCHServer::getCurrentTrack";
     (*this)[iTCHMethod::METHOD_IITCHSERVER_GET_CURRENTPLAYLIST] = "iTCHServer::getCurrentPlaylist";
-    (*this)[iTCHMethod::METHOD_IITCHCLIENT_CHANGENOTIFICATION] = "iTCHClient::changeNotification";
+    (*this)[iTCHMethod::METHOD_IITCHCLIENT_VOLUMECHANGED] = "iTCHClient::volumeChanged";
+    (*this)[iTCHMethod::METHOD_IITCHCLIENT_PLAYINGSTARTED] = "iTCHClient::playingStarted";
+    (*this)[iTCHMethod::METHOD_IITCHCLIENT_PLAYINGSTOPPED] = "iTCHClient::playingStopped";
+    (*this)[iTCHMethod::METHOD_IITCHCLIENT_TRACKINFOCHANGED] = "iTCHClient::trackInfoChanged";
   }
 } __supportedMethods;
 
