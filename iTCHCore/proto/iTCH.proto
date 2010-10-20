@@ -1,0 +1,95 @@
+package iTCH;
+
+// Notification that the player state has changed to be sent by server to client
+message ServerNotification {
+  enum Notification {
+    VOLUMECHANGED    = 0;    // Sends a volume changed message to client; No response
+    PLAYINGSTARTED   = 1;    // Sends a playing started notification to client; No response
+    PLAYINGSTOPPED   = 2;    // Sends a playing stopped notification to client; No response
+    TRACKINFOCHANGED = 3;    // Sends a notification that the currently playing track's info has changed to client; No response
+  }
+
+  required uint32 seqid = 1;     // Sequence ID
+  required Notification notification = 2;
+}
+
+// Request to be sent from client to server
+message ClientRequest {
+  enum Action {
+    BACKTRACK           = 0;     // No value is returned
+    FASTFORWARD         = 1;     // No value is returned
+    NEXTTRACK           = 2;     // No value is returned
+    PAUSE               = 3;     // No value is returned
+    PLAY                = 4;     // No value is returned
+    PLAYPAUSE           = 5;     // No value is returned
+    PREVIOUSTRACK       = 6;     // No value is returned
+    RESUME              = 7;     // No value is returned
+    REWIND              = 8;     // No value is returned
+    STOP                = 9;     // No value is returned
+    GET_SOUNDVOLUME     = 10;    // Returns a long (0-100%)
+    PUT_SOUNDVOLUME     = 11;    // Takes a long (0-100%); No value is returned
+    GET_MUTE            = 12;    // Returns a bool
+    PUT_MUTE            = 13;    // Takes a bool; No value is returned
+    GET_PLAYERPOSITION  = 14;    // Returns a long (0-100%)
+    PUT_PLAYERPOSITION  = 15;    // Takes a long (0-100%); No value is returned
+    GET_PLAYERSTATE     = 16;    // Returns player state enumeration value (generated from ITPlayserState)
+    GET_CURRENTTRACK    = 17;    // Returns a track message (generated from IITTrack)
+    GET_CURRENTPLAYLIST = 18;    // Returns a playlist message sorted by play order (generated from IITTrackCollection member of IITPlaylist)
+  }
+
+  message Value {
+    enum Type {
+	  VOLUME = 0;
+	  MUTE = 1;
+	  POSITION = 2;
+	}
+
+	required Type type = 1;
+    optional uint32 volume = 2;
+    optional bool mute = 3;
+    optional uint32 position = 4;
+  }
+  
+  required uint32 seqid = 1;        // Sequence ID
+  required Action action = 2;       // Action to perform
+  optional Value value = 3;         // Value supporting action
+}
+
+// Message describing 
+message Track {
+  required string name = 1;
+  required string artist = 2;
+  required string album = 3;
+  required uint32 duration = 4;
+  required string genre = 5;
+  required uint32 year = 6;                 // Year recorded/released
+  optional uint32 bitrate = 7;              // Bit rate of track in kbps
+  optional uint32 sample_rate = 8;          // Sample rate of track in Hz
+  optional string comment = 9;              // Free-form comment on track
+  optional string kind = 10;                // Text description of the track
+}
+
+// Response to client request sent from server to client
+message ServerResponse {
+  message Value {
+    enum Type {
+	  VOLUME = 0;
+	  MUTE = 1;
+	  POSITION = 2;
+	  TRACK = 3;
+	}
+
+	required Type type = 1;
+    optional uint32 volume = 2;
+    optional bool mute = 3;
+    optional uint32 position = 4;
+	optional Track track = 5;
+  }
+  required uint32 seqid = 1;        // Sequence ID
+  optional Value value = 2;
+}
+
+// Client request / server response service
+service RequestService {
+  rpc Request (ClientRequest) returns (ServerResponse);
+}
