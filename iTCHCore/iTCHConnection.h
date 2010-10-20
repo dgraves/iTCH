@@ -45,4 +45,6 @@ private:
   QDateTime   time_;
 };
 
+Q_DECLARE_METATYPE(iTCHConnection *);
+
 #endif // ITCHCONNECTION_H

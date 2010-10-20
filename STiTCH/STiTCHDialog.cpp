@@ -1,4 +1,5 @@
 #include <QtCore/QList>
+#include <QtGui/QStandardItem>
 #include <QtGui/QMessageBox>
 #include <QtGui/QMenu>
 #include <QtGui/QCloseEvent>
@@ -83,7 +84,8 @@ void STiTCHDialog::changeEvent(QEvent *e)
 
 void STiTCHDialog::addConnectionToList(iTCHConnection *connection)
 {
-  iTCHConnectionItem *item = new iTCHConnectionItem(connection);
+  QStandardItem *item = new QStandardItem(0, 2);
+  item->setData(QVariant::fromValue(connection));
   model_->appendRow(item);
   model_->setData(model_->index(item->row(), 0), connection->getConnectionAddress().toString());
   model_->setData(model_->index(item->row(), 1), connection->getConnectionTime());
@@ -300,8 +302,9 @@ void STiTCHDialog::disconnectButtonClicked()
   QModelIndexList indexes = ui_->connectionsList->selectionModel()->selectedRows();
   for (QModelIndexList::iterator index = indexes.begin(); index != indexes.end(); ++index)
   {
-    iTCHConnectionItem *item = dynamic_cast<iTCHConnectionItem *>(model_->item((*index).row()));
-    server_.closeConnection(item->getConnection());
+    QStandardItem *item = model_->item((*index).row());
+    iTCHConnection *connection = item->data().value<iTCHConnection *>();
+    server_.closeConnection(connection);
   }
 }
 

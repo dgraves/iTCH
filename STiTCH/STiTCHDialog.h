@@ -2,7 +2,6 @@
 #define STITCHDIALOG_H
 
 #include <QtGui/QDialog>
-#include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QSystemTrayIcon>
 #include <QtCore/QModelIndex>
@@ -20,18 +19,6 @@ namespace Ui {
 class STiTCHDialog : public QDialog
 {
   Q_OBJECT
-
-protected:
-  class iTCHConnectionItem : public QStandardItem
-  {
-  public:
-    iTCHConnectionItem(iTCHConnection *connection) : QStandardItem(0, 2), connection_(connection) { }
-
-    iTCHConnection * getConnection() const { return connection_; }
-
-  protected:
-    iTCHConnection *connection_;
-  };
 
 public:
   STiTCHDialog(QWidget *parent = 0);
@@ -89,7 +76,7 @@ private:
   QSystemTrayIcon                     *trayIcon_;
   QMenu                               *trayIconMenu_;
   QStandardItemModel                  *model_;
-  QMap<iTCHConnection *, QModelIndex>  connectionIndexes_;
+  QMap<iTCHConnection *, QModelIndex>  connectionIndexes_;    // Map connections to items in connection list; quick lookup for list item removal when connection closes
 };
 
 #endif // STITCHDIALOG_H
