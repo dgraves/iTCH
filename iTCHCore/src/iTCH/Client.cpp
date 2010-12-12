@@ -1,6 +1,8 @@
-#include "iTCHClient.h"
+#include "iTCH/Client.h"
 
-iTCHClient::iTCHClient(QObject *parent) :
+using namespace iTCH;
+
+Client::Client(QObject *parent) :
   QObject(parent)
 {
   // Connect signals and slots
@@ -11,31 +13,31 @@ iTCHClient::iTCHClient(QObject *parent) :
   connect(&socket_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError()));
 }
 
-iTCHClient::~iTCHClient()
+Client::~Client()
 {
 }
 
-bool iTCHClient::isOpen() const
+bool Client::isOpen() const
 {
   return socket_.isOpen();
 }
 
-bool iTCHClient::isConnected() const
+bool Client::isConnected() const
 {
   return (socket_.state() == QAbstractSocket::ConnectedState);
 }
 
-void iTCHClient::openConnection(const iTCHNetworkInfo &info)
+void Client::openConnection(const NetworkInfo &info)
 {
   socket_.connectToHost(info.getHostname(), info.getPort());
 }
 
-void iTCHClient::closeConnection()
+void Client::closeConnection()
 {
   socket_.close();
 }
 
-void iTCHClient::sendMethod(const iTCHMethod &method)
+void Client::sendMethod(const Method &method)
 {
   QString message = QString("%1\r\n").arg(method.toJsonRpc());
   if (socket_.write(message.toAscii().constData()) == -1)
@@ -44,17 +46,17 @@ void iTCHClient::sendMethod(const iTCHMethod &method)
   }
 }
 
-void iTCHClient::resolvedHostname()
+void Client::resolvedHostname()
 {
   hostnameResolved();
 }
 
-void iTCHClient::connectedToServer()
+void Client::connectedToServer()
 {
   connected();
 }
 
-void iTCHClient::receiveMethod()
+void Client::receiveMethod()
 {
   while (socket_.canReadLine())
   {
@@ -64,9 +66,9 @@ void iTCHClient::receiveMethod()
     {
       try
       {
-        receivedMethod(iTCHMethod(QString(message)));
+        receivedMethod(Method(QString(message)));
       }
-      catch(iTCHMethod::InvalidValueException ex)
+      catch(Method::InvalidValueException ex)
       {
         // The method could not be decoded
         error(ex.what());
@@ -79,12 +81,12 @@ void iTCHClient::receiveMethod()
   }
 }
 
-void iTCHClient::connectionClosedByServer()
+void Client::connectionClosedByServer()
 {
   disconnected(true, socket_.errorString());
 }
 
-void iTCHClient::socketError()
+void Client::socketError()
 {
   QString errorString = socket_.errorString();
   closeConnection();

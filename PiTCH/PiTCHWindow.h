@@ -2,9 +2,9 @@
 #define PITCHWINDOW_H
 
 #include <QtGui/QMainWindow>
-#include "iTCHMethod.h"
-#include "iTCHClient.h"
-#include "iTCHNetworkInfo.h"
+#include "iTCH/Method.h"
+#include "iTCH/Client.h"
+#include "iTCH/NetworkInfo.h"
 
 namespace Ui
 {
@@ -28,7 +28,7 @@ protected slots:
   void resolvedHostname();
   void connectedToServer();
   void disconnectedFromServer(bool closedByServer, const QString &message);
-  void processMethod(const iTCHMethod &method);
+  void processMethod(const iTCH::Method &method);
   void error(const QString &message);
 
   // Slots to handle signals from widgets
@@ -44,14 +44,14 @@ protected slots:
   void networkButtonClicked();
 
 protected:
-  iTCHClient       client_;
-  iTCHNetworkInfo  serverInfo_;
-  unsigned int     autoConnectInterval_;
-  bool             autoConnect_;
-  bool             buttonHeld_;
+  iTCH::Client      client_;
+  iTCH::NetworkInfo serverInfo_;
+  unsigned int      autoConnectInterval_;
+  bool              autoConnect_;
+  bool              buttonHeld_;
 
 private:
-  Ui::PiTCHWindow *ui_;
+  Ui::PiTCHWindow  *ui_;
 };
 
 #endif // PITCHWINDOW_H

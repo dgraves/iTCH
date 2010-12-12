@@ -1,65 +1,67 @@
 #include <QtCore/QMap>
 #include <QtCore/QRegExp>
-#include "iTCHMethod.h"
+#include "iTCH/Method.h"
+
+using namespace iTCH;
 
 namespace {
   // Initialize static values for JSON RPC conversion and checking
   const char JSON_METHOD_REG_EXP[] = "\\{\\s*\"method\":\\s*\"(.*)\"\\s*,\\s*\"params\":\\s*\\[(.*)\\]\\s*,\\s*\"id\":\\s*(.*)\\s*\\}";
   const QRegExp __jsonMethodRegExp(JSON_METHOD_REG_EXP, Qt::CaseSensitive, QRegExp::RegExp2);
 
-  class __SupportedMethodsMap : public QMap<iTCHMethod::SupportedMethods, QString>
+  class __SupportedMethodsMap : public QMap<Method::SupportedMethods, QString>
   {
   public:
     __SupportedMethodsMap()
     {
-      (*this)[iTCHMethod::METHOD_IITUNES_BACKTRACK] = "IiTunes::BackTrack";
-      (*this)[iTCHMethod::METHOD_IITUNES_FASTFORWARD] = "IiTunes::FastForward";
-      (*this)[iTCHMethod::METHOD_IITUNES_NEXTTRACK] = "IiTunes::NextTrack";
-      (*this)[iTCHMethod::METHOD_IITUNES_PAUSE] = "IiTunes::Pause";
-      (*this)[iTCHMethod::METHOD_IITUNES_PLAY] = "IiTunes::Play";
-      (*this)[iTCHMethod::METHOD_IITUNES_PLAYPAUSE] = "IiTunes::PlayPause";
-      (*this)[iTCHMethod::METHOD_IITUNES_PREVIOUSTRACK] = "IiTunes::PreviousTrack";
-      (*this)[iTCHMethod::METHOD_IITUNES_RESUME] = "IiTunes::Resume";
-      (*this)[iTCHMethod::METHOD_IITUNES_REWIND] = "IiTunes::Rewind";
-      (*this)[iTCHMethod::METHOD_IITUNES_STOP] = "IiTunes::Stop";
-      (*this)[iTCHMethod::METHOD_IITUNES_GET_SOUNDVOLUME] = "IiTunes::get_SoundVolume";
-      (*this)[iTCHMethod::METHOD_IITUNES_PUT_SOUNDVOLUME] = "IiTunes::put_SoundVolume";
-      (*this)[iTCHMethod::METHOD_IITUNES_GET_MUTE] = "IiTunes::get_Mute";
-      (*this)[iTCHMethod::METHOD_IITUNES_PUT_MUTE] = "IiTunes::put_Mute";
-      (*this)[iTCHMethod::METHOD_IITUNES_GET_PLAYERPOSITION] = "IiTunes::get_playerPosition";
-      (*this)[iTCHMethod::METHOD_IITUNES_PUT_PLAYERPOSITION] = "IiTunes::put_PlayerPosition";
-      (*this)[iTCHMethod::METHOD_IITCHSERVER_GET_PLAYERSTATE] = "iTCHServer::getPlayserState";
-      (*this)[iTCHMethod::METHOD_IITCHSERVER_GET_CURRENTTRACK] = "iTCHServer::getCurrentTrack";
-      (*this)[iTCHMethod::METHOD_IITCHSERVER_GET_CURRENTPLAYLIST] = "iTCHServer::getCurrentPlaylist";
-      (*this)[iTCHMethod::METHOD_IITCHCLIENT_VOLUMECHANGED] = "iTCHClient::volumeChanged";
-      (*this)[iTCHMethod::METHOD_IITCHCLIENT_PLAYINGSTARTED] = "iTCHClient::playingStarted";
-      (*this)[iTCHMethod::METHOD_IITCHCLIENT_PLAYINGSTOPPED] = "iTCHClient::playingStopped";
-      (*this)[iTCHMethod::METHOD_IITCHCLIENT_TRACKINFOCHANGED] = "iTCHClient::trackInfoChanged";
+      (*this)[Method::METHOD_IITUNES_BACKTRACK] = "IiTunes::BackTrack";
+      (*this)[Method::METHOD_IITUNES_FASTFORWARD] = "IiTunes::FastForward";
+      (*this)[Method::METHOD_IITUNES_NEXTTRACK] = "IiTunes::NextTrack";
+      (*this)[Method::METHOD_IITUNES_PAUSE] = "IiTunes::Pause";
+      (*this)[Method::METHOD_IITUNES_PLAY] = "IiTunes::Play";
+      (*this)[Method::METHOD_IITUNES_PLAYPAUSE] = "IiTunes::PlayPause";
+      (*this)[Method::METHOD_IITUNES_PREVIOUSTRACK] = "IiTunes::PreviousTrack";
+      (*this)[Method::METHOD_IITUNES_RESUME] = "IiTunes::Resume";
+      (*this)[Method::METHOD_IITUNES_REWIND] = "IiTunes::Rewind";
+      (*this)[Method::METHOD_IITUNES_STOP] = "IiTunes::Stop";
+      (*this)[Method::METHOD_IITUNES_GET_SOUNDVOLUME] = "IiTunes::get_SoundVolume";
+      (*this)[Method::METHOD_IITUNES_PUT_SOUNDVOLUME] = "IiTunes::put_SoundVolume";
+      (*this)[Method::METHOD_IITUNES_GET_MUTE] = "IiTunes::get_Mute";
+      (*this)[Method::METHOD_IITUNES_PUT_MUTE] = "IiTunes::put_Mute";
+      (*this)[Method::METHOD_IITUNES_GET_PLAYERPOSITION] = "IiTunes::get_playerPosition";
+      (*this)[Method::METHOD_IITUNES_PUT_PLAYERPOSITION] = "IiTunes::put_PlayerPosition";
+      (*this)[Method::METHOD_IITCHSERVER_GET_PLAYERSTATE] = "iTCHServer::getPlayserState";
+      (*this)[Method::METHOD_IITCHSERVER_GET_CURRENTTRACK] = "iTCHServer::getCurrentTrack";
+      (*this)[Method::METHOD_IITCHSERVER_GET_CURRENTPLAYLIST] = "iTCHServer::getCurrentPlaylist";
+      (*this)[Method::METHOD_IITCHCLIENT_VOLUMECHANGED] = "iTCHClient::volumeChanged";
+      (*this)[Method::METHOD_IITCHCLIENT_PLAYINGSTARTED] = "iTCHClient::playingStarted";
+      (*this)[Method::METHOD_IITCHCLIENT_PLAYINGSTOPPED] = "iTCHClient::playingStopped";
+      (*this)[Method::METHOD_IITCHCLIENT_TRACKINFOCHANGED] = "iTCHClient::trackInfoChanged";
     }
   } __supportedMethods;
 }
 
-iTCHMethod::iTCHMethod(const iTCHMethod& method) :
+Method::Method(const Method& method) :
   method_(method.method_),
   params_(method.params_),
   id_(method.id_)
 {
 }
 
-iTCHMethod::iTCHMethod(SupportedMethods method, const QStringList &params, unsigned int id) :
+Method::Method(SupportedMethods method, const QStringList &params, unsigned int id) :
   params_(params),
   id_(id)
 {
   setMethod(method);
 }
 
-iTCHMethod::iTCHMethod(const QString &json) :
+Method::Method(const QString &json) :
   id_(0)
 {
   fromJsonRpc(json);
 }
 
-void iTCHMethod::setMethod(SupportedMethods method)
+void Method::setMethod(SupportedMethods method)
 {
   // Check for supported method name
   if (!__supportedMethods.contains(method))
@@ -70,7 +72,7 @@ void iTCHMethod::setMethod(SupportedMethods method)
   method_ = method;
 }
 
-QString iTCHMethod::toJsonRpc() const
+QString Method::toJsonRpc() const
 {
   // Initialize JSON-RPC string with method name
   if (!__supportedMethods.contains(method_))
@@ -101,7 +103,7 @@ QString iTCHMethod::toJsonRpc() const
   return json;
 }
 
-void iTCHMethod::fromJsonRpc(const QString &json)
+void Method::fromJsonRpc(const QString &json)
 {
   // Extract method, parameters, and id
   int pos = __jsonMethodRegExp.indexIn(json);

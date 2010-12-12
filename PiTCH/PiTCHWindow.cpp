@@ -15,7 +15,7 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   connect(&client_, SIGNAL(hostnameResolved()), this, SLOT(resolvedHostname()));
   connect(&client_, SIGNAL(connected()), this, SLOT(connectedToServer()));
   connect(&client_, SIGNAL(disconnected(bool,QString)), this, SLOT(disconnectedFromServer(bool,QString)));
-  connect(&client_, SIGNAL(receivedMethod(iTCHMethod)), this, SLOT(processMethod(iTCHMethod)));
+  connect(&client_, SIGNAL(receivedMethod(iTCH::Method)), this, SLOT(processMethod(iTCH::Method)));
   connect(&client_, SIGNAL(error(QString)), this, SLOT(error(QString)));
 }
 
@@ -60,7 +60,7 @@ void PiTCHWindow::disconnectedFromServer(bool closedByServer, const QString &mes
   }
 }
 
-void PiTCHWindow::processMethod(const iTCHMethod &method)
+void PiTCHWindow::processMethod(const iTCH::Method &method)
 {
 }
 
@@ -73,7 +73,7 @@ void PiTCHWindow::timeSliderValueChanged(int value)
 {
   QStringList params;
   params.append(QString::number(value));
-  client_.sendMethod(iTCHMethod(iTCHMethod::METHOD_IITUNES_PUT_PLAYERPOSITION, params, 0));
+  client_.sendMethod(iTCH::Method(iTCH::Method::METHOD_IITUNES_PUT_PLAYERPOSITION, params, 0));
 }
 
 void PiTCHWindow::backButtonPressed()
@@ -89,7 +89,7 @@ void PiTCHWindow::backButtonReleased()
   }
   else
   {
-    client_.sendMethod(iTCHMethod(iTCHMethod::METHOD_IITUNES_BACKTRACK, QStringList(), 0));
+    client_.sendMethod(iTCH::Method(iTCH::Method::METHOD_IITUNES_BACKTRACK, QStringList(), 0));
   }
 }
 
@@ -106,13 +106,13 @@ void PiTCHWindow::forwardButtonReleased()
   }
   else
   {
-    client_.sendMethod(iTCHMethod(iTCHMethod::METHOD_IITUNES_NEXTTRACK, QStringList(), 0));
+    client_.sendMethod(iTCH::Method(iTCH::Method::METHOD_IITUNES_NEXTTRACK, QStringList(), 0));
   }
 }
 
 void PiTCHWindow::playPauseButtonClicked()
 {
-  client_.sendMethod(iTCHMethod(iTCHMethod::METHOD_IITUNES_PLAYPAUSE, QStringList(), 0));
+  client_.sendMethod(iTCH::Method(iTCH::Method::METHOD_IITUNES_PLAYPAUSE, QStringList(), 0));
 }
 
 void PiTCHWindow::muteButtonClicked()
@@ -129,7 +129,7 @@ void PiTCHWindow::volumeSliderValueChanged(int value)
 {
   QStringList params;
   params.append(QString::number(value));
-  client_.sendMethod(iTCHMethod(iTCHMethod::METHOD_IITUNES_PUT_SOUNDVOLUME, params, 0));
+  client_.sendMethod(iTCH::Method(iTCH::Method::METHOD_IITUNES_PUT_SOUNDVOLUME, params, 0));
 }
 
 void PiTCHWindow::networkButtonClicked()

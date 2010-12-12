@@ -6,11 +6,14 @@
 #include <QtGui/QSystemTrayIcon>
 #include <QtCore/QModelIndex>
 #include <QtCore/QMap>
-#include "iTCHServer.h"
-#include "iTCHController.h"
+#include "iTCH/Server.h"
+#include "iTCH/Controller.h"
 
 class QAbstractButton;
-class iTCHConnection;
+
+namespace iTCH {
+  class Connection;
+}
 
 namespace Ui {
   class STiTCHDialog;
@@ -30,9 +33,9 @@ protected:
 
   void changeEvent(QEvent *e);
 
-  void addConnectionToList(iTCHConnection *connection);
+  void addConnectionToList(iTCH::Connection *connection);
 
-  void removeConnectionFromList(iTCHConnection *connection);
+  void removeConnectionFromList(iTCH::Connection *connection);
 
   void setupServer();
 
@@ -43,10 +46,10 @@ public slots:
 
 protected slots:
   // Slots to handle signals from iTCHServer
-  void connectionReceived(iTCHConnection *connection);
-  void connectionLost(iTCHConnection *connection, bool closedByPeer, const QString &message);
-  void processMethod(iTCHConnection *connection, const iTCHMethod &method);
-  void communicationError(iTCHConnection *connection, const QString &message);                    // Receive JSON error messages
+  void connectionReceived(iTCH::Connection *connection);
+  void connectionLost(iTCH::Connection *connection, bool closedByPeer, const QString &message);
+  void processMethod(iTCH::Connection *connection, const iTCH::Method &method);
+  void communicationError(iTCH::Connection *connection, const QString &message);                    // Receive JSON error messages
 
   // Slots to handle signals from iTCHController
   void createdInstance();
@@ -70,13 +73,13 @@ private:
   void fillInterfaceBox();
 
 private:
-  Ui::STiTCHDialog                    *ui_;
-  iTCHServer                           server_;
-  iTCHController                       controller_;
-  QSystemTrayIcon                     *trayIcon_;
-  QMenu                               *trayIconMenu_;
-  QStandardItemModel                  *model_;
-  QMap<iTCHConnection *, QModelIndex>  connectionIndexes_;    // Map connections to items in connection list; quick lookup for list item removal when connection closes
+  Ui::STiTCHDialog                      *ui_;
+  iTCH::Server                           server_;
+  iTCH::Controller                       controller_;
+  QSystemTrayIcon                       *trayIcon_;
+  QMenu                                 *trayIconMenu_;
+  QStandardItemModel                    *model_;
+  QMap<iTCH::Connection *, QModelIndex>  connectionIndexes_;    // Map connections to items in connection list; quick lookup for list item removal when connection closes
 };
 
 #endif // STITCHDIALOG_H

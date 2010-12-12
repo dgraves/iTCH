@@ -1,7 +1,7 @@
 #include "PiTCHNetworkDialog.h"
 #include "ui_PiTCHNetworkDialog.h"
 
-PiTCHNetworkDialog::PiTCHNetworkDialog(const iTCHNetworkInfo &info, bool autoConnect, unsigned int autoConnectInterval, QWidget *parent) :
+PiTCHNetworkDialog::PiTCHNetworkDialog(const iTCH::NetworkInfo &info, bool autoConnect, unsigned int autoConnectInterval, QWidget *parent) :
   QDialog(parent),
   ui_(new Ui::PiTCHNetworkDialog)
 {
@@ -16,7 +16,7 @@ PiTCHNetworkDialog::~PiTCHNetworkDialog()
   delete ui_;
 }
 
-void PiTCHNetworkDialog::setNetworkInfo(const iTCHNetworkInfo &info)
+void PiTCHNetworkDialog::setNetworkInfo(const iTCH::NetworkInfo &info)
 {
   ui_->hostnameLineEdit->setText(info.getHostname());
   ui_->portSpinBox->setValue(info.getPort());
@@ -32,9 +32,9 @@ void PiTCHNetworkDialog::setAutoConnectInterval(unsigned int interval)
   ui_->intervalSpinBox->setValue(interval);
 }
 
-iTCHNetworkInfo PiTCHNetworkDialog::getNetworkInfo() const
+iTCH::NetworkInfo PiTCHNetworkDialog::getNetworkInfo() const
 {
-  return iTCHNetworkInfo(ui_->hostnameLineEdit->text(), ui_->portSpinBox->value());
+  return iTCH::NetworkInfo(ui_->hostnameLineEdit->text(), ui_->portSpinBox->value());
 }
 
 bool PiTCHNetworkDialog::getAutoConnect() const

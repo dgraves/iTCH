@@ -1,11 +1,14 @@
-#ifndef ITCHCOMMAND_H
-#define ITCHCOMMAND_H
+#ifndef ITCH_METHOD_H
+#define ITCH_METHOD_H
 
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/qtconcurrentexception.h>
 
-class iTCHMethod
+namespace iTCH
+{
+
+class Method
 {
 public:
   class InvalidValueException : public QtConcurrent::Exception
@@ -50,11 +53,11 @@ public:
   };
 
 public:
-  iTCHMethod(const iTCHMethod& method);
+  Method(const Method& method);
 
-  iTCHMethod(SupportedMethods method, const QStringList &params, unsigned int id);
+  Method(SupportedMethods method, const QStringList &params, unsigned int id);
 
-  iTCHMethod(const QString &json);
+  Method(const QString &json);
 
   void setMethod(SupportedMethods method);
 
@@ -78,4 +81,6 @@ private:
   unsigned int id_;
 };
 
-#endif // ITCHCOMMAND_H
+} // end namespace iTCH
+
+#endif // ITCH_METHOD_H

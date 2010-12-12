@@ -1,28 +1,31 @@
-#ifndef ITCHCONTROLLER_H
-#define ITCHCONTROLLER_H
+#ifndef ITCH_CONTROLLER_H
+#define ITCH_CONTROLLER_H
 
 #include <QtCore/QObject>
-#include "iTCHMethod.h"
+#include "iTCH/Method.h"
 
 struct IiTunes;
 struct IConnectionPoint;
 
-class iTCHController : public QObject
+namespace iTCH
+{
+
+class Controller : public QObject
 {
   Q_OBJECT
 
   // Creating a friend class to receive iTunes events for the controller instead
   // of using multiple inheritance to handle events directly
-  friend class iTCHEventSink;
+  friend class EventSink;
 
 public:
-  iTCHController();
+  Controller();
 
-  ~iTCHController();
+  ~Controller();
 
   bool hasInstance() const;
 
-  void callMethod(const iTCHMethod& method);
+  void callMethod(const Method& method);
 
   void createInstance();
 
@@ -42,10 +45,12 @@ protected slots:
   void quitting();
 
 private:
-  IiTunes       *itunes_;
-  iTCHEventSink *events_;
+  IiTunes          *itunes_;
+  EventSink        *events_;
   IConnectionPoint *eventsConnectionPoint_;
-  unsigned long  eventsCookie_;
+  unsigned long     eventsCookie_;
 };
 
-#endif // ITCHCONTROLLER_H
+} // end namespace iTCH
+
+#endif // ITCH_CONTROLLER_H

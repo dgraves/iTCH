@@ -1,6 +1,8 @@
-#include "iTCHConnection.h"
+#include "iTCH/Connection.h"
 
-iTCHConnection::iTCHConnection(QTcpSocket *socket, QDateTime time, QObject *parent) :
+using namespace iTCH;
+
+Connection::Connection(QTcpSocket *socket, QDateTime time, QObject *parent) :
   QObject(parent),
   socket_(socket),
   time_(time)
@@ -10,37 +12,37 @@ iTCHConnection::iTCHConnection(QTcpSocket *socket, QDateTime time, QObject *pare
   connect(socket_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError()));
 }
 
-iTCHConnection::~iTCHConnection()
+Connection::~Connection()
 {
   delete socket_;
 }
 
-bool iTCHConnection::isOpen() const
+bool Connection::isOpen() const
 {
   return socket_->isOpen();
 }
 
-bool iTCHConnection::isConnected() const
+bool Connection::isConnected() const
 {
   return (socket_->state() == QAbstractSocket::ConnectedState);
 }
 
-QHostAddress iTCHConnection::getConnectionAddress() const
+QHostAddress Connection::getConnectionAddress() const
 {
   return socket_->peerAddress();
 }
 
-quint16 iTCHConnection::getConnectionPort() const
+quint16 Connection::getConnectionPort() const
 {
   return socket_->peerPort();
 }
 
-QDateTime iTCHConnection::getConnectionTime() const
+QDateTime Connection::getConnectionTime() const
 {
   return time_;
 }
 
-void iTCHConnection::sendMethod(const iTCHMethod &method)
+void Connection::sendMethod(const Method &method)
 {
   QString message = QString("%1\r\n").arg(method.toJsonRpc());
   if (socket_->write(message.toAscii().constData()) == -1)
@@ -49,7 +51,7 @@ void iTCHConnection::sendMethod(const iTCHMethod &method)
   }
 }
 
-void iTCHConnection::receiveMethod()
+void Connection::receiveMethod()
 {
   while (socket_->canReadLine())
   {
@@ -60,9 +62,9 @@ void iTCHConnection::receiveMethod()
       try
       {
         // Trim CRLF from end of message before processing
-        receivedMethod(iTCHMethod(QString(message).trimmed()));
+        receivedMethod(Method(QString(message).trimmed()));
       }
-      catch(iTCHMethod::InvalidValueException ex)
+      catch(Method::InvalidValueException ex)
       {
         // The method could not be decoded
         error(ex.what());
@@ -75,12 +77,12 @@ void iTCHConnection::receiveMethod()
   }
 }
 
-void iTCHConnection::connectionClosedByServer()
+void Connection::connectionClosedByServer()
 {
   disconnected(true, socket_->errorString());
 }
 
-void iTCHConnection::socketError()
+void Connection::socketError()
 {
   QString errorString = socket_->errorString();
   socket_->close();

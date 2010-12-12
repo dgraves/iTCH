@@ -1,8 +1,9 @@
-#include "iTunesCOMInterface.h"
-#include "iTCHController.h"
-#include "iTCHEventSink.h"
+#include "iTCH/Controller.h"
+#include "iTCH/EventSink.h"
 
-iTCHEventSink::iTCHEventSink(iTCHController *controller) :
+using namespace iTCH;
+
+EventSink::EventSink(Controller *controller) :
   controller_(controller),
   typeInfo_(NULL),
   refCount_(0)
@@ -37,11 +38,11 @@ iTCHEventSink::iTCHEventSink(iTCHController *controller) :
   }
 }
 
-iTCHEventSink::~iTCHEventSink()
+EventSink::~EventSink()
 {
 }
 
-HRESULT STDMETHODCALLTYPE iTCHEventSink::QueryInterface(REFIID riid, void **ppvObject)
+HRESULT STDMETHODCALLTYPE EventSink::QueryInterface(REFIID riid, void **ppvObject)
 {
   if (ppvObject == NULL)
   {
@@ -61,12 +62,12 @@ HRESULT STDMETHODCALLTYPE iTCHEventSink::QueryInterface(REFIID riid, void **ppvO
   }
 }
 
-ULONG STDMETHODCALLTYPE iTCHEventSink::AddRef()
+ULONG STDMETHODCALLTYPE EventSink::AddRef()
 {
   return ++refCount_;
 }
 
-ULONG STDMETHODCALLTYPE iTCHEventSink::Release()
+ULONG STDMETHODCALLTYPE EventSink::Release()
 {
   // COM specification requires that an object free itself when ref count is 0
   if (--refCount_ == 0)
@@ -77,13 +78,13 @@ ULONG STDMETHODCALLTYPE iTCHEventSink::Release()
   return refCount_;
 }
 
-HRESULT STDMETHODCALLTYPE iTCHEventSink::GetTypeInfoCount(UINT *pctinfo)
+HRESULT STDMETHODCALLTYPE EventSink::GetTypeInfoCount(UINT *pctinfo)
 {
   *pctinfo = 1;
   return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE iTCHEventSink::GetTypeInfo(UINT iTInfo, LCID, ITypeInfo **ppTInfo)
+HRESULT STDMETHODCALLTYPE EventSink::GetTypeInfo(UINT iTInfo, LCID, ITypeInfo **ppTInfo)
 {
   if (ppTInfo == NULL)
   {
@@ -104,7 +105,7 @@ HRESULT STDMETHODCALLTYPE iTCHEventSink::GetTypeInfo(UINT iTInfo, LCID, ITypeInf
   }
 }
 
-HRESULT STDMETHODCALLTYPE iTCHEventSink::GetIDsOfNames(REFIID riid, OLECHAR **rgszNames, UINT cNames, LCID, DISPID *rgDispId)
+HRESULT STDMETHODCALLTYPE EventSink::GetIDsOfNames(REFIID riid, OLECHAR **rgszNames, UINT cNames, LCID, DISPID *rgDispId)
 {
   if (riid != IID_NULL)
   {
@@ -114,7 +115,7 @@ HRESULT STDMETHODCALLTYPE iTCHEventSink::GetIDsOfNames(REFIID riid, OLECHAR **rg
   return ::DispGetIDsOfNames(typeInfo_, rgszNames, cNames, rgDispId);
 }
 
-HRESULT STDMETHODCALLTYPE iTCHEventSink::Invoke(DISPID dispIdMember, REFIID riid, LCID, WORD wFlags, DISPPARAMS *pDispParams, VARIANT *, EXCEPINFO *, UINT *puArgErr)
+HRESULT STDMETHODCALLTYPE EventSink::Invoke(DISPID dispIdMember, REFIID riid, LCID, WORD wFlags, DISPPARAMS *pDispParams, VARIANT *, EXCEPINFO *, UINT *puArgErr)
 {
   UINT uArgErr;
   HRESULT hresult;

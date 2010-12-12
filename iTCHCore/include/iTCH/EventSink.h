@@ -1,17 +1,21 @@
 // Event sink for iTunes COM SDK for Windows
 // Based on code from http://www.codeproject.com/useritems/iTunes_interact.asp
-#ifndef ITCHEVENTSINK_H
-#define ITCHEVENTSINK_H
+#ifndef ITCH_EVENTSINK_H
+#define ITCH_EVENTSINK_H
 
-class iTCHController;
-struct ITypeInfo;
+#include "iTunesCOMInterface.h"
 
-class iTCHEventSink : public _IiTunesEvents
+namespace iTCH
+{
+
+class Controller;
+
+class EventSink : public _IiTunesEvents
 {
 public:
-  iTCHEventSink(iTCHController *controller);
+  EventSink(Controller *controller);
 
-  ~iTCHEventSink();
+  ~EventSink();
 
   HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
 
@@ -46,9 +50,11 @@ public:
   HRESULT STDMETHODCALLTYPE OnSoundVolumeChangedEvent(long newVolume);
 
 private:
-  iTCHController *controller_;
+  Controller     *controller_;
   ITypeInfo      *typeInfo_;
   ULONG           refCount_;
 };
 
-#endif // ITCHEVENTSINK_H
+} // end namespace iTCH
+
+#endif // ITCH_EVENTSINK_H

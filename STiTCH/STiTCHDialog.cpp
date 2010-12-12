@@ -4,7 +4,7 @@
 #include <QtGui/QMenu>
 #include <QtGui/QCloseEvent>
 #include <QtNetwork/QNetworkInterface>
-#include "iTCHConnection.h"
+#include "iTCH/Connection.h"
 #include "STiTCHDialog.h"
 #include "ui_STiTCHDialog.h"
 
@@ -19,10 +19,10 @@ STiTCHDialog::STiTCHDialog(QWidget *parent) :
   fillInterfaceBox();
   setMaxLogEntries(ui_->maxLogEntriesSpinBox->value());  // Default number of log entries
 
-  connect(&server_, SIGNAL(connectionReceived(iTCHConnection*)), this, SLOT(connectionReceived(iTCHConnection*)));
-  connect(&server_, SIGNAL(connectionLost(iTCHConnection*,bool,QString)), this, SLOT(connectionLost(iTCHConnection*,bool,QString)));
-  connect(&server_, SIGNAL(receivedMethod(iTCHConnection*,iTCHMethod)), this, SLOT(processMethod(iTCHConnection*,iTCHMethod)));
-  connect(&server_, SIGNAL(error(iTCHConnection*,QString)), this, SLOT(communicationError(iTCHConnection*,QString)));
+  connect(&server_, SIGNAL(connectionReceived(iTCH::Connection*)), this, SLOT(connectionReceived(iTCH::Connection*)));
+  connect(&server_, SIGNAL(connectionLost(iTCH::Connection*,bool,QString)), this, SLOT(connectionLost(iTCH::Connection*,bool,QString)));
+  connect(&server_, SIGNAL(receivedMethod(iTCH::Connection*,iTCH::Method)), this, SLOT(processMethod(iTCH::Connection*,iTCH::Method)));
+  connect(&server_, SIGNAL(error(iTCH::Connection*,QString)), this, SLOT(communicationError(iTCH::Connection*,QString)));
 
   connect(&controller_, SIGNAL(createdInstance()), this, SLOT(createdInstance()));
   connect(&controller_, SIGNAL(destroyedInstance()), this, SLOT(destroyedInstance()));
@@ -41,8 +41,8 @@ STiTCHDialog::STiTCHDialog(QWidget *parent) :
 
 STiTCHDialog::~STiTCHDialog()
 {
-  QList<iTCHConnection *> keys = connectionIndexes_.keys();
-  for (QList<iTCHConnection *>::iterator iter = keys.begin(); iter != keys.end(); ++iter)
+  QList<iTCH::Connection *> keys = connectionIndexes_.keys();
+  for (QList<iTCH::Connection *>::iterator iter = keys.begin(); iter != keys.end(); ++iter)
   {
     server_.closeConnection(*iter);
   }
@@ -82,7 +82,7 @@ void STiTCHDialog::changeEvent(QEvent *e)
   }
 }
 
-void STiTCHDialog::addConnectionToList(iTCHConnection *connection)
+void STiTCHDialog::addConnectionToList(iTCH::Connection *connection)
 {
   QStandardItem *item = new QStandardItem(0, 2);
   item->setData(QVariant::fromValue(connection));
@@ -99,9 +99,9 @@ void STiTCHDialog::addConnectionToList(iTCHConnection *connection)
   setIcon();
 }
 
-void STiTCHDialog::removeConnectionFromList(iTCHConnection *connection)
+void STiTCHDialog::removeConnectionFromList(iTCH::Connection *connection)
 {
-  QMap<iTCHConnection *, QModelIndex>::iterator index = connectionIndexes_.find(connection);
+  QMap<iTCH::Connection *, QModelIndex>::iterator index = connectionIndexes_.find(connection);
   if (index != connectionIndexes_.end())
   {
     model_->removeRow((*index).row());
@@ -188,7 +188,7 @@ void STiTCHDialog::appendLogMessage(const QString &message)
                            .arg(message));
 }
 
-void STiTCHDialog::connectionReceived(iTCHConnection *connection)
+void STiTCHDialog::connectionReceived(iTCH::Connection *connection)
 {
   addConnectionToList(connection);
 
@@ -202,7 +202,7 @@ void STiTCHDialog::connectionReceived(iTCHConnection *connection)
   }
 }
 
-void STiTCHDialog::connectionLost(iTCHConnection *connection, bool closedByPeer, const QString &message)
+void STiTCHDialog::connectionLost(iTCH::Connection *connection, bool closedByPeer, const QString &message)
 {
   removeConnectionFromList(connection);
 
@@ -216,7 +216,7 @@ void STiTCHDialog::connectionLost(iTCHConnection *connection, bool closedByPeer,
   }
 }
 
-void STiTCHDialog::processMethod(iTCHConnection *connection, const iTCHMethod &method)
+void STiTCHDialog::processMethod(iTCH::Connection *connection, const iTCH::Method &method)
 {
   // Attempt to recreate an inactive instance, if configuration dictates
   if (!controller_.hasInstance() && ui_->activationCheckBox->isChecked())
@@ -234,7 +234,7 @@ void STiTCHDialog::processMethod(iTCHConnection *connection, const iTCHMethod &m
   }
 }
 
-void STiTCHDialog::communicationError(iTCHConnection *connection, const QString &message)
+void STiTCHDialog::communicationError(iTCH::Connection *connection, const QString &message)
 {
   appendLogMessage(QString("%1 %2 -> %3")
                    .arg(tr("ERROR: Received invalid command from"))
@@ -303,7 +303,7 @@ void STiTCHDialog::disconnectButtonClicked()
   for (QModelIndexList::iterator index = indexes.begin(); index != indexes.end(); ++index)
   {
     QStandardItem *item = model_->item((*index).row());
-    iTCHConnection *connection = item->data().value<iTCHConnection *>();
+    iTCH::Connection *connection = item->data().value<iTCH::Connection *>();
     server_.closeConnection(connection);
   }
 }

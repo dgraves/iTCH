@@ -6,21 +6,21 @@ TARGET = STiTCH
 TEMPLATE = app
 SOURCES += main.cpp \
     STiTCHDialog.cpp \
-    ../iTCHCore/iTCHMethod.cpp \
-    ../iTCHCore/iTCHServer.cpp \
-    ../iTCHCore/iTCHController.cpp \
-    ../iTCHCore/iTCHConnection.cpp \
+    ../iTCHCore/src/iTCH/Method.cpp \
+    ../iTCHCore/src/iTCH/Server.cpp \
+    ../iTCHCore/src/iTCH/Controller.cpp \
+    ../iTCHCore/src/iTCH/Connection.cpp \
     ../iTunesCOMWindowsSDK/iTunesCOMInterface_i.c \
-    ../iTCHCore/iTCHEventSink.cpp
+    ../iTCHCore/src/iTCH/EventSink.cpp
 HEADERS += STiTCHDialog.h \
-    ../iTCHCore/iTCHMethod.h \
-    ../iTCHCore/iTCHServer.h \
-    ../iTCHCore/iTCHController.h \
-    ../iTCHCore/iTCHConnection.h \
+    ../iTCHCore/include/iTCH/Method.h \
+    ../iTCHCore/include/iTCH/Server.h \
+    ../iTCHCore/include/iTCH/Controller.h \
+    ../iTCHCore/include/iTCH/Connection.h \
     ../iTunesCOMWindowsSDK/iTunesCOMInterface.h \
-    ../iTCHCore/iTCHEventSink.h
+    ../iTCHCore/include/iTCH/EventSink.h
 FORMS += STiTCHDialog.ui
-INCLUDEPATH += ../iTCHCore \
+INCLUDEPATH += ../iTCHCore/include \
     ../iTunesCOMWindowsSDK
 LIBS += ole32.lib oleaut32.lib
 RESOURCES += STiTCH.qrc

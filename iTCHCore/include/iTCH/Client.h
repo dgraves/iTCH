@@ -1,35 +1,38 @@
-#ifndef ITCHCLIENT_H
-#define ITCHCLIENT_H
+#ifndef ITCH_CLIENT_H
+#define ITCH_CLIENT_H
 
 #include <QtCore/QObject>
 #include <QtNetwork/QTcpSocket>
-#include "iTCHMethod.h"
-#include "iTCHNetworkInfo.h"
+#include "iTCH/Method.h"
+#include "iTCH/NetworkInfo.h"
 
-class iTCHClient : public QObject
+namespace iTCH
+{
+
+class Client : public QObject
 {
   Q_OBJECT
 
 public:
-  iTCHClient(QObject *parent = 0);
+  Client(QObject *parent = 0);
 
-  ~iTCHClient();
+  ~Client();
 
   bool isOpen() const;
 
   bool isConnected() const;
 
-  void openConnection(const iTCHNetworkInfo &info);
+  void openConnection(const NetworkInfo &info);
 
   void closeConnection();
 
-  void sendMethod(const iTCHMethod &method);
+  void sendMethod(const Method &method);
 
 signals:
   void hostnameResolved();
   void connected();
   void disconnected(bool closedByServer, const QString &message);
-  void receivedMethod(const iTCHMethod &method);
+  void receivedMethod(const iTCH::Method &method);
   void error(const QString &message);                                       // Report errors with JSON-RC messages
 
 protected slots:
@@ -43,4 +46,6 @@ protected:
   QTcpSocket socket_;
 };
 
-#endif // ITCHCLIENT_H
+} // end namespace iTCH
+
+#endif // ITCH_CLIENT_H

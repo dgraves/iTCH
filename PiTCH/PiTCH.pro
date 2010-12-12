@@ -6,14 +6,14 @@ TARGET = PiTCH
 TEMPLATE = app
 SOURCES += main.cpp \
     PiTCHWindow.cpp \
-    ../iTCHCore/iTCHMethod.cpp \
-    ../iTCHCore/iTCHClient.cpp \
+    ../iTCHCore/src/iTCH/Method.cpp \
+    ../iTCHCore/src/iTCH/Client.cpp \
     PiTCHNetworkDialog.cpp
 HEADERS += PiTCHWindow.h \
-    ../iTCHCore/iTCHClient.h \
-    ../iTCHCore/iTCHMethod.h \
+    ../iTCHCore/include/iTCH/Client.h \
+    ../iTCHCore/include/iTCH/Method.h \
     PiTCHNetworkDialog.h \
-    ../iTCHCore/iTCHNetworkInfo.h
+    ../iTCHCore/include/iTCH/NetworkInfo.h
 FORMS += PiTCHWindow.ui \
     PiTCHNetworkDialog.ui
-INCLUDEPATH += ../iTCHCore
+INCLUDEPATH += ../iTCHCore/include

@@ -1,20 +1,23 @@
-#ifndef ITCHCONNECTION_H
-#define ITCHCONNECTION_H
+#ifndef ITCH_CONNECTION_H
+#define ITCH_CONNECTION_H
 
-#include <QtCore\QObject>
-#include <QtCore\QDateTime>
-#include <QtNetwork\QTcpSocket>
-#include <QtNetwork\QHostAddress>
-#include "iTCHMethod.h"
+#include <QtCore/QObject>
+#include <QtCore/QDateTime>
+#include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QHostAddress>
+#include "iTCH/Method.h"
 
-class iTCHConnection : public QObject
+namespace iTCH
+{
+
+class Connection : public QObject
 {
   Q_OBJECT
 
 public:
-  iTCHConnection(QTcpSocket *socket, QDateTime time, QObject *parent = 0);
+  Connection(QTcpSocket *socket, QDateTime time, QObject *parent = 0);
 
-  ~iTCHConnection();
+  ~Connection();
 
   bool isOpen() const;
 
@@ -26,11 +29,11 @@ public:
 
   QDateTime getConnectionTime() const;
 
-  void sendMethod(const iTCHMethod &method);
+  void sendMethod(const Method &method);
 
 signals:
   void disconnected(bool closedByPeer, const QString &message);
-  void receivedMethod(const iTCHMethod &method);
+  void receivedMethod(const Method &method);
   void error(const QString &message);                             // Report errors with JSON-RC messages
 
 protected slots:
@@ -45,6 +48,8 @@ private:
   QDateTime   time_;
 };
 
-Q_DECLARE_METATYPE(iTCHConnection *);
+Q_DECLARE_METATYPE(Connection *);
 
-#endif // ITCHCONNECTION_H
+} // end namespace iTCH
+
+#endif // ITCH_CONNECTION_H

@@ -1,12 +1,15 @@
-#ifndef ITCHNETWORKINFO_H
-#define ITCHNETWORKINFO_H
+#ifndef ITCH_NETWORKINFO_H
+#define ITCH_NETWORKINFO_H
 
 #include <QtCore/QString>
 
-class iTCHNetworkInfo
+namespace iTCH
+{
+
+class NetworkInfo
 {
 public:
-  iTCHNetworkInfo(const QString &hostname, unsigned short port) : hostname_(hostname), port_(port) { }
+  NetworkInfo(const QString &hostname, unsigned short port) : hostname_(hostname), port_(port) { }
 
   QString getHostname() const { return hostname_; }
 
@@ -21,4 +24,6 @@ protected:
   unsigned short port_;
 };
 
-#endif // ITCHNETWORKINFO_H
+} // end namespace iTCH
+
+#endif // ITCH_NETWORKINFO_H

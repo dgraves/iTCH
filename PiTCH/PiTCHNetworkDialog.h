@@ -2,7 +2,7 @@
 #define PITCHNETWORKDIALOG_H
 
 #include <QtGui/QDialog>
-#include "iTCHNetworkInfo.h"
+#include "iTCH/NetworkInfo.h"
 
 namespace Ui {
   class PiTCHNetworkDialog;
@@ -11,17 +11,17 @@ namespace Ui {
 class PiTCHNetworkDialog : public QDialog {
   Q_OBJECT
 public:
-  PiTCHNetworkDialog(const iTCHNetworkInfo &info, bool autoConnect, unsigned int autoConnectInterval = 10, QWidget *parent = 0);
+  PiTCHNetworkDialog(const iTCH::NetworkInfo &info, bool autoConnect, unsigned int autoConnectInterval = 10, QWidget *parent = 0);
 
   ~PiTCHNetworkDialog();
 
-  void setNetworkInfo(const iTCHNetworkInfo &info);
+  void setNetworkInfo(const iTCH::NetworkInfo &info);
 
   void setAutoConnect(bool autoConnect);
 
   void setAutoConnectInterval(unsigned int interval);
 
-  iTCHNetworkInfo getNetworkInfo() const;
+  iTCH::NetworkInfo getNetworkInfo() const;
 
   bool getAutoConnect() const;
 
