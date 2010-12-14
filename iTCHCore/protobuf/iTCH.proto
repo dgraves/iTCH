@@ -1,6 +1,8 @@
 package iTCH;
 
 // Notification that the player state has changed to be sent by server to client
+// Server does not send any additional data; client is expected to request data
+// related to the notification if interested
 message ServerNotification {
   enum Notification {
     VOLUMECHANGED    = 0;    // Sends a volume changed message to client; No response
@@ -55,7 +57,7 @@ message ClientRequest {
   optional Value value = 3;         // Value supporting action
 }
 
-// Message describing 
+// Message describing a track
 message Track {
   required string name = 1;
   required string artist = 2;
@@ -69,27 +71,39 @@ message Track {
   optional string kind = 10;                // Text description of the track
 }
 
+// Enumeration describing the player state
+enum PlayerState {
+ STOPPED = 0;
+ PLAYING = 1;
+ FASTFORWARD = 2;
+ REWIND = 3; 
+}
+
 // Response to client request sent from server to client
 message ServerResponse {
+  
   message Value {
     enum Type {
 	  VOLUME = 0;
 	  MUTE = 1;
 	  POSITION = 2;
-	  TRACK = 3;
+	  STATE = 3;
+	  TRACK = 4;
 	}
 
 	required Type type = 1;
     optional uint32 volume = 2;
     optional bool mute = 3;
     optional uint32 position = 4;
-	optional Track track = 5;
+	optional PlayerState state = 5;
+	repeated Track track = 6;
   }
+
   required uint32 seqid = 1;        // Sequence ID
   optional Value value = 2;
 }
 
 // Client request / server response service
-service RequestService {
-  rpc Request (ClientRequest) returns (ServerResponse);
-}
+//service RequestService {
+//  rpc Request (ClientRequest) returns (ServerResponse);
+//}
