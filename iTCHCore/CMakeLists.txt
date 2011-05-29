@@ -3,7 +3,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Core header files to be included with IDE projects (not really needed for build)
 set(CORE_HEADER_FILES
-    include/iTCH/Method.h
+    include/iTCH/MessageBuilder.h
     include/iTCH/NetworkInfo.h
 )
 
@@ -18,7 +18,7 @@ set(CORE_QOBJECT_HEADER_FILES
 set(CORE_SOURCE_FILES
     src/iTCH/Client.cpp
     src/iTCH/Connection.cpp
-    src/iTCH/Method.cpp
+    src/iTCH/MessageBuilder.cpp
     src/iTCH/Server.cpp
 )
 

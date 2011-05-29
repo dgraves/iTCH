@@ -1,6 +1,6 @@
 #include <cassert>
 #include "GeneratedCode/iTCH.pb.cc"
-#include "iTCH/Method.h"
+#include "iTCH/MessageBuilder.h"
 
 using namespace iTCH;
 

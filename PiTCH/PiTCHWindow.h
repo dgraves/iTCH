@@ -2,7 +2,7 @@
 #define PITCHWINDOW_H
 
 #include <QtGui/QMainWindow>
-#include "iTCH/Method.h"
+#include "iTCH/MessageBuilder.h"
 #include "iTCH/Client.h"
 #include "iTCH/NetworkInfo.h"
 

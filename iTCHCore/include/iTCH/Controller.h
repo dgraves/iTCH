@@ -2,7 +2,7 @@
 #define ITCH_CONTROLLER_H
 
 #include <QtCore/QObject>
-#include "iTCH/Method.h"
+#include "iTCH/MessageBuilder.h"
 
 struct IiTunes;
 struct IConnectionPoint;

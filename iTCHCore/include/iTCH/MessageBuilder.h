@@ -1,5 +1,5 @@
-#ifndef ITCH_METHOD_H
-#define ITCH_METHOD_H
+#ifndef ITCH_MESSAGEBUILDER_H
+#define ITCH_MESSAGEBUILDER_H
 
 #include <QtCore/QSharedPointer>
 #include "GeneratedCode/iTCH.pb.h"

@@ -4,7 +4,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QDateTime>
 #include <QtNetwork/QTcpServer>
-#include "iTCH/Method.h"
+#include "iTCH/MessageBuilder.h"
 
 namespace iTCH
 {

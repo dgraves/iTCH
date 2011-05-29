@@ -6,7 +6,7 @@
 #include <QtCore/QSharedPointer>
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
-#include "iTCH/Method.h"
+#include "iTCH/MessageBuilder.h"
 #include "iTCH/NetworkInfo.h"
 
 namespace iTCH

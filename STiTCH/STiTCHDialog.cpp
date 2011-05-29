@@ -5,7 +5,7 @@
 #include <QtGui/QCloseEvent>
 #include <QtNetwork/QNetworkInterface>
 #include "iTCH/Connection.h"
-#include "iTCH/Method.h"
+#include "iTCH/MessageBuilder.h"
 #include "STiTCHDialog.h"
 #include "ui_STiTCHDialog.h"
 
