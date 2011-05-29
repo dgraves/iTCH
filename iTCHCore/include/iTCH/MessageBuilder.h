@@ -16,18 +16,6 @@ public:
   static EnvelopePtr createEnvelope() { return EnvelopePtr(new Envelope()); }
 
 
-  //--------------- Make server notification RPC messages ---------------
-  static EnvelopePtr makeVolumeChangedNotification(unsigned int sequenceId);
-
-  static EnvelopePtr makePlayingStartedNotification(unsigned int sequenceId);
-
-  static EnvelopePtr makePlayingStoppedNotification(unsigned int sequenceId);
-
-  static EnvelopePtr makeTrackInfoChangedNotification(unsigned int sequenceId);
-
-  static bool containsValidServerNotification(const EnvelopePtr envelope);
-
-
   //--------------- Make client request RPC messages ---------------
   static EnvelopePtr makeBackTrackRequest(unsigned int sequenceId);
 
@@ -70,14 +58,18 @@ public:
   static bool containsValidClientRequest(const EnvelopePtr envelope);
 
 
-  //--------------- Make server response RPC messages ---------------
-  static EnvelopePtr makeVolumeResponse(unsigned int sequenceId, long volume);
+  //--------------- Make server status RPC messages ---------------
+  static EnvelopePtr makeSoundVolumeStatus(unsigned int sequenceId, long volume);
 
-  static EnvelopePtr makeMuteResponse(unsigned int sequenceId, bool isMute);
+  static EnvelopePtr makeMuteStatus(unsigned int sequenceId, bool isMute);
 
-  static EnvelopePtr makePositionResponse(unsigned int sequenceId, long position);
+  static EnvelopePtr makePlayerPositionStatus(unsigned int sequenceId, long position);
 
-  static EnvelopePtr makeTrackResponse(unsigned int sequenceId, const Track &track);
+  static EnvelopePtr makePlayerStateStatus(unsigned int sequenceId, PlayerState state);
+
+  static EnvelopePtr makeTrackStatus(unsigned int sequenceId, const Track &track);
+
+  static bool containsValidServerStatus(const EnvelopePtr envelope);
 
   static bool containsValidServerResponse(const EnvelopePtr envelope, const ClientRequest &originalRequest);
 

@@ -34,7 +34,7 @@ add_custom_command(
     OUTPUT ${CORE_PROTO_GENERATED_FILES}
     COMMAND  ${PROTOBUF_PROTOC_EXECUTABLE}
     ARGS --cpp_out ${CORE_PROTO_OUT} --proto_path ${CORE_PROTO_PATH} ${CORE_PROTO_FILE}
-    DEPENDS ${CORE_PROTO_FILE}
+    MAIN_DEPENDENCY ${CORE_PROTO_FILE}
     COMMENT "Running C++ protocol buffer compiler on ${CORE_PROTO_PATH}"
     VERBATIM
 )

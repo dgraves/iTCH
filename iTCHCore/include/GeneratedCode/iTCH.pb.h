@@ -34,21 +34,19 @@ void protobuf_ShutdownFile_iTCH_2eproto();
 
 class Hello;
 class Envelope;
-class ServerNotification;
 class ClientRequest;
 class ClientRequest_Value;
 class Track;
-class ServerResponse;
-class ServerResponse_Value;
+class ServerStatus;
+class ServerStatus_Value;
 
 enum Envelope_Type {
-  Envelope_Type_SERVERNOTIFICATION = 0,
-  Envelope_Type_CLIENTREQUEST = 1,
-  Envelope_Type_SERVERRESPONSE = 2
+  Envelope_Type_CLIENTREQUEST = 0,
+  Envelope_Type_SERVERSTATUS = 1
 };
 bool Envelope_Type_IsValid(int value);
-const Envelope_Type Envelope_Type_Type_MIN = Envelope_Type_SERVERNOTIFICATION;
-const Envelope_Type Envelope_Type_Type_MAX = Envelope_Type_SERVERRESPONSE;
+const Envelope_Type Envelope_Type_Type_MIN = Envelope_Type_CLIENTREQUEST;
+const Envelope_Type Envelope_Type_Type_MAX = Envelope_Type_SERVERSTATUS;
 const int Envelope_Type_Type_ARRAYSIZE = Envelope_Type_Type_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Envelope_Type_descriptor();
@@ -60,27 +58,6 @@ inline bool Envelope_Type_Parse(
     const ::std::string& name, Envelope_Type* value) {
   return ::google::protobuf::internal::ParseNamedEnum<Envelope_Type>(
     Envelope_Type_descriptor(), name, value);
-}
-enum ServerNotification_Type {
-  ServerNotification_Type_VOLUMECHANGED = 0,
-  ServerNotification_Type_PLAYINGSTARTED = 1,
-  ServerNotification_Type_PLAYINGSTOPPED = 2,
-  ServerNotification_Type_TRACKINFOCHANGED = 3
-};
-bool ServerNotification_Type_IsValid(int value);
-const ServerNotification_Type ServerNotification_Type_Type_MIN = ServerNotification_Type_VOLUMECHANGED;
-const ServerNotification_Type ServerNotification_Type_Type_MAX = ServerNotification_Type_TRACKINFOCHANGED;
-const int ServerNotification_Type_Type_ARRAYSIZE = ServerNotification_Type_Type_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* ServerNotification_Type_descriptor();
-inline const ::std::string& ServerNotification_Type_Name(ServerNotification_Type value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    ServerNotification_Type_descriptor(), value);
-}
-inline bool ServerNotification_Type_Parse(
-    const ::std::string& name, ServerNotification_Type* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<ServerNotification_Type>(
-    ServerNotification_Type_descriptor(), name, value);
 }
 enum ClientRequest_Value_Type {
   ClientRequest_Value_Type_VOLUME = 0,
@@ -138,27 +115,50 @@ inline bool ClientRequest_Type_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<ClientRequest_Type>(
     ClientRequest_Type_descriptor(), name, value);
 }
-enum ServerResponse_Value_Type {
-  ServerResponse_Value_Type_VOLUME = 0,
-  ServerResponse_Value_Type_MUTE = 1,
-  ServerResponse_Value_Type_POSITION = 2,
-  ServerResponse_Value_Type_STATE = 3,
-  ServerResponse_Value_Type_TRACK = 4
+enum ServerStatus_Value_Type {
+  ServerStatus_Value_Type_VOLUME = 0,
+  ServerStatus_Value_Type_MUTE = 1,
+  ServerStatus_Value_Type_POSITION = 2,
+  ServerStatus_Value_Type_STATE = 3,
+  ServerStatus_Value_Type_TRACK = 4
 };
-bool ServerResponse_Value_Type_IsValid(int value);
-const ServerResponse_Value_Type ServerResponse_Value_Type_Type_MIN = ServerResponse_Value_Type_VOLUME;
-const ServerResponse_Value_Type ServerResponse_Value_Type_Type_MAX = ServerResponse_Value_Type_TRACK;
-const int ServerResponse_Value_Type_Type_ARRAYSIZE = ServerResponse_Value_Type_Type_MAX + 1;
+bool ServerStatus_Value_Type_IsValid(int value);
+const ServerStatus_Value_Type ServerStatus_Value_Type_Type_MIN = ServerStatus_Value_Type_VOLUME;
+const ServerStatus_Value_Type ServerStatus_Value_Type_Type_MAX = ServerStatus_Value_Type_TRACK;
+const int ServerStatus_Value_Type_Type_ARRAYSIZE = ServerStatus_Value_Type_Type_MAX + 1;
 
-const ::google::protobuf::EnumDescriptor* ServerResponse_Value_Type_descriptor();
-inline const ::std::string& ServerResponse_Value_Type_Name(ServerResponse_Value_Type value) {
+const ::google::protobuf::EnumDescriptor* ServerStatus_Value_Type_descriptor();
+inline const ::std::string& ServerStatus_Value_Type_Name(ServerStatus_Value_Type value) {
   return ::google::protobuf::internal::NameOfEnum(
-    ServerResponse_Value_Type_descriptor(), value);
+    ServerStatus_Value_Type_descriptor(), value);
 }
-inline bool ServerResponse_Value_Type_Parse(
-    const ::std::string& name, ServerResponse_Value_Type* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<ServerResponse_Value_Type>(
-    ServerResponse_Value_Type_descriptor(), name, value);
+inline bool ServerStatus_Value_Type_Parse(
+    const ::std::string& name, ServerStatus_Value_Type* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ServerStatus_Value_Type>(
+    ServerStatus_Value_Type_descriptor(), name, value);
+}
+enum ServerStatus_Type {
+  ServerStatus_Type_SOUNDVOLUME = 0,
+  ServerStatus_Type_MUTE = 1,
+  ServerStatus_Type_PLAYERPOSITION = 2,
+  ServerStatus_Type_PLAYERSTATE = 3,
+  ServerStatus_Type_CURRENTTRACK = 4,
+  ServerStatus_Type_CURRENTPLAYLIST = 5
+};
+bool ServerStatus_Type_IsValid(int value);
+const ServerStatus_Type ServerStatus_Type_Type_MIN = ServerStatus_Type_SOUNDVOLUME;
+const ServerStatus_Type ServerStatus_Type_Type_MAX = ServerStatus_Type_CURRENTPLAYLIST;
+const int ServerStatus_Type_Type_ARRAYSIZE = ServerStatus_Type_Type_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ServerStatus_Type_descriptor();
+inline const ::std::string& ServerStatus_Type_Name(ServerStatus_Type value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ServerStatus_Type_descriptor(), value);
+}
+inline bool ServerStatus_Type_Parse(
+    const ::std::string& name, ServerStatus_Type* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ServerStatus_Type>(
+    ServerStatus_Type_descriptor(), name, value);
 }
 enum Version {
   PROTOCOL_VERSION = 0
@@ -378,9 +378,8 @@ class Envelope : public ::google::protobuf::Message {
   // nested types ----------------------------------------------------
   
   typedef Envelope_Type Type;
-  static const Type SERVERNOTIFICATION = Envelope_Type_SERVERNOTIFICATION;
   static const Type CLIENTREQUEST = Envelope_Type_CLIENTREQUEST;
-  static const Type SERVERRESPONSE = Envelope_Type_SERVERRESPONSE;
+  static const Type SERVERSTATUS = Envelope_Type_SERVERSTATUS;
   static inline bool Type_IsValid(int value) {
     return Envelope_Type_IsValid(value);
   }
@@ -411,50 +410,39 @@ class Envelope : public ::google::protobuf::Message {
   inline ::iTCH::Envelope_Type type() const;
   inline void set_type(::iTCH::Envelope_Type value);
   
-  // optional .iTCH.ServerNotification notification = 2;
-  inline bool has_notification() const;
-  inline void clear_notification();
-  static const int kNotificationFieldNumber = 2;
-  inline const ::iTCH::ServerNotification& notification() const;
-  inline ::iTCH::ServerNotification* mutable_notification();
-  inline ::iTCH::ServerNotification* release_notification();
-  
-  // optional .iTCH.ClientRequest request = 3;
+  // optional .iTCH.ClientRequest request = 2;
   inline bool has_request() const;
   inline void clear_request();
-  static const int kRequestFieldNumber = 3;
+  static const int kRequestFieldNumber = 2;
   inline const ::iTCH::ClientRequest& request() const;
   inline ::iTCH::ClientRequest* mutable_request();
   inline ::iTCH::ClientRequest* release_request();
   
-  // optional .iTCH.ServerResponse response = 4;
-  inline bool has_response() const;
-  inline void clear_response();
-  static const int kResponseFieldNumber = 4;
-  inline const ::iTCH::ServerResponse& response() const;
-  inline ::iTCH::ServerResponse* mutable_response();
-  inline ::iTCH::ServerResponse* release_response();
+  // optional .iTCH.ServerStatus status = 3;
+  inline bool has_status() const;
+  inline void clear_status();
+  static const int kStatusFieldNumber = 3;
+  inline const ::iTCH::ServerStatus& status() const;
+  inline ::iTCH::ServerStatus* mutable_status();
+  inline ::iTCH::ServerStatus* release_status();
   
   // @@protoc_insertion_point(class_scope:iTCH.Envelope)
  private:
   inline void set_has_type();
   inline void clear_has_type();
-  inline void set_has_notification();
-  inline void clear_has_notification();
   inline void set_has_request();
   inline void clear_has_request();
-  inline void set_has_response();
-  inline void clear_has_response();
+  inline void set_has_status();
+  inline void clear_has_status();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::iTCH::ServerNotification* notification_;
   ::iTCH::ClientRequest* request_;
-  ::iTCH::ServerResponse* response_;
+  ::iTCH::ServerStatus* status_;
   int type_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_iTCH_2eproto();
   friend void protobuf_AssignDesc_iTCH_2eproto();
@@ -462,124 +450,6 @@ class Envelope : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static Envelope* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class ServerNotification : public ::google::protobuf::Message {
- public:
-  ServerNotification();
-  virtual ~ServerNotification();
-  
-  ServerNotification(const ServerNotification& from);
-  
-  inline ServerNotification& operator=(const ServerNotification& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const ServerNotification& default_instance();
-  
-  void Swap(ServerNotification* other);
-  
-  // implements Message ----------------------------------------------
-  
-  ServerNotification* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ServerNotification& from);
-  void MergeFrom(const ServerNotification& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  typedef ServerNotification_Type Type;
-  static const Type VOLUMECHANGED = ServerNotification_Type_VOLUMECHANGED;
-  static const Type PLAYINGSTARTED = ServerNotification_Type_PLAYINGSTARTED;
-  static const Type PLAYINGSTOPPED = ServerNotification_Type_PLAYINGSTOPPED;
-  static const Type TRACKINFOCHANGED = ServerNotification_Type_TRACKINFOCHANGED;
-  static inline bool Type_IsValid(int value) {
-    return ServerNotification_Type_IsValid(value);
-  }
-  static const Type Type_MIN =
-    ServerNotification_Type_Type_MIN;
-  static const Type Type_MAX =
-    ServerNotification_Type_Type_MAX;
-  static const int Type_ARRAYSIZE =
-    ServerNotification_Type_Type_ARRAYSIZE;
-  static inline const ::google::protobuf::EnumDescriptor*
-  Type_descriptor() {
-    return ServerNotification_Type_descriptor();
-  }
-  static inline const ::std::string& Type_Name(Type value) {
-    return ServerNotification_Type_Name(value);
-  }
-  static inline bool Type_Parse(const ::std::string& name,
-      Type* value) {
-    return ServerNotification_Type_Parse(name, value);
-  }
-  
-  // accessors -------------------------------------------------------
-  
-  // required uint32 seqid = 1;
-  inline bool has_seqid() const;
-  inline void clear_seqid();
-  static const int kSeqidFieldNumber = 1;
-  inline ::google::protobuf::uint32 seqid() const;
-  inline void set_seqid(::google::protobuf::uint32 value);
-  
-  // required .iTCH.ServerNotification.Type type = 2;
-  inline bool has_type() const;
-  inline void clear_type();
-  static const int kTypeFieldNumber = 2;
-  inline ::iTCH::ServerNotification_Type type() const;
-  inline void set_type(::iTCH::ServerNotification_Type value);
-  
-  // @@protoc_insertion_point(class_scope:iTCH.ServerNotification)
- private:
-  inline void set_has_seqid();
-  inline void clear_has_seqid();
-  inline void set_has_type();
-  inline void clear_has_type();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::uint32 seqid_;
-  int type_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_iTCH_2eproto();
-  friend void protobuf_AssignDesc_iTCH_2eproto();
-  friend void protobuf_ShutdownFile_iTCH_2eproto();
-  
-  void InitAsDefaultInstance();
-  static ServerNotification* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1062,14 +932,14 @@ class Track : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class ServerResponse_Value : public ::google::protobuf::Message {
+class ServerStatus_Value : public ::google::protobuf::Message {
  public:
-  ServerResponse_Value();
-  virtual ~ServerResponse_Value();
+  ServerStatus_Value();
+  virtual ~ServerStatus_Value();
   
-  ServerResponse_Value(const ServerResponse_Value& from);
+  ServerStatus_Value(const ServerStatus_Value& from);
   
-  inline ServerResponse_Value& operator=(const ServerResponse_Value& from) {
+  inline ServerStatus_Value& operator=(const ServerStatus_Value& from) {
     CopyFrom(from);
     return *this;
   }
@@ -1083,17 +953,17 @@ class ServerResponse_Value : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const ServerResponse_Value& default_instance();
+  static const ServerStatus_Value& default_instance();
   
-  void Swap(ServerResponse_Value* other);
+  void Swap(ServerStatus_Value* other);
   
   // implements Message ----------------------------------------------
   
-  ServerResponse_Value* New() const;
+  ServerStatus_Value* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ServerResponse_Value& from);
-  void MergeFrom(const ServerResponse_Value& from);
+  void CopyFrom(const ServerStatus_Value& from);
+  void MergeFrom(const ServerStatus_Value& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -1114,41 +984,41 @@ class ServerResponse_Value : public ::google::protobuf::Message {
   
   // nested types ----------------------------------------------------
   
-  typedef ServerResponse_Value_Type Type;
-  static const Type VOLUME = ServerResponse_Value_Type_VOLUME;
-  static const Type MUTE = ServerResponse_Value_Type_MUTE;
-  static const Type POSITION = ServerResponse_Value_Type_POSITION;
-  static const Type STATE = ServerResponse_Value_Type_STATE;
-  static const Type TRACK = ServerResponse_Value_Type_TRACK;
+  typedef ServerStatus_Value_Type Type;
+  static const Type VOLUME = ServerStatus_Value_Type_VOLUME;
+  static const Type MUTE = ServerStatus_Value_Type_MUTE;
+  static const Type POSITION = ServerStatus_Value_Type_POSITION;
+  static const Type STATE = ServerStatus_Value_Type_STATE;
+  static const Type TRACK = ServerStatus_Value_Type_TRACK;
   static inline bool Type_IsValid(int value) {
-    return ServerResponse_Value_Type_IsValid(value);
+    return ServerStatus_Value_Type_IsValid(value);
   }
   static const Type Type_MIN =
-    ServerResponse_Value_Type_Type_MIN;
+    ServerStatus_Value_Type_Type_MIN;
   static const Type Type_MAX =
-    ServerResponse_Value_Type_Type_MAX;
+    ServerStatus_Value_Type_Type_MAX;
   static const int Type_ARRAYSIZE =
-    ServerResponse_Value_Type_Type_ARRAYSIZE;
+    ServerStatus_Value_Type_Type_ARRAYSIZE;
   static inline const ::google::protobuf::EnumDescriptor*
   Type_descriptor() {
-    return ServerResponse_Value_Type_descriptor();
+    return ServerStatus_Value_Type_descriptor();
   }
   static inline const ::std::string& Type_Name(Type value) {
-    return ServerResponse_Value_Type_Name(value);
+    return ServerStatus_Value_Type_Name(value);
   }
   static inline bool Type_Parse(const ::std::string& name,
       Type* value) {
-    return ServerResponse_Value_Type_Parse(name, value);
+    return ServerStatus_Value_Type_Parse(name, value);
   }
   
   // accessors -------------------------------------------------------
   
-  // required .iTCH.ServerResponse.Value.Type type = 1;
+  // required .iTCH.ServerStatus.Value.Type type = 1;
   inline bool has_type() const;
   inline void clear_type();
   static const int kTypeFieldNumber = 1;
-  inline ::iTCH::ServerResponse_Value_Type type() const;
-  inline void set_type(::iTCH::ServerResponse_Value_Type value);
+  inline ::iTCH::ServerStatus_Value_Type type() const;
+  inline void set_type(::iTCH::ServerStatus_Value_Type value);
   
   // optional uint32 volume = 2;
   inline bool has_volume() const;
@@ -1190,7 +1060,7 @@ class ServerResponse_Value : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::iTCH::Track >*
       mutable_track();
   
-  // @@protoc_insertion_point(class_scope:iTCH.ServerResponse.Value)
+  // @@protoc_insertion_point(class_scope:iTCH.ServerStatus.Value)
  private:
   inline void set_has_type();
   inline void clear_has_type();
@@ -1220,18 +1090,18 @@ class ServerResponse_Value : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_iTCH_2eproto();
   
   void InitAsDefaultInstance();
-  static ServerResponse_Value* default_instance_;
+  static ServerStatus_Value* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class ServerResponse : public ::google::protobuf::Message {
+class ServerStatus : public ::google::protobuf::Message {
  public:
-  ServerResponse();
-  virtual ~ServerResponse();
+  ServerStatus();
+  virtual ~ServerStatus();
   
-  ServerResponse(const ServerResponse& from);
+  ServerStatus(const ServerStatus& from);
   
-  inline ServerResponse& operator=(const ServerResponse& from) {
+  inline ServerStatus& operator=(const ServerStatus& from) {
     CopyFrom(from);
     return *this;
   }
@@ -1245,17 +1115,17 @@ class ServerResponse : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const ServerResponse& default_instance();
+  static const ServerStatus& default_instance();
   
-  void Swap(ServerResponse* other);
+  void Swap(ServerStatus* other);
   
   // implements Message ----------------------------------------------
   
-  ServerResponse* New() const;
+  ServerStatus* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ServerResponse& from);
-  void MergeFrom(const ServerResponse& from);
+  void CopyFrom(const ServerStatus& from);
+  void MergeFrom(const ServerStatus& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -1276,27 +1146,64 @@ class ServerResponse : public ::google::protobuf::Message {
   
   // nested types ----------------------------------------------------
   
-  typedef ServerResponse_Value Value;
+  typedef ServerStatus_Value Value;
+  
+  typedef ServerStatus_Type Type;
+  static const Type SOUNDVOLUME = ServerStatus_Type_SOUNDVOLUME;
+  static const Type MUTE = ServerStatus_Type_MUTE;
+  static const Type PLAYERPOSITION = ServerStatus_Type_PLAYERPOSITION;
+  static const Type PLAYERSTATE = ServerStatus_Type_PLAYERSTATE;
+  static const Type CURRENTTRACK = ServerStatus_Type_CURRENTTRACK;
+  static const Type CURRENTPLAYLIST = ServerStatus_Type_CURRENTPLAYLIST;
+  static inline bool Type_IsValid(int value) {
+    return ServerStatus_Type_IsValid(value);
+  }
+  static const Type Type_MIN =
+    ServerStatus_Type_Type_MIN;
+  static const Type Type_MAX =
+    ServerStatus_Type_Type_MAX;
+  static const int Type_ARRAYSIZE =
+    ServerStatus_Type_Type_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  Type_descriptor() {
+    return ServerStatus_Type_descriptor();
+  }
+  static inline const ::std::string& Type_Name(Type value) {
+    return ServerStatus_Type_Name(value);
+  }
+  static inline bool Type_Parse(const ::std::string& name,
+      Type* value) {
+    return ServerStatus_Type_Parse(name, value);
+  }
   
   // accessors -------------------------------------------------------
   
-  // required uint32 seqid = 1;
+  // required .iTCH.ServerStatus.Type type = 1;
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 1;
+  inline ::iTCH::ServerStatus_Type type() const;
+  inline void set_type(::iTCH::ServerStatus_Type value);
+  
+  // required uint32 seqid = 2 [default = 0];
   inline bool has_seqid() const;
   inline void clear_seqid();
-  static const int kSeqidFieldNumber = 1;
+  static const int kSeqidFieldNumber = 2;
   inline ::google::protobuf::uint32 seqid() const;
   inline void set_seqid(::google::protobuf::uint32 value);
   
-  // optional .iTCH.ServerResponse.Value value = 2;
+  // required .iTCH.ServerStatus.Value value = 3;
   inline bool has_value() const;
   inline void clear_value();
-  static const int kValueFieldNumber = 2;
-  inline const ::iTCH::ServerResponse_Value& value() const;
-  inline ::iTCH::ServerResponse_Value* mutable_value();
-  inline ::iTCH::ServerResponse_Value* release_value();
+  static const int kValueFieldNumber = 3;
+  inline const ::iTCH::ServerStatus_Value& value() const;
+  inline ::iTCH::ServerStatus_Value* mutable_value();
+  inline ::iTCH::ServerStatus_Value* release_value();
   
-  // @@protoc_insertion_point(class_scope:iTCH.ServerResponse)
+  // @@protoc_insertion_point(class_scope:iTCH.ServerStatus)
  private:
+  inline void set_has_type();
+  inline void clear_has_type();
   inline void set_has_seqid();
   inline void clear_has_seqid();
   inline void set_has_value();
@@ -1304,18 +1211,19 @@ class ServerResponse : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::iTCH::ServerResponse_Value* value_;
+  int type_;
   ::google::protobuf::uint32 seqid_;
+  ::iTCH::ServerStatus_Value* value_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_iTCH_2eproto();
   friend void protobuf_AssignDesc_iTCH_2eproto();
   friend void protobuf_ShutdownFile_iTCH_2eproto();
   
   void InitAsDefaultInstance();
-  static ServerResponse* default_instance_;
+  static ServerStatus* default_instance_;
 };
 // ===================================================================
 
@@ -1548,44 +1456,15 @@ inline void Envelope::set_type(::iTCH::Envelope_Type value) {
   type_ = value;
 }
 
-// optional .iTCH.ServerNotification notification = 2;
-inline bool Envelope::has_notification() const {
+// optional .iTCH.ClientRequest request = 2;
+inline bool Envelope::has_request() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void Envelope::set_has_notification() {
+inline void Envelope::set_has_request() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void Envelope::clear_has_notification() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void Envelope::clear_notification() {
-  if (notification_ != NULL) notification_->::iTCH::ServerNotification::Clear();
-  clear_has_notification();
-}
-inline const ::iTCH::ServerNotification& Envelope::notification() const {
-  return notification_ != NULL ? *notification_ : *default_instance_->notification_;
-}
-inline ::iTCH::ServerNotification* Envelope::mutable_notification() {
-  set_has_notification();
-  if (notification_ == NULL) notification_ = new ::iTCH::ServerNotification;
-  return notification_;
-}
-inline ::iTCH::ServerNotification* Envelope::release_notification() {
-  clear_has_notification();
-  ::iTCH::ServerNotification* temp = notification_;
-  notification_ = NULL;
-  return temp;
-}
-
-// optional .iTCH.ClientRequest request = 3;
-inline bool Envelope::has_request() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void Envelope::set_has_request() {
-  _has_bits_[0] |= 0x00000004u;
-}
 inline void Envelope::clear_has_request() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void Envelope::clear_request() {
   if (request_ != NULL) request_->::iTCH::ClientRequest::Clear();
@@ -1606,82 +1485,33 @@ inline ::iTCH::ClientRequest* Envelope::release_request() {
   return temp;
 }
 
-// optional .iTCH.ServerResponse response = 4;
-inline bool Envelope::has_response() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+// optional .iTCH.ServerStatus status = 3;
+inline bool Envelope::has_status() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void Envelope::set_has_response() {
-  _has_bits_[0] |= 0x00000008u;
+inline void Envelope::set_has_status() {
+  _has_bits_[0] |= 0x00000004u;
 }
-inline void Envelope::clear_has_response() {
-  _has_bits_[0] &= ~0x00000008u;
+inline void Envelope::clear_has_status() {
+  _has_bits_[0] &= ~0x00000004u;
 }
-inline void Envelope::clear_response() {
-  if (response_ != NULL) response_->::iTCH::ServerResponse::Clear();
-  clear_has_response();
+inline void Envelope::clear_status() {
+  if (status_ != NULL) status_->::iTCH::ServerStatus::Clear();
+  clear_has_status();
 }
-inline const ::iTCH::ServerResponse& Envelope::response() const {
-  return response_ != NULL ? *response_ : *default_instance_->response_;
+inline const ::iTCH::ServerStatus& Envelope::status() const {
+  return status_ != NULL ? *status_ : *default_instance_->status_;
 }
-inline ::iTCH::ServerResponse* Envelope::mutable_response() {
-  set_has_response();
-  if (response_ == NULL) response_ = new ::iTCH::ServerResponse;
-  return response_;
+inline ::iTCH::ServerStatus* Envelope::mutable_status() {
+  set_has_status();
+  if (status_ == NULL) status_ = new ::iTCH::ServerStatus;
+  return status_;
 }
-inline ::iTCH::ServerResponse* Envelope::release_response() {
-  clear_has_response();
-  ::iTCH::ServerResponse* temp = response_;
-  response_ = NULL;
+inline ::iTCH::ServerStatus* Envelope::release_status() {
+  clear_has_status();
+  ::iTCH::ServerStatus* temp = status_;
+  status_ = NULL;
   return temp;
-}
-
-// -------------------------------------------------------------------
-
-// ServerNotification
-
-// required uint32 seqid = 1;
-inline bool ServerNotification::has_seqid() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void ServerNotification::set_has_seqid() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void ServerNotification::clear_has_seqid() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void ServerNotification::clear_seqid() {
-  seqid_ = 0u;
-  clear_has_seqid();
-}
-inline ::google::protobuf::uint32 ServerNotification::seqid() const {
-  return seqid_;
-}
-inline void ServerNotification::set_seqid(::google::protobuf::uint32 value) {
-  set_has_seqid();
-  seqid_ = value;
-}
-
-// required .iTCH.ServerNotification.Type type = 2;
-inline bool ServerNotification::has_type() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void ServerNotification::set_has_type() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void ServerNotification::clear_has_type() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void ServerNotification::clear_type() {
-  type_ = 0;
-  clear_has_type();
-}
-inline ::iTCH::ServerNotification_Type ServerNotification::type() const {
-  return static_cast< ::iTCH::ServerNotification_Type >(type_);
-}
-inline void ServerNotification::set_type(::iTCH::ServerNotification_Type value) {
-  GOOGLE_DCHECK(::iTCH::ServerNotification_Type_IsValid(value));
-  set_has_type();
-  type_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -2297,196 +2127,219 @@ inline ::std::string* Track::release_kind() {
 
 // -------------------------------------------------------------------
 
-// ServerResponse_Value
+// ServerStatus_Value
 
-// required .iTCH.ServerResponse.Value.Type type = 1;
-inline bool ServerResponse_Value::has_type() const {
+// required .iTCH.ServerStatus.Value.Type type = 1;
+inline bool ServerStatus_Value::has_type() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void ServerResponse_Value::set_has_type() {
+inline void ServerStatus_Value::set_has_type() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void ServerResponse_Value::clear_has_type() {
+inline void ServerStatus_Value::clear_has_type() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void ServerResponse_Value::clear_type() {
+inline void ServerStatus_Value::clear_type() {
   type_ = 0;
   clear_has_type();
 }
-inline ::iTCH::ServerResponse_Value_Type ServerResponse_Value::type() const {
-  return static_cast< ::iTCH::ServerResponse_Value_Type >(type_);
+inline ::iTCH::ServerStatus_Value_Type ServerStatus_Value::type() const {
+  return static_cast< ::iTCH::ServerStatus_Value_Type >(type_);
 }
-inline void ServerResponse_Value::set_type(::iTCH::ServerResponse_Value_Type value) {
-  GOOGLE_DCHECK(::iTCH::ServerResponse_Value_Type_IsValid(value));
+inline void ServerStatus_Value::set_type(::iTCH::ServerStatus_Value_Type value) {
+  GOOGLE_DCHECK(::iTCH::ServerStatus_Value_Type_IsValid(value));
   set_has_type();
   type_ = value;
 }
 
 // optional uint32 volume = 2;
-inline bool ServerResponse_Value::has_volume() const {
+inline bool ServerStatus_Value::has_volume() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void ServerResponse_Value::set_has_volume() {
+inline void ServerStatus_Value::set_has_volume() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void ServerResponse_Value::clear_has_volume() {
+inline void ServerStatus_Value::clear_has_volume() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void ServerResponse_Value::clear_volume() {
+inline void ServerStatus_Value::clear_volume() {
   volume_ = 0u;
   clear_has_volume();
 }
-inline ::google::protobuf::uint32 ServerResponse_Value::volume() const {
+inline ::google::protobuf::uint32 ServerStatus_Value::volume() const {
   return volume_;
 }
-inline void ServerResponse_Value::set_volume(::google::protobuf::uint32 value) {
+inline void ServerStatus_Value::set_volume(::google::protobuf::uint32 value) {
   set_has_volume();
   volume_ = value;
 }
 
 // optional bool mute = 3;
-inline bool ServerResponse_Value::has_mute() const {
+inline bool ServerStatus_Value::has_mute() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void ServerResponse_Value::set_has_mute() {
+inline void ServerStatus_Value::set_has_mute() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void ServerResponse_Value::clear_has_mute() {
+inline void ServerStatus_Value::clear_has_mute() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void ServerResponse_Value::clear_mute() {
+inline void ServerStatus_Value::clear_mute() {
   mute_ = false;
   clear_has_mute();
 }
-inline bool ServerResponse_Value::mute() const {
+inline bool ServerStatus_Value::mute() const {
   return mute_;
 }
-inline void ServerResponse_Value::set_mute(bool value) {
+inline void ServerStatus_Value::set_mute(bool value) {
   set_has_mute();
   mute_ = value;
 }
 
 // optional uint32 position = 4;
-inline bool ServerResponse_Value::has_position() const {
+inline bool ServerStatus_Value::has_position() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void ServerResponse_Value::set_has_position() {
+inline void ServerStatus_Value::set_has_position() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void ServerResponse_Value::clear_has_position() {
+inline void ServerStatus_Value::clear_has_position() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void ServerResponse_Value::clear_position() {
+inline void ServerStatus_Value::clear_position() {
   position_ = 0u;
   clear_has_position();
 }
-inline ::google::protobuf::uint32 ServerResponse_Value::position() const {
+inline ::google::protobuf::uint32 ServerStatus_Value::position() const {
   return position_;
 }
-inline void ServerResponse_Value::set_position(::google::protobuf::uint32 value) {
+inline void ServerStatus_Value::set_position(::google::protobuf::uint32 value) {
   set_has_position();
   position_ = value;
 }
 
 // optional .iTCH.PlayerState state = 5;
-inline bool ServerResponse_Value::has_state() const {
+inline bool ServerStatus_Value::has_state() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void ServerResponse_Value::set_has_state() {
+inline void ServerStatus_Value::set_has_state() {
   _has_bits_[0] |= 0x00000010u;
 }
-inline void ServerResponse_Value::clear_has_state() {
+inline void ServerStatus_Value::clear_has_state() {
   _has_bits_[0] &= ~0x00000010u;
 }
-inline void ServerResponse_Value::clear_state() {
+inline void ServerStatus_Value::clear_state() {
   state_ = 0;
   clear_has_state();
 }
-inline iTCH::PlayerState ServerResponse_Value::state() const {
+inline iTCH::PlayerState ServerStatus_Value::state() const {
   return static_cast< iTCH::PlayerState >(state_);
 }
-inline void ServerResponse_Value::set_state(iTCH::PlayerState value) {
+inline void ServerStatus_Value::set_state(iTCH::PlayerState value) {
   GOOGLE_DCHECK(iTCH::PlayerState_IsValid(value));
   set_has_state();
   state_ = value;
 }
 
 // repeated .iTCH.Track track = 6;
-inline int ServerResponse_Value::track_size() const {
+inline int ServerStatus_Value::track_size() const {
   return track_.size();
 }
-inline void ServerResponse_Value::clear_track() {
+inline void ServerStatus_Value::clear_track() {
   track_.Clear();
 }
-inline const ::iTCH::Track& ServerResponse_Value::track(int index) const {
+inline const ::iTCH::Track& ServerStatus_Value::track(int index) const {
   return track_.Get(index);
 }
-inline ::iTCH::Track* ServerResponse_Value::mutable_track(int index) {
+inline ::iTCH::Track* ServerStatus_Value::mutable_track(int index) {
   return track_.Mutable(index);
 }
-inline ::iTCH::Track* ServerResponse_Value::add_track() {
+inline ::iTCH::Track* ServerStatus_Value::add_track() {
   return track_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::iTCH::Track >&
-ServerResponse_Value::track() const {
+ServerStatus_Value::track() const {
   return track_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::iTCH::Track >*
-ServerResponse_Value::mutable_track() {
+ServerStatus_Value::mutable_track() {
   return &track_;
 }
 
 // -------------------------------------------------------------------
 
-// ServerResponse
+// ServerStatus
 
-// required uint32 seqid = 1;
-inline bool ServerResponse::has_seqid() const {
+// required .iTCH.ServerStatus.Type type = 1;
+inline bool ServerStatus::has_type() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void ServerResponse::set_has_seqid() {
+inline void ServerStatus::set_has_type() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void ServerResponse::clear_has_seqid() {
+inline void ServerStatus::clear_has_type() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void ServerResponse::clear_seqid() {
+inline void ServerStatus::clear_type() {
+  type_ = 0;
+  clear_has_type();
+}
+inline ::iTCH::ServerStatus_Type ServerStatus::type() const {
+  return static_cast< ::iTCH::ServerStatus_Type >(type_);
+}
+inline void ServerStatus::set_type(::iTCH::ServerStatus_Type value) {
+  GOOGLE_DCHECK(::iTCH::ServerStatus_Type_IsValid(value));
+  set_has_type();
+  type_ = value;
+}
+
+// required uint32 seqid = 2 [default = 0];
+inline bool ServerStatus::has_seqid() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void ServerStatus::set_has_seqid() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void ServerStatus::clear_has_seqid() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void ServerStatus::clear_seqid() {
   seqid_ = 0u;
   clear_has_seqid();
 }
-inline ::google::protobuf::uint32 ServerResponse::seqid() const {
+inline ::google::protobuf::uint32 ServerStatus::seqid() const {
   return seqid_;
 }
-inline void ServerResponse::set_seqid(::google::protobuf::uint32 value) {
+inline void ServerStatus::set_seqid(::google::protobuf::uint32 value) {
   set_has_seqid();
   seqid_ = value;
 }
 
-// optional .iTCH.ServerResponse.Value value = 2;
-inline bool ServerResponse::has_value() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+// required .iTCH.ServerStatus.Value value = 3;
+inline bool ServerStatus::has_value() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void ServerResponse::set_has_value() {
-  _has_bits_[0] |= 0x00000002u;
+inline void ServerStatus::set_has_value() {
+  _has_bits_[0] |= 0x00000004u;
 }
-inline void ServerResponse::clear_has_value() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void ServerStatus::clear_has_value() {
+  _has_bits_[0] &= ~0x00000004u;
 }
-inline void ServerResponse::clear_value() {
-  if (value_ != NULL) value_->::iTCH::ServerResponse_Value::Clear();
+inline void ServerStatus::clear_value() {
+  if (value_ != NULL) value_->::iTCH::ServerStatus_Value::Clear();
   clear_has_value();
 }
-inline const ::iTCH::ServerResponse_Value& ServerResponse::value() const {
+inline const ::iTCH::ServerStatus_Value& ServerStatus::value() const {
   return value_ != NULL ? *value_ : *default_instance_->value_;
 }
-inline ::iTCH::ServerResponse_Value* ServerResponse::mutable_value() {
+inline ::iTCH::ServerStatus_Value* ServerStatus::mutable_value() {
   set_has_value();
-  if (value_ == NULL) value_ = new ::iTCH::ServerResponse_Value;
+  if (value_ == NULL) value_ = new ::iTCH::ServerStatus_Value;
   return value_;
 }
-inline ::iTCH::ServerResponse_Value* ServerResponse::release_value() {
+inline ::iTCH::ServerStatus_Value* ServerStatus::release_value() {
   clear_has_value();
-  ::iTCH::ServerResponse_Value* temp = value_;
+  ::iTCH::ServerStatus_Value* temp = value_;
   value_ = NULL;
   return temp;
 }
@@ -2505,10 +2358,6 @@ inline const EnumDescriptor* GetEnumDescriptor< ::iTCH::Envelope_Type>() {
   return ::iTCH::Envelope_Type_descriptor();
 }
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::iTCH::ServerNotification_Type>() {
-  return ::iTCH::ServerNotification_Type_descriptor();
-}
-template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::iTCH::ClientRequest_Value_Type>() {
   return ::iTCH::ClientRequest_Value_Type_descriptor();
 }
@@ -2517,8 +2366,12 @@ inline const EnumDescriptor* GetEnumDescriptor< ::iTCH::ClientRequest_Type>() {
   return ::iTCH::ClientRequest_Type_descriptor();
 }
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::iTCH::ServerResponse_Value_Type>() {
-  return ::iTCH::ServerResponse_Value_Type_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::iTCH::ServerStatus_Value_Type>() {
+  return ::iTCH::ServerStatus_Value_Type_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::iTCH::ServerStatus_Type>() {
+  return ::iTCH::ServerStatus_Type_descriptor();
 }
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< iTCH::Version>() {
