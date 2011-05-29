@@ -1,0 +1,68 @@
+Introduction
+============
+The iTCH project consists of two separate applications:
+  - An iTunes plug-in for Windows
+  - A multi-platform client application
+  
+The iTunes plug-in can only be built on Windows, while the
+client application can be compiled for both Windows and
+Linux/UNIX operating systems.  The build system is setup
+so that the plug-in code is ignored for non-Windows systems.
+
+The installation instructions describe the process for building
+both plug-in and client application.  Instructions for building
+the plug-in application should be ignored when not working on
+Windows.
+
+
+Prerequisites
+=============
+Building the iTCH software requires the following applications
+and libraries:
+- CMake cross-platform, open-source build system:
+    http://www.cmake.org
+  
+- Qt cross-platform application and UI framework, version 4.6 or greater:
+    http://qt.nokia.com
+  
+- Protocol Buffers library:
+    http://code.google.com/p/protobuf/
+
+- iTunes COM for Windows SDK (for Windows builds only):
+    http://connect.apple.com
+
+Acces to the iTunes COM for Windows SDK requires a free Apple
+Developer Connection account, which can be created at the ADC
+website (http://developer.apple.com).  After creating an
+account, go to http://connect.apple.com, click on the "Developer
+Tools" link found in the Downloads menu.  Then search for 
+"iTunes COM for Windows SDK" and download the assocaited zip
+file.
+
+
+Building the code
+=================
+Preparing to build the client application or plug-in:
+Before building the code, the Qt and Protocol Buffers must be
+installed.  These can be compiled and installed from source, or
+installed from pre-compiled binaries.  Refer to the installation
+instructin for both libraries for the appropriate installation
+procedure.
+
+Additional preparation for building the plug-in:
+After the Qt and Protocol Buffers dependencies are installed,
+the "iTunes COM for Windows SDK" source code should be added to
+the iTCH distribution.  This is done by extracting the directory
+found within "iTunes COM for Windows SDK" zip file to the root
+directory of the iTCH distribution.  The "iTunes COM for Windows
+SDK" directory should be named iTunesCOMWindowsSDK.
+
+With the Qt and Protocl Buffers dependencies installed, and the
+"iTunes COM for Windows SDK" source code copied to the root iTCH
+directory (windows only), CMake should be used to generate the
+appropriate build files for your preferred build environment.
+You must specify the locations of the Qt and Protocol Buffers
+header and library files as part of the CMake configuration
+process.  Once CMake has generated the build files for you build
+environment, the iTCH programs can be built from within that
+environment.
