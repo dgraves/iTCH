@@ -31,12 +31,12 @@ and libraries:
 - iTunes COM for Windows SDK (for Windows builds only):
     http://connect.apple.com
 
-Acces to the iTunes COM for Windows SDK requires a free Apple
+Access to the iTunes COM for Windows SDK requires a free Apple
 Developer Connection account, which can be created at the ADC
 website (http://developer.apple.com).  After creating an
 account, go to http://connect.apple.com, click on the "Developer
 Tools" link found in the Downloads menu.  Then search for 
-"iTunes COM for Windows SDK" and download the assocaited zip
+"iTunes COM for Windows SDK" and download the associated zip
 file.
 
 
@@ -46,7 +46,7 @@ Preparing to build the client application or plug-in:
 Before building the code, the Qt and Protocol Buffers must be
 installed.  These can be compiled and installed from source, or
 installed from pre-compiled binaries.  Refer to the installation
-instructin for both libraries for the appropriate installation
+instruction for both libraries for the appropriate installation
 procedure.
 
 Additional preparation for building the plug-in:
@@ -57,7 +57,7 @@ found within "iTunes COM for Windows SDK" zip file to the root
 directory of the iTCH distribution.  The "iTunes COM for Windows
 SDK" directory should be named iTunesCOMWindowsSDK.
 
-With the Qt and Protocl Buffers dependencies installed, and the
+With the Qt and Protocol Buffers dependencies installed, and the
 "iTunes COM for Windows SDK" source code copied to the root iTCH
 directory (windows only), CMake should be used to generate the
 appropriate build files for your preferred build environment.
