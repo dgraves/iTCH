@@ -5,6 +5,7 @@
 #include <QtGui/QCloseEvent>
 #include <QtNetwork/QNetworkInterface>
 #include "iTCH/Connection.h"
+#include "iTCH/Method.h"
 #include "STiTCHDialog.h"
 #include "ui_STiTCHDialog.h"
 
@@ -21,7 +22,7 @@ STiTCHDialog::STiTCHDialog(QWidget *parent) :
 
   connect(&server_, SIGNAL(connectionReceived(iTCH::Connection*)), this, SLOT(connectionReceived(iTCH::Connection*)));
   connect(&server_, SIGNAL(connectionLost(iTCH::Connection*,bool,QString)), this, SLOT(connectionLost(iTCH::Connection*,bool,QString)));
-  connect(&server_, SIGNAL(receivedMethod(iTCH::Connection*,iTCH::Method)), this, SLOT(processMethod(iTCH::Connection*,iTCH::Method)));
+  connect(&server_, SIGNAL(receivedMessage(iTCH::Connection*,iTCH::EnvelopePtr)), this, SLOT(processMessage(iTCH::Connection*,iTCH::EnvelopePtr)));
   connect(&server_, SIGNAL(error(iTCH::Connection*,QString)), this, SLOT(communicationError(iTCH::Connection*,QString)));
 
   connect(&controller_, SIGNAL(createdInstance()), this, SLOT(createdInstance()));
@@ -87,7 +88,7 @@ void STiTCHDialog::addConnectionToList(iTCH::Connection *connection)
   QStandardItem *item = new QStandardItem(0, 2);
   item->setData(QVariant::fromValue(connection));
   model_->appendRow(item);
-  model_->setData(model_->index(item->row(), 0), connection->getConnectionAddress().toString());
+  model_->setData(model_->index(item->row(), 0), connection->getAddress());
   model_->setData(model_->index(item->row(), 1), connection->getConnectionTime());
 
   ui_->connectionsList->resizeColumnToContents(0);
@@ -193,12 +194,12 @@ void STiTCHDialog::connectionReceived(iTCH::Connection *connection)
   addConnectionToList(connection);
 
   // Add log message
-  appendLogMessage(QString(tr("Connection received from %1")).arg(connection->getConnectionAddress().toString()));
+  appendLogMessage(QString(tr("Connection received from %1")).arg(connection->getAddress()));
 
   // Show task tray notification
   if (ui_->connectCheckBox->isChecked())
   {
-    trayIcon_->showMessage(tr("Client Connected"), QString(tr("Connection received from %1")).arg(connection->getConnectionAddress().toString()), QSystemTrayIcon::Information, ui_->durationSpinBox->value() * 1000);
+    trayIcon_->showMessage(tr("Client Connected"), QString(tr("Connection received from %1")).arg(connection->getAddress()), QSystemTrayIcon::Information, ui_->durationSpinBox->value() * 1000);
   }
 }
 
@@ -207,16 +208,16 @@ void STiTCHDialog::connectionLost(iTCH::Connection *connection, bool closedByPee
   removeConnectionFromList(connection);
 
   // Add log message
-  appendLogMessage(QString(tr("Connection from %1 lost: %2")).arg(connection->getConnectionAddress().toString()).arg(message));
+  appendLogMessage(QString(tr("Connection from %1 lost: %2")).arg(connection->getAddress()).arg(message));
 
   // Show task tray notification
   if (ui_->disconnectCheckBox->isChecked())
   {
-    trayIcon_->showMessage(tr("Client Disconnected"), QString(tr("Client from %1 has disconnected")).arg(connection->getConnectionAddress().toString()), QSystemTrayIcon::Information, ui_->durationSpinBox->value() * 1000);
+    trayIcon_->showMessage(tr("Client Disconnected"), QString(tr("Client from %1 has disconnected")).arg(connection->getAddress()), QSystemTrayIcon::Information, ui_->durationSpinBox->value() * 1000);
   }
 }
 
-void STiTCHDialog::processMethod(iTCH::Connection *connection, const iTCH::Method &method)
+void STiTCHDialog::processMessage(iTCH::Connection *connection, const iTCH::EnvelopePtr envelope)
 {
   // Attempt to recreate an inactive instance, if configuration dictates
   if (!controller_.hasInstance() && ui_->activationCheckBox->isChecked())
@@ -224,9 +225,9 @@ void STiTCHDialog::processMethod(iTCH::Connection *connection, const iTCH::Metho
     controller_.createInstance();
   }
 
-  if (controller_.hasInstance())
+  if (controller_.hasInstance() && iTCH::MessageBuilder::containsValidClientRequest(envelope))
   {
-    controller_.callMethod(method);
+    controller_.processRequest(envelope->request(), connection);
   }
   else
   {
@@ -238,7 +239,7 @@ void STiTCHDialog::communicationError(iTCH::Connection *connection, const QStrin
 {
   appendLogMessage(QString("%1 %2 -> %3")
                    .arg(tr("ERROR: Received invalid command from"))
-                   .arg(connection->getConnectionAddress().toString())
+                   .arg(connection->getAddress())
                    .arg(message));
 }
 

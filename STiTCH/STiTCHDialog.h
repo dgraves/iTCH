@@ -26,7 +26,7 @@ class STiTCHDialog : public QDialog
 public:
   STiTCHDialog(QWidget *parent = 0);
 
-  ~STiTCHDialog();
+  virtual ~STiTCHDialog();
 
 protected:
   void closeEvent(QCloseEvent *e);
@@ -48,7 +48,7 @@ protected slots:
   // Slots to handle signals from iTCHServer
   void connectionReceived(iTCH::Connection *connection);
   void connectionLost(iTCH::Connection *connection, bool closedByPeer, const QString &message);
-  void processMethod(iTCH::Connection *connection, const iTCH::Method &method);
+  void processMessage(iTCH::Connection *connection, const iTCH::EnvelopePtr envelope);
   void communicationError(iTCH::Connection *connection, const QString &message);                    // Receive JSON error messages
 
   // Slots to handle signals from iTCHController

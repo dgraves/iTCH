@@ -15,7 +15,7 @@ class EventSink : public _IiTunesEvents
 public:
   EventSink(Controller *controller);
 
-  ~EventSink();
+  virtual ~EventSink();
 
   HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
 

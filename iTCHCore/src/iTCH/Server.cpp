@@ -63,12 +63,12 @@ void Server::disconnectedFromPeer(bool closedByPeer, const QString &message)
   }
 }
 
-void Server::receiveMethod(const Method &method)
+void Server::receiveMessage(const EnvelopePtr envelope)
 {
   Connection *connection = dynamic_cast<Connection *>(sender());
   if (connection)
   {
-    receivedMethod(connection, method);
+    receivedMessage(connection, envelope);
   }
 }
 
@@ -86,7 +86,7 @@ void Server::acceptConnection()
   Connection *connection = new Connection(server_.nextPendingConnection(), QDateTime::currentDateTime(), this);
 
   connect(connection, SIGNAL(disconnected(bool,QString)), this, SLOT(disconnectedFromPeer(bool,QString)));
-  connect(connection, SIGNAL(receivedMethod(Method)), this, SLOT(receiveMethod(Method)));
+  connect(connection, SIGNAL(receivedMessage(iTCH::EnvelopePtr)), this, SLOT(receiveMessage(iTCH::EnvelopePtr)));
   connect(connection, SIGNAL(error(QString)), this, SLOT(connectionError(QString)));
 
   // Signal receipt of new connection

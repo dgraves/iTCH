@@ -25,64 +25,65 @@ bool Controller::hasInstance() const
   return itunes_ != NULL;
 }
 
-void Controller::callMethod(const Method &method)
+void Controller::processRequest(const ClientRequest &request, iTCH::Connection *connection)
 {
   if (!hasInstance())
   {
     // throw exception
   }
 
-  switch (method.getMethod())
+  switch (request.type())
   {
-  case Method::METHOD_IITUNES_BACKTRACK:                        // No value is returned
+  case ClientRequest::BACKTRACK:                        // No value is returned
     itunes_->BackTrack();
     break;
-  case Method::METHOD_IITUNES_FASTFORWARD:                      // No value is returned
+  case ClientRequest::FASTFORWARD:                      // No value is returned
     itunes_->FastForward();
     break;
-  case Method::METHOD_IITUNES_NEXTTRACK:                        // No value is returned
+  case ClientRequest::NEXTTRACK:                        // No value is returned
     itunes_->NextTrack();
     break;
-  case Method::METHOD_IITUNES_PAUSE:                            // No value is returned
+  case ClientRequest::PAUSE:                            // No value is returned
     itunes_->Pause();
     break;
-  case Method::METHOD_IITUNES_PLAY:                             // No value is returned
+  case ClientRequest::PLAY:                             // No value is returned
     itunes_->Play();
     break;
-  case Method::METHOD_IITUNES_PLAYPAUSE:                        // No value is returned
+  case ClientRequest::PLAYPAUSE:                        // No value is returned
     itunes_->PlayPause();
     break;
-  case Method::METHOD_IITUNES_PREVIOUSTRACK:                    // No value is returned
+  case ClientRequest::PREVIOUSTRACK:                    // No value is returned
     itunes_->PreviousTrack();
     break;
-  case Method::METHOD_IITUNES_RESUME:                           // No value is returned
+  case ClientRequest::RESUME:                           // No value is returned
     itunes_->Resume();
     break;
-  case Method::METHOD_IITUNES_REWIND:                           // No value is returned
+  case ClientRequest::REWIND:                           // No value is returned
     itunes_->Rewind();
     break;
-  case Method::METHOD_IITUNES_STOP:                             // No value is returned
+  case ClientRequest::STOP:                             // No value is returned
     itunes_->Stop();
     break;
-  case Method::METHOD_IITUNES_GET_SOUNDVOLUME:                  // Returns a long (0-100%)
+  case ClientRequest::GET_SOUNDVOLUME:                  // Returns a long (0-100%)
     break;
-  case Method::METHOD_IITUNES_PUT_SOUNDVOLUME:                  // Takes a long (0-100%); No value is returned
-    itunes_->put_SoundVolume(method.getParams()[0].toLong());
+  case ClientRequest::PUT_SOUNDVOLUME:                  // Takes a long (0-100%); No value is returned
+    itunes_->put_SoundVolume(request.value().volume());
     break;
-  case Method::METHOD_IITUNES_GET_MUTE:                         // Returns a bool
+  case ClientRequest::GET_MUTE:                         // Returns a bool
     break;
-  case Method::METHOD_IITUNES_PUT_MUTE:                         // Takes a bool; No value is returned
+  case ClientRequest::PUT_MUTE:                         // Takes a bool; No value is returned
+    itunes_->put_Mute(request.value().mute());
     break;
-  case Method::METHOD_IITUNES_GET_PLAYERPOSITION:               // Returns a long (0-100%)
+  case ClientRequest::GET_PLAYERPOSITION:               // Returns a long (0-100%)
     break;
-  case Method::METHOD_IITUNES_PUT_PLAYERPOSITION:               // Takes a long (0-100%); No value is returned
-    itunes_->put_PlayerPosition(method.getParams()[0].toLong());
+  case ClientRequest::PUT_PLAYERPOSITION:               // Takes a long (0-100%); No value is returned
+    itunes_->put_PlayerPosition(request.value().position());
     break;
-  case Method::METHOD_IITCHSERVER_GET_PLAYERSTATE:              // Returns an iTCHPlayerState enumeration value (generated from ITPlayserState)
+  case ClientRequest::GET_PLAYERSTATE:                  // Returns an iTCHPlayerState enumeration value (generated from ITPlayserState)
     break;
-  case Method::METHOD_IITCHSERVER_GET_CURRENTTRACK:             // Returns an iTCHTrack object (generated from IITTrack)
+  case ClientRequest::GET_CURRENTTRACK:                 // Returns an iTCHTrack object (generated from IITTrack)
     break;
-  case Method::METHOD_IITCHSERVER_GET_CURRENTPLAYLIST:          // Returns an iTCHPlayList object (generated from IITPlayList)
+  case ClientRequest::GET_CURRENTPLAYLIST:              // Returns an iTCHPlayList object (generated from IITPlayList)
     break;
   default:
     // throw exception

@@ -10,6 +10,8 @@ struct IConnectionPoint;
 namespace iTCH
 {
 
+class Connection;
+
 class Controller : public QObject
 {
   Q_OBJECT
@@ -21,11 +23,11 @@ class Controller : public QObject
 public:
   Controller();
 
-  ~Controller();
+  virtual ~Controller();
 
   bool hasInstance() const;
 
-  void callMethod(const Method& method);
+  void processRequest(const ClientRequest &request, iTCH::Connection *connection);
 
   void createInstance();
 

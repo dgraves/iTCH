@@ -7,7 +7,8 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   QMainWindow(parent),
   ui_(new Ui::PiTCHWindow),
   serverInfo_(QHostInfo::localHostName(), 8049),
-  buttonHeld_(false)
+  buttonHeld_(false),
+  sequenceId_(0)
 {
   ui_->setupUi(this);
   ui_->statusBar->showMessage(tr("Unconnected"));
@@ -15,7 +16,7 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   connect(&client_, SIGNAL(hostnameResolved()), this, SLOT(resolvedHostname()));
   connect(&client_, SIGNAL(connected()), this, SLOT(connectedToServer()));
   connect(&client_, SIGNAL(disconnected(bool,QString)), this, SLOT(disconnectedFromServer(bool,QString)));
-  connect(&client_, SIGNAL(receivedMethod(iTCH::Method)), this, SLOT(processMethod(iTCH::Method)));
+  connect(&client_, SIGNAL(receivedMessage(iTCH::EnvelopePtr)), this, SLOT(processMessage(iTCH::EnvelopePtr)));
   connect(&client_, SIGNAL(error(QString)), this, SLOT(error(QString)));
 }
 
@@ -60,7 +61,7 @@ void PiTCHWindow::disconnectedFromServer(bool closedByServer, const QString &mes
   }
 }
 
-void PiTCHWindow::processMethod(const iTCH::Method &method)
+void PiTCHWindow::processMessage(const iTCH::EnvelopePtr envelope)
 {
 }
 
@@ -71,9 +72,7 @@ void PiTCHWindow::error(const QString &message)
 
 void PiTCHWindow::timeSliderValueChanged(int value)
 {
-  QStringList params;
-  params.append(QString::number(value));
-  client_.sendMethod(iTCH::Method(iTCH::Method::METHOD_IITUNES_PUT_PLAYERPOSITION, params, 0));
+  client_.sendMessage(iTCH::MessageBuilder::makePutPlayerPositionRequest(nextSequenceId(), value));
 }
 
 void PiTCHWindow::backButtonPressed()
@@ -89,7 +88,7 @@ void PiTCHWindow::backButtonReleased()
   }
   else
   {
-    client_.sendMethod(iTCH::Method(iTCH::Method::METHOD_IITUNES_BACKTRACK, QStringList(), 0));
+    client_.sendMessage(iTCH::MessageBuilder::makeBackTrackRequest(nextSequenceId()));
   }
 }
 
@@ -106,13 +105,13 @@ void PiTCHWindow::forwardButtonReleased()
   }
   else
   {
-    client_.sendMethod(iTCH::Method(iTCH::Method::METHOD_IITUNES_NEXTTRACK, QStringList(), 0));
+    client_.sendMessage(iTCH::MessageBuilder::makeNextTrackRequest(nextSequenceId()));
   }
 }
 
 void PiTCHWindow::playPauseButtonClicked()
 {
-  client_.sendMethod(iTCH::Method(iTCH::Method::METHOD_IITUNES_PLAYPAUSE, QStringList(), 0));
+  client_.sendMessage(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
 }
 
 void PiTCHWindow::muteButtonClicked()
@@ -127,9 +126,7 @@ void PiTCHWindow::fullVolumeButtonClicked()
 
 void PiTCHWindow::volumeSliderValueChanged(int value)
 {
-  QStringList params;
-  params.append(QString::number(value));
-  client_.sendMethod(iTCH::Method(iTCH::Method::METHOD_IITUNES_PUT_SOUNDVOLUME, params, 0));
+  client_.sendMessage(iTCH::MessageBuilder::makePutSoundVolumeRequest(nextSequenceId(), value));
 }
 
 void PiTCHWindow::networkButtonClicked()
@@ -142,4 +139,9 @@ void PiTCHWindow::networkButtonClicked()
     ui_->statusBar->showMessage(tr("Looking up host..."));
     client_.openConnection(dialog.getNetworkInfo());
   }
+}
+
+unsigned long PiTCHWindow::nextSequenceId()
+{
+  return ++sequenceId_;
 }

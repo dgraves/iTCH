@@ -18,7 +18,7 @@ class Server : public QObject
 public:
   Server(QObject *parent = 0);
 
-  ~Server();
+  virtual ~Server();
 
   QHostAddress getServerAddress() const;
 
@@ -37,13 +37,13 @@ public:
 signals:
   void connectionReceived(iTCH::Connection *connection);                                           // Report acceptance of a new connection
   void connectionLost(iTCH::Connection *connection, bool closedByPeer, const QString &message);    // Report lost connection, either through communication error or closed by peer
-  void receivedMethod(iTCH::Connection *connection, const iTCH::Method &method);                         // Report receipt of a method from a connection
-  void error(iTCH::Connection *connection, const QString &message);                                // Report a JSON-RPC error from received message
+  void receivedMessage(iTCH::Connection *connection, const iTCH::EnvelopePtr envelope);                    // Report receipt of a message from a connection
+  void error(iTCH::Connection *connection, const QString &message);                                // Report an error with a received message
 
 protected slots:
   // Slots to handle signals from iTCH::Connection
   void disconnectedFromPeer(bool closedByPeer, const QString &message);
-  void receiveMethod(const iTCH::Method &method);
+  void receiveMessage(const iTCH::EnvelopePtr envelope);
   void connectionError(const QString &message);
 
   // Slots to handle signals from QTcpServer

@@ -1,23 +1,51 @@
 package iTCH;
 
+// Protocol version (probably not recommended use of enumerations)
+// Used to announce version of protocol used by client/server during handshake 
+enum Version {
+  PROTOCOL_VERSION = 0;
+}
+
+// Client/server hello message for handshaking
+message Hello {
+  required Version version = 1 [default = PROTOCOL_VERSION];
+  optional string hostname = 2;
+  optional string program_name = 3;
+  optional string program_version = 4;
+}
+
+// Message container for client and server message types
+message Envelope {
+  enum Type {
+    SERVERNOTIFICATION = 0;
+    CLIENTREQUEST = 1;
+    SERVERRESPONSE = 2;
+  }
+  
+  required Type type = 1;
+  optional ServerNotification notification = 2;
+  optional ClientRequest request = 3;
+  optional ServerResponse response = 4;
+}
+
 // Notification that the player state has changed to be sent by server to client
 // Server does not send any additional data; client is expected to request data
 // related to the notification if interested
 message ServerNotification {
-  enum Notification {
+  enum Type {
     VOLUMECHANGED    = 0;    // Sends a volume changed message to client; No response
     PLAYINGSTARTED   = 1;    // Sends a playing started notification to client; No response
     PLAYINGSTOPPED   = 2;    // Sends a playing stopped notification to client; No response
     TRACKINFOCHANGED = 3;    // Sends a notification that the currently playing track's info has changed to client; No response
   }
 
-  required uint32 seqid = 1;     // Sequence ID
-  required Notification notification = 2;
+  required uint32 seqid = 1; // Sequence ID
+  required Type type = 2;
 }
 
 // Request to be sent from client to server
 message ClientRequest {
-  enum Action {
+  enum Type {
     BACKTRACK           = 0;     // No value is returned
     FASTFORWARD         = 1;     // No value is returned
     NEXTTRACK           = 2;     // No value is returned
@@ -36,7 +64,7 @@ message ClientRequest {
     PUT_PLAYERPOSITION  = 15;    // Takes a long (0-100%); No value is returned
     GET_PLAYERSTATE     = 16;    // Returns player state enumeration value (generated from ITPlayserState)
     GET_CURRENTTRACK    = 17;    // Returns a track message (generated from IITTrack)
-    GET_CURRENTPLAYLIST = 18;    // Returns a playlist message sorted by play order (generated from IITTrackCollection member of IITPlaylist)
+    GET_CURRENTPLAYLIST = 18;    // Returns a list of track messages sorted by play order (generated from IITTrackCollection member of IITPlaylist)
   }
 
   message Value {
@@ -52,8 +80,8 @@ message ClientRequest {
     optional uint32 position = 4;
   }
   
-  required uint32 seqid = 1;        // Sequence ID
-  required Action action = 2;       // Action to perform
+  required uint32 seqid = 1;        // Sequence ID, should be matched by associated response (when response is requested)
+  required Type type = 2;           // Type of action to perform
   optional Value value = 3;         // Value supporting action
 }
 
@@ -99,7 +127,7 @@ message ServerResponse {
 	repeated Track track = 6;
   }
 
-  required uint32 seqid = 1;        // Sequence ID
+  required uint32 seqid = 1;        // Sequence ID, should matche the sequence ID from the ClientRequest to which this is a response
   optional Value value = 2;
 }
 

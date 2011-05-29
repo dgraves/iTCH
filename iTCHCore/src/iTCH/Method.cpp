@@ -1,140 +1,351 @@
-#include <QtCore/QMap>
-#include <QtCore/QRegExp>
+#include <cassert>
+#include "GeneratedCode/iTCH.pb.cc"
 #include "iTCH/Method.h"
 
 using namespace iTCH;
 
-namespace {
-  // Initialize static values for JSON RPC conversion and checking
-  const char JSON_METHOD_REG_EXP[] = "\\{\\s*\"method\":\\s*\"(.*)\"\\s*,\\s*\"params\":\\s*\\[(.*)\\]\\s*,\\s*\"id\":\\s*(.*)\\s*\\}";
-  const QRegExp __jsonMethodRegExp(JSON_METHOD_REG_EXP, Qt::CaseSensitive, QRegExp::RegExp2);
-
-  class __SupportedMethodsMap : public QMap<Method::SupportedMethods, QString>
+namespace
+{
+  EnvelopePtr makeServerNotification(unsigned int sequenceId, ServerNotification::Type type)
   {
-  public:
-    __SupportedMethodsMap()
+    EnvelopePtr envelope = MessageBuilder::createEnvelope();
+    envelope->set_type(Envelope::SERVERNOTIFICATION);
+
+    ServerNotification *message = envelope->mutable_notification();
+    assert(message);
+    message->set_seqid(sequenceId);
+    message->set_type(type);
+
+    return envelope;
+  }
+
+  EnvelopePtr makeClientRequest(unsigned int sequenceId, ClientRequest::Type type)
+  {
+    EnvelopePtr envelope = MessageBuilder::createEnvelope();
+    envelope->set_type(Envelope::CLIENTREQUEST);
+
+    ClientRequest *message = envelope->mutable_request();
+    assert(message);
+    message->set_seqid(sequenceId);
+    message->set_type(type);
+
+    return envelope;
+  }
+
+  EnvelopePtr makeServerResponse(unsigned int sequenceId)
+  {
+    EnvelopePtr envelope = MessageBuilder::createEnvelope();
+    envelope->set_type(Envelope::SERVERRESPONSE);
+
+    ServerResponse *message = envelope->mutable_response();
+    assert(message);
+    message->set_seqid(sequenceId);
+
+    return envelope;
+  }
+}
+
+EnvelopePtr MessageBuilder::makeVolumeChangedNotification(unsigned int sequenceId)
+{
+  return makeServerNotification(sequenceId, ServerNotification::VOLUMECHANGED);
+}
+
+EnvelopePtr MessageBuilder::makePlayingStartedNotification(unsigned int sequenceId)
+{
+  return makeServerNotification(sequenceId, ServerNotification::PLAYINGSTARTED);
+}
+
+EnvelopePtr MessageBuilder::makePlayingStoppedNotification(unsigned int sequenceId)
+{
+  return makeServerNotification(sequenceId, ServerNotification::PLAYINGSTOPPED);
+}
+
+EnvelopePtr MessageBuilder::makeTrackInfoChangedNotification(unsigned int sequenceId)
+{
+  return makeServerNotification(sequenceId, ServerNotification::TRACKINFOCHANGED);
+}
+
+bool MessageBuilder::containsValidServerNotification(const EnvelopePtr envelope)
+{
+  // Make sure the envelope contains a ServerNotification object
+  if (Envelope::Type_IsValid(envelope->type()) && (envelope->type() == Envelope::SERVERNOTIFICATION) && envelope->has_notification())
+  {
+    // Check notification type for valid value; no params to check for this message
+    const ServerNotification &message = envelope->notification();
+    return ServerNotification::Type_IsValid(message.type());
+  }
+  return false;
+}
+
+EnvelopePtr MessageBuilder::makeBackTrackRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::BACKTRACK);
+}
+
+EnvelopePtr MessageBuilder::makeFastForwardRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::FASTFORWARD);
+}
+
+EnvelopePtr MessageBuilder::makeNextTrackRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::NEXTTRACK);
+}
+
+EnvelopePtr MessageBuilder::makePauseRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::PAUSE);
+}
+
+EnvelopePtr MessageBuilder::makePlayRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::PLAY);
+}
+
+EnvelopePtr MessageBuilder::makePlayPauseRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::PLAYPAUSE);
+}
+
+EnvelopePtr MessageBuilder::makePreviousTrackRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::PREVIOUSTRACK);
+}
+
+EnvelopePtr MessageBuilder::makeResumeRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::RESUME);
+}
+
+EnvelopePtr MessageBuilder::makeRewindRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::REWIND);
+}
+
+EnvelopePtr MessageBuilder::makeStopRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::STOP);
+}
+
+EnvelopePtr MessageBuilder::makeGetSoundVolumeRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::GET_SOUNDVOLUME);
+}
+
+EnvelopePtr MessageBuilder::makePutSoundVolumeRequest(unsigned int sequenceId, long volume)
+{
+  EnvelopePtr envelope = makeClientRequest(sequenceId, ClientRequest::PUT_SOUNDVOLUME);
+  ClientRequest *request = envelope->mutable_request();
+  request->mutable_value()->set_type(ClientRequest::Value::VOLUME);
+  request->mutable_value()->set_volume(volume);
+  return envelope;
+}
+
+EnvelopePtr MessageBuilder::makeGetMuteRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::GET_MUTE);
+}
+
+EnvelopePtr MessageBuilder::makePutMuteRequest(unsigned int sequenceId, bool isMute)
+{
+  EnvelopePtr envelope = makeClientRequest(sequenceId, ClientRequest::PUT_MUTE);
+  ClientRequest *request = envelope->mutable_request();
+  request->mutable_value()->set_type(ClientRequest::Value::MUTE);
+  request->mutable_value()->set_mute(isMute);
+  return envelope;
+}
+
+EnvelopePtr MessageBuilder::makeGetPlayerPositionRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::GET_PLAYERPOSITION);
+}
+
+EnvelopePtr MessageBuilder::makePutPlayerPositionRequest(unsigned int sequenceId, long position)
+{
+  EnvelopePtr envelope = makeClientRequest(sequenceId, ClientRequest::PUT_PLAYERPOSITION);
+  ClientRequest *request = envelope->mutable_request();
+  request->mutable_value()->set_type(ClientRequest::Value::POSITION);
+  request->mutable_value()->set_position(position);
+  return envelope;
+}
+
+EnvelopePtr MessageBuilder::makeGetPlayerStateRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::GET_PLAYERSTATE);
+}
+
+EnvelopePtr MessageBuilder::makeGetCurrentTrackRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::GET_CURRENTTRACK);
+}
+
+EnvelopePtr MessageBuilder::makeGetCurrentPlaylistRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::GET_CURRENTPLAYLIST);
+}
+
+bool MessageBuilder::containsValidClientRequest(const EnvelopePtr envelope)
+{
+  // Make sure the envelope contains a ServerNotification object
+  if (Envelope::Type_IsValid(envelope->type()) && (envelope->type() == Envelope::CLIENTREQUEST) && envelope->has_request())
+  {
+    const ClientRequest &message = envelope->request();
+
+    // First make sure that the request type is valid
+    if (ClientRequest::Type_IsValid(message.type()))
     {
-      (*this)[Method::METHOD_IITUNES_BACKTRACK] = "IiTunes::BackTrack";
-      (*this)[Method::METHOD_IITUNES_FASTFORWARD] = "IiTunes::FastForward";
-      (*this)[Method::METHOD_IITUNES_NEXTTRACK] = "IiTunes::NextTrack";
-      (*this)[Method::METHOD_IITUNES_PAUSE] = "IiTunes::Pause";
-      (*this)[Method::METHOD_IITUNES_PLAY] = "IiTunes::Play";
-      (*this)[Method::METHOD_IITUNES_PLAYPAUSE] = "IiTunes::PlayPause";
-      (*this)[Method::METHOD_IITUNES_PREVIOUSTRACK] = "IiTunes::PreviousTrack";
-      (*this)[Method::METHOD_IITUNES_RESUME] = "IiTunes::Resume";
-      (*this)[Method::METHOD_IITUNES_REWIND] = "IiTunes::Rewind";
-      (*this)[Method::METHOD_IITUNES_STOP] = "IiTunes::Stop";
-      (*this)[Method::METHOD_IITUNES_GET_SOUNDVOLUME] = "IiTunes::get_SoundVolume";
-      (*this)[Method::METHOD_IITUNES_PUT_SOUNDVOLUME] = "IiTunes::put_SoundVolume";
-      (*this)[Method::METHOD_IITUNES_GET_MUTE] = "IiTunes::get_Mute";
-      (*this)[Method::METHOD_IITUNES_PUT_MUTE] = "IiTunes::put_Mute";
-      (*this)[Method::METHOD_IITUNES_GET_PLAYERPOSITION] = "IiTunes::get_playerPosition";
-      (*this)[Method::METHOD_IITUNES_PUT_PLAYERPOSITION] = "IiTunes::put_PlayerPosition";
-      (*this)[Method::METHOD_IITCHSERVER_GET_PLAYERSTATE] = "iTCHServer::getPlayserState";
-      (*this)[Method::METHOD_IITCHSERVER_GET_CURRENTTRACK] = "iTCHServer::getCurrentTrack";
-      (*this)[Method::METHOD_IITCHSERVER_GET_CURRENTPLAYLIST] = "iTCHServer::getCurrentPlaylist";
-      (*this)[Method::METHOD_IITCHCLIENT_VOLUMECHANGED] = "iTCHClient::volumeChanged";
-      (*this)[Method::METHOD_IITCHCLIENT_PLAYINGSTARTED] = "iTCHClient::playingStarted";
-      (*this)[Method::METHOD_IITCHCLIENT_PLAYINGSTOPPED] = "iTCHClient::playingStopped";
-      (*this)[Method::METHOD_IITCHCLIENT_TRACKINFOCHANGED] = "iTCHClient::trackInfoChanged";
+      // Make sure that the action types with associated parameters have those parameters
+      switch(message.type())
+      {
+      case ClientRequest::PUT_SOUNDVOLUME:
+        if (message.has_value() &&
+            (message.value().type() == ClientRequest::Value::VOLUME) &&
+            message.value().has_volume())
+        {
+          return true;
+        }
+        break;
+      case ClientRequest::PUT_MUTE:
+        if (message.has_value() &&
+            (message.value().type() == ClientRequest::Value::MUTE) &&
+            message.value().has_mute())
+        {
+          return true;
+        }
+        break;
+      case ClientRequest::PUT_PLAYERPOSITION:
+        if (message.has_value() &&
+            (message.value().type() == ClientRequest::Value::POSITION) &&
+            message.value().has_position())
+        {
+          return true;
+        }
+        break;
+      default:
+        // This action should not have a value
+        if (!message.has_value())
+        {
+          return true;
+        }
+        break;
+      }
     }
-  } __supportedMethods;
-}
-
-Method::Method(const Method& method) :
-  method_(method.method_),
-  params_(method.params_),
-  id_(method.id_)
-{
-}
-
-Method::Method(SupportedMethods method, const QStringList &params, unsigned int id) :
-  params_(params),
-  id_(id)
-{
-  setMethod(method);
-}
-
-Method::Method(const QString &json) :
-  id_(0)
-{
-  fromJsonRpc(json);
-}
-
-void Method::setMethod(SupportedMethods method)
-{
-  // Check for supported method name
-  if (!__supportedMethods.contains(method))
-  {
-    throw InvalidValueException(QString("Unsupported method: %1").arg(method));
   }
 
-  method_ = method;
+  return false;
 }
 
-QString Method::toJsonRpc() const
+EnvelopePtr MessageBuilder::makeVolumeResponse(unsigned int sequenceId, long volume)
 {
-  // Initialize JSON-RPC string with method name
-  if (!__supportedMethods.contains(method_))
+  EnvelopePtr envelope = makeServerResponse(sequenceId);
+  ServerResponse *response = envelope->mutable_response();
+  response->mutable_value()->set_type(ServerResponse::Value::VOLUME);
+  response->mutable_value()->set_volume(volume);
+  return envelope;
+}
+
+EnvelopePtr MessageBuilder::makeMuteResponse(unsigned int sequenceId, bool isMute)
+{
+  EnvelopePtr envelope = makeServerResponse(sequenceId);
+  ServerResponse *response = envelope->mutable_response();
+  response->mutable_value()->set_type(ServerResponse::Value::MUTE);
+  response->mutable_value()->set_mute(isMute);
+  return envelope;
+}
+
+EnvelopePtr MessageBuilder::makePositionResponse(unsigned int sequenceId, long position)
+{
+  EnvelopePtr envelope = makeServerResponse(sequenceId);
+  ServerResponse *response = envelope->mutable_response();
+  response->mutable_value()->set_type(ServerResponse::Value::POSITION);
+  response->mutable_value()->set_position(position);
+  return envelope;
+}
+
+EnvelopePtr MessageBuilder::makeTrackResponse(unsigned int sequenceId, const Track &track)
+{
+  EnvelopePtr envelope = makeServerResponse(sequenceId);
+  ServerResponse *response = envelope->mutable_response();
+  response->mutable_value()->set_type(ServerResponse::Value::TRACK);
+  response->mutable_value()->add_track()->CopyFrom(track);
+  return envelope;
+}
+
+bool MessageBuilder::containsValidServerResponse(const EnvelopePtr envelope, const ClientRequest &originalRequest)
+{
+  // Make sure the envelope contains a ServerNotification object
+  if (Envelope::Type_IsValid(envelope->type()) && (envelope->type() == Envelope::SERVERRESPONSE) && envelope->has_response())
   {
-    throw InvalidValueException(QString("Unsupported method: %1").arg(method_));
-  }
+    const ServerResponse &message = envelope->response();
 
-  QString json = QString("{ \"method\": \"%1\", \"params\": [").arg(__supportedMethods[method_]);
-
-  // Add paramters to JSON-RPC params list
-  if (!params_.empty())
-  {
-    QStringList::const_iterator paramsIterator = params_.constBegin();
-
-    // Add first parameter to list
-    json += (*paramsIterator++);
-
-    // Add remaining parameters with comma separation
-    for (; paramsIterator != params_.constEnd(); ++paramsIterator)
+    // Make sure that the server response has the appropriate return value for the original request
+    // Should this also check the sequence id? it currently does not
+    // First make sure that the request type is valid
+    if (ClientRequest::Type_IsValid(originalRequest.type()))
     {
-      json += QString(", %1").arg(*paramsIterator);
+      // Make sure that the action types with associated parameters have those parameters
+      switch(originalRequest.type())
+      {
+      case ClientRequest::GET_SOUNDVOLUME:
+        if (message.has_value() &&
+            (message.value().type() == ServerResponse::Value::VOLUME) &&
+            message.value().has_volume())
+        {
+          return true;
+        }
+        break;
+      case ClientRequest::GET_MUTE:
+        if (message.has_value() &&
+            (message.value().type() == ClientRequest::Value::MUTE) &&
+            message.value().has_mute())
+        {
+          return true;
+        }
+        break;
+      case ClientRequest::GET_PLAYERPOSITION:
+        if (message.has_value() &&
+            (message.value().type() == ServerResponse::Value::POSITION) &&
+            message.value().has_position())
+        {
+          return true;
+        }
+        break;
+      case ClientRequest::GET_PLAYERSTATE:
+        if (message.has_value() &&
+            (message.value().type() == ServerResponse::Value::STATE) &&
+            message.value().has_state() &&
+            iTCH::PlayerState_IsValid(message.value().state()))
+        {
+          return true;
+        }
+        break;
+      case ClientRequest::GET_CURRENTTRACK:
+        // Should have only one track
+        if (message.has_value() &&
+            (message.value().type() == ServerResponse::Value::TRACK) &&
+            (message.value().track_size() == 1))
+        {
+          return true;
+        }
+        break;
+      case ClientRequest::GET_CURRENTPLAYLIST:
+        // Treat playlist as having 0 or more tracks
+        if (message.has_value() &&
+            (message.value().type() == ServerResponse::Value::TRACK))
+        {
+          return true;
+        }
+        break;
+      default:
+        // Response to this action should not have a value
+        if (!message.has_value())
+        {
+          return true;
+        }
+        break;
+      }
     }
   }
 
-  // Append the id number
-  json += QString("], \"id\": %1}").arg((id_ > 0) ? QString::number(id_) : "null");
-
-  return json;
-}
-
-void Method::fromJsonRpc(const QString &json)
-{
-  // Extract method, parameters, and id
-  int pos = __jsonMethodRegExp.indexIn(json);
-
-  // Check for valid JSON RPC message
-  if (pos < 0)
-  {
-    throw InvalidValueException(QString("Invalid JSON-RPC message: not correctly formatted"));
-  }
-
-  int n = __jsonMethodRegExp.numCaptures();
-  if (n != 3)
-  {
-    throw InvalidValueException(QString("Invalid JSON-RPC message: incorrect number of parameters (had %1, needs 3)").arg(n));
-  }
-
-  // Extract the method name (checks for supported method)
-  QString method = __jsonMethodRegExp.cap(1);
-  if (!__supportedMethods.values().contains(method))
-  {
-    throw InvalidValueException(QString("Invalid JSON-RPC message: unsupported method %1)").arg(method));
-  }
-
-  // Get key for method
-  method_ = __supportedMethods.key(method);
-
-  // Extract the
-  QString params = __jsonMethodRegExp.cap(2);
-  params_ = params.split(QRegExp("\\s*,\\s*"), QString::SkipEmptyParts);
-
-  QString id = __jsonMethodRegExp.cap(3);
-  bool valid;
-  id_ = (id == "null") ? 0 : id.toInt(&valid);
+  return false;
 }

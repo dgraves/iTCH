@@ -21,6 +21,7 @@ HEADERS += STiTCHDialog.h \
     ../iTCHCore/include/iTCH/EventSink.h
 FORMS += STiTCHDialog.ui
 INCLUDEPATH += ../iTCHCore/include \
-    ../iTunesCOMWindowsSDK
+    ../iTunesCOMWindowsSDK \
+    C:/Development/protobuf-2.3.0/src
 LIBS += ole32.lib oleaut32.lib
 RESOURCES += STiTCH.qrc

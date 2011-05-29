@@ -1,84 +1,88 @@
 #ifndef ITCH_METHOD_H
 #define ITCH_METHOD_H
 
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-#include <QtCore/qtconcurrentexception.h>
+#include <QtCore/QSharedPointer>
+#include "GeneratedCode/iTCH.pb.h"
 
 namespace iTCH
 {
 
-class Method
+typedef QSharedPointer<Envelope> EnvelopePtr;
+
+class MessageBuilder
 {
 public:
-  class InvalidValueException : public QtConcurrent::Exception
-  {
-  public:
-    InvalidValueException(const QString &message) : message_(message) { }
-    ~InvalidValueException() throw() { }
-    virtual const char * what() const throw() { return message_.toLocal8Bit().constData(); }
-    void raise() const { throw *this; }
-    Exception * clone() const { return new InvalidValueException(message_); }
+  //--------------- General purpose functions ---------------
+  static EnvelopePtr createEnvelope() { return EnvelopePtr(new Envelope()); }
 
-  protected:
-    QString message_;
-  };
 
-public:
-  enum SupportedMethods
-  {
-    METHOD_IITUNES_BACKTRACK               = 1,     // No value is returned
-    METHOD_IITUNES_FASTFORWARD             = 2,     // No value is returned
-    METHOD_IITUNES_NEXTTRACK               = 3,     // No value is returned
-    METHOD_IITUNES_PAUSE                   = 4,     // No value is returned
-    METHOD_IITUNES_PLAY                    = 5,     // No value is returned
-    METHOD_IITUNES_PLAYPAUSE               = 6,     // No value is returned
-    METHOD_IITUNES_PREVIOUSTRACK           = 7,     // No value is returned
-    METHOD_IITUNES_RESUME                  = 8,     // No value is returned
-    METHOD_IITUNES_REWIND                  = 9,     // No value is returned
-    METHOD_IITUNES_STOP                    = 10,    // No value is returned
-    METHOD_IITUNES_GET_SOUNDVOLUME         = 11,    // Returns a long (0-100%)
-    METHOD_IITUNES_PUT_SOUNDVOLUME         = 12,    // Takes a long (0-100%); No value is returned
-    METHOD_IITUNES_GET_MUTE                = 13,    // Returns a bool
-    METHOD_IITUNES_PUT_MUTE                = 14,    // Takes a bool; No value is returned
-    METHOD_IITUNES_GET_PLAYERPOSITION      = 15,    // Returns a long (0-100%)
-    METHOD_IITUNES_PUT_PLAYERPOSITION      = 16,    // Takes a long (0-100%); No value is returned
-    METHOD_IITCHSERVER_GET_PLAYERSTATE     = 17,    // Returns an iTCHPlayerState enumeration value (generated from ITPlayserState)
-    METHOD_IITCHSERVER_GET_CURRENTTRACK    = 18,    // Returns an iTCHTrack object (generated from IITTrack)
-    METHOD_IITCHSERVER_GET_CURRENTPLAYLIST = 19,    // Returns an iTCHPlayList object (generated from IITPlayList)
-    METHOD_IITCHCLIENT_VOLUMECHANGED       = 20,    // Sends a volume changed message to client
-    METHOD_IITCHCLIENT_PLAYINGSTARTED      = 21,    // Sends a playing started notification to client
-    METHOD_IITCHCLIENT_PLAYINGSTOPPED      = 22,    // Sends a playing stopped notification to client
-    METHOD_IITCHCLIENT_TRACKINFOCHANGED    = 23     // Sends a notification that the currently playing track's info has changed to client
-  };
+  //--------------- Make server notification RPC messages ---------------
+  static EnvelopePtr makeVolumeChangedNotification(unsigned int sequenceId);
 
-public:
-  Method(const Method& method);
+  static EnvelopePtr makePlayingStartedNotification(unsigned int sequenceId);
 
-  Method(SupportedMethods method, const QStringList &params, unsigned int id);
+  static EnvelopePtr makePlayingStoppedNotification(unsigned int sequenceId);
 
-  Method(const QString &json);
+  static EnvelopePtr makeTrackInfoChangedNotification(unsigned int sequenceId);
 
-  void setMethod(SupportedMethods method);
+  static bool containsValidServerNotification(const EnvelopePtr envelope);
 
-  SupportedMethods getMethod() const { return method_; }
 
-  void setParams(const QStringList &params) { params_ = params; }
+  //--------------- Make client request RPC messages ---------------
+  static EnvelopePtr makeBackTrackRequest(unsigned int sequenceId);
 
-  QStringList getParams() const { return params_; }
+  static EnvelopePtr makeFastForwardRequest(unsigned int sequenceId);
 
-  void setID(unsigned int id) { id_ = id; }
+  static EnvelopePtr makeNextTrackRequest(unsigned int sequenceId);
 
-  unsigned int getID() const { return id_; }
+  static EnvelopePtr makePauseRequest(unsigned int sequenceId);
 
-  QString toJsonRpc() const;
+  static EnvelopePtr makePlayRequest(unsigned int sequenceId);
 
-  void fromJsonRpc(const QString &json);
+  static EnvelopePtr makePlayPauseRequest(unsigned int sequenceId);
+
+  static EnvelopePtr makePreviousTrackRequest(unsigned int sequenceId);
+
+  static EnvelopePtr makeResumeRequest(unsigned int sequenceId);
+
+  static EnvelopePtr makeRewindRequest(unsigned int sequenceId);
+
+  static EnvelopePtr makeStopRequest(unsigned int sequenceId);
+
+  static EnvelopePtr makeGetSoundVolumeRequest(unsigned int sequenceId);
+
+  static EnvelopePtr makePutSoundVolumeRequest(unsigned int sequenceId, long volume);
+
+  static EnvelopePtr makeGetMuteRequest(unsigned int sequenceId);
+
+  static EnvelopePtr makePutMuteRequest(unsigned int sequenceId, bool isMute);
+
+  static EnvelopePtr makeGetPlayerPositionRequest(unsigned int sequenceId);
+
+  static EnvelopePtr makePutPlayerPositionRequest(unsigned int sequenceId, long position);
+
+  static EnvelopePtr makeGetPlayerStateRequest(unsigned int sequenceId);
+
+  static EnvelopePtr makeGetCurrentTrackRequest(unsigned int sequenceId);
+
+  static EnvelopePtr makeGetCurrentPlaylistRequest(unsigned int sequenceId);
+
+  static bool containsValidClientRequest(const EnvelopePtr envelope);
+
+
+  //--------------- Make server response RPC messages ---------------
+  static EnvelopePtr makeVolumeResponse(unsigned int sequenceId, long volume);
+
+  static EnvelopePtr makeMuteResponse(unsigned int sequenceId, bool isMute);
+
+  static EnvelopePtr makePositionResponse(unsigned int sequenceId, long position);
+
+  static EnvelopePtr makeTrackResponse(unsigned int sequenceId, const Track &track);
+
+  static bool containsValidServerResponse(const EnvelopePtr envelope, const ClientRequest &originalRequest);
 
 private:
-  SupportedMethods method_;
-  QStringList params_;                       // Place strings inside doublequotes, to distinguish between strings and numbers (for JSON)
-  unsigned int id_;
+  ~MessageBuilder();
 };
 
 } // end namespace iTCH

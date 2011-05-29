@@ -18,7 +18,7 @@ class PiTCHWindow : public QMainWindow
 public:
   PiTCHWindow(QWidget *parent = 0);
 
-  ~PiTCHWindow();
+  virtual ~PiTCHWindow();
 
 protected:
   void changeEvent(QEvent *e);
@@ -28,7 +28,7 @@ protected slots:
   void resolvedHostname();
   void connectedToServer();
   void disconnectedFromServer(bool closedByServer, const QString &message);
-  void processMethod(const iTCH::Method &method);
+  void processMessage(const iTCH::EnvelopePtr envelope);
   void error(const QString &message);
 
   // Slots to handle signals from widgets
@@ -43,15 +43,17 @@ protected slots:
   void volumeSliderValueChanged(int);
   void networkButtonClicked();
 
-protected:
+private:
+  unsigned long nextSequenceId();
+
+private:
+  Ui::PiTCHWindow  *ui_;
   iTCH::Client      client_;
   iTCH::NetworkInfo serverInfo_;
   unsigned int      autoConnectInterval_;
   bool              autoConnect_;
   bool              buttonHeld_;
-
-private:
-  Ui::PiTCHWindow  *ui_;
+  unsigned long sequenceId_;
 };
 
 #endif // PITCHWINDOW_H

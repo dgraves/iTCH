@@ -13,7 +13,7 @@ class PiTCHNetworkDialog : public QDialog {
 public:
   PiTCHNetworkDialog(const iTCH::NetworkInfo &info, bool autoConnect, unsigned int autoConnectInterval = 10, QWidget *parent = 0);
 
-  ~PiTCHNetworkDialog();
+  virtual ~PiTCHNetworkDialog();
 
   void setNetworkInfo(const iTCH::NetworkInfo &info);
 
