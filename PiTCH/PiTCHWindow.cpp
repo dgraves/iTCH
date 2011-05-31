@@ -56,7 +56,7 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   ui_(new Ui::PiTCHWindow),
   serverInfo_(QHostInfo::localHostName(), 8049),
   buttonHeld_(false),
-  buttonHeldDelay_(300),
+  buttonHeldDelay_(500),
   sequenceId_(0)
 {
   ui_->setupUi(this);
