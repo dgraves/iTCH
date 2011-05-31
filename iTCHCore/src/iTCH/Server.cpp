@@ -67,7 +67,7 @@ void Server::close()
 
 void Server::closeConnection(Connection *connection)
 {
-  delete connection;
+  connection->closeConnection();
 }
 
 QString Server::errorString() const
