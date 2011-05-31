@@ -336,9 +336,9 @@
   </connection>
   <connection>
    <sender>networkButton</sender>
-   <signal>clicked()</signal>
+   <signal>toggled(bool)</signal>
    <receiver>PiTCHWindow</receiver>
-   <slot>networkButtonClicked()</slot>
+   <slot>networkButtonToggled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>389</x>
@@ -393,6 +393,6 @@
   <slot>minVolumeButtonClicked()</slot>
   <slot>maxVolumeButtonClicked()</slot>
   <slot>volumeSliderValueChanged(int)</slot>
-  <slot>networkButtonClicked()</slot>
+  <slot>networkButtonToggled(bool)</slot>
  </slots>
 </ui>

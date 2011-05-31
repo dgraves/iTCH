@@ -108,13 +108,21 @@ void PiTCHWindow::connectedToServer()
   client_.sendMessage(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
 }
 
-void PiTCHWindow::disconnectedFromServer(bool closedByServer, const QString &message)
+void PiTCHWindow::disconnectedFromServer(bool closedByHost, const QString &message)
 {
   QString status(tr("Unconnected"));
-  ui_->statusBar->showMessage(QString("%1: %2").arg(status).arg(message));
+  ui_->networkButton->blockSignals(true);
+  ui_->networkButton->setChecked(false);
+  ui_->networkButton->blockSignals(false);
 
-  if (!closedByServer)
+  if (closedByHost)
   {
+    ui_->statusBar->showMessage(status);
+  }
+  else
+  {
+    ui_->statusBar->showMessage(QString("%1: %2").arg(status).arg(message));
+
     // Start auto-connect
   }
 }
@@ -245,15 +253,22 @@ void PiTCHWindow::volumeSliderValueChanged(int value)
   client_.sendMessage(iTCH::MessageBuilder::makePutSoundVolumeRequest(nextSequenceId(), value));
 }
 
-void PiTCHWindow::networkButtonClicked()
+void PiTCHWindow::networkButtonToggled(bool isChecked)
 {
-  PiTCHNetworkDialog dialog(serverInfo_, this);
-
-  if (QDialog::Accepted == dialog.exec())
+  if (isChecked)
   {
-    // Attempt the server connection
-    ui_->statusBar->showMessage(tr("Looking up host..."));
-    client_.openConnection(dialog.getNetworkInfo());
+    PiTCHNetworkDialog dialog(serverInfo_, this);
+
+    if (QDialog::Accepted == dialog.exec())
+    {
+      // Attempt the server connection
+      ui_->statusBar->showMessage(tr("Looking up host..."));
+      client_.openConnection(dialog.getNetworkInfo());
+    }
+  }
+  else
+  {
+    client_.closeConnection();
   }
 }
 

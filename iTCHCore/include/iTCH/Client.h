@@ -65,7 +65,7 @@ public:
 signals:
   void hostnameResolved();
   void connected();
-  void disconnected(bool closedByPeer, const QString &message);
+  void disconnected(bool closedByHost, const QString &message);   // closedByHost is true if socket closed by closeConnection(), false for error condition (includes closed normally by remote peer)
   void receivedMessage(const iTCH::EnvelopePtr envelope);
   void error(const QString &message);                             // Report errors with JSON-RC messages
 
@@ -73,7 +73,7 @@ protected slots:
   void resolvedHostname();
   void connectedToServer();
   void receiveMessage();
-  void connectionClosedByServer();
+  void connectionClosed();
   void socketError();
 
 private:

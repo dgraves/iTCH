@@ -146,7 +146,7 @@ void Client::receiveMessage()
   buffer_.remove(0, pos);
 }
 
-void Client::connectionClosedByServer()
+void Client::connectionClosed()
 {
   disconnected(true, socket_->errorString());
 }
@@ -154,7 +154,12 @@ void Client::connectionClosedByServer()
 void Client::socketError()
 {
   QString errorString = socket_->errorString();
+
+  // Stop QTcpSocket::disconnected() from being raised and triggering connectionClosed()
+  socket_->blockSignals(true);
   socket_->close();
+  socket_->blockSignals(false);
+
   disconnected(false, errorString);
 }
 
@@ -163,7 +168,7 @@ void Client::initializeSignals()
   // Connect signals and slots
   connect(socket_.data(), SIGNAL(hostFound()), this, SLOT(resolvedHostname()));
   connect(socket_.data(), SIGNAL(connected()), this, SLOT(connectedToServer()));
-  connect(socket_.data(), SIGNAL(disconnected()), this, SLOT(connectionClosedByServer()));
+  connect(socket_.data(), SIGNAL(disconnected()), this, SLOT(connectionClosed()));
   connect(socket_.data(), SIGNAL(readyRead()), this, SLOT(receiveMessage()));
   connect(socket_.data(), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError()));
 }

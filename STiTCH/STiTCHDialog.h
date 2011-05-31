@@ -69,7 +69,7 @@ public slots:
 protected slots:
   // Slots to handle signals from iTCH::Server
   void connectionReceived(iTCH::Connection *connection);
-  void connectionLost(iTCH::Connection *connection, bool closedByPeer, const QString &message);
+  void connectionLost(iTCH::Connection *connection, bool closedByHost, const QString &message);
   void processMessage(iTCH::Connection *connection, const iTCH::EnvelopePtr envelope);
   void communicationError(iTCH::Connection *connection, const QString &message);                 // Receive message formatting error
 

@@ -226,12 +226,19 @@ void STiTCHDialog::connectionReceived(iTCH::Connection *connection)
   }
 }
 
-void STiTCHDialog::connectionLost(iTCH::Connection *connection, bool closedByPeer, const QString &message)
+void STiTCHDialog::connectionLost(iTCH::Connection *connection, bool closedByHost, const QString &message)
 {
   removeConnectionFromList(connection);
 
   // Add log message
-  appendLogMessage(QString(tr("Connection from %1 lost: %2")).arg(connection->getAddress()).arg(message));
+  if (closedByHost)
+  {
+    appendLogMessage(QString(tr("Connection from %1 closed by server")).arg(connection->getAddress()).arg(message));
+  }
+  else
+  {
+    appendLogMessage(QString(tr("Connection from %1 lost: %2")).arg(connection->getAddress()).arg(message));
+  }
 
   // Show task tray notification
   if (ui_->disconnectCheckBox->isChecked())

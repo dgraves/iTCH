@@ -75,12 +75,12 @@ QString Server::errorString() const
   return server_.errorString();
 }
 
-void Server::disconnectedFromPeer(bool closedByPeer, const QString &message)
+void Server::disconnectedFromPeer(bool closedByHost, const QString &message)
 {
   Connection *connection = dynamic_cast<Connection *>(sender());
   if (connection)
   {
-    connectionLost(connection, closedByPeer, message);
+    connectionLost(connection, closedByHost, message);
     connection->deleteLater();  // Delete the connection after signal handling is complete
   }
 }

@@ -58,13 +58,13 @@ public:
 
 signals:
   void connectionReceived(iTCH::Connection *connection);                                           // Report acceptance of a new connection
-  void connectionLost(iTCH::Connection *connection, bool closedByPeer, const QString &message);    // Report lost connection, either through communication error or closed by peer
-  void receivedMessage(iTCH::Connection *connection, const iTCH::EnvelopePtr envelope);                    // Report receipt of a message from a connection
+  void connectionLost(iTCH::Connection *connection, bool closedByHost, const QString &message);    // Report lost connection, either through communication error or closed by host
+  void receivedMessage(iTCH::Connection *connection, const iTCH::EnvelopePtr envelope);            // Report receipt of a message from a connection
   void error(iTCH::Connection *connection, const QString &message);                                // Report an error with a received message
 
 protected slots:
   // Slots to handle signals from iTCH::Connection
-  void disconnectedFromPeer(bool closedByPeer, const QString &message);
+  void disconnectedFromPeer(bool closedByHost, const QString &message);
   void receiveMessage(const iTCH::EnvelopePtr envelope);
   void connectionError(const QString &message);
 

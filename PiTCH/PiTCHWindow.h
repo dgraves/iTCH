@@ -50,7 +50,7 @@ protected slots:
   // Slots to handle signals from iTCHClient
   void resolvedHostname();
   void connectedToServer();
-  void disconnectedFromServer(bool closedByServer, const QString &message);
+  void disconnectedFromServer(bool closedByHost, const QString &message);
   void processMessage(const iTCH::EnvelopePtr envelope);
   void error(const QString &message);
 
@@ -66,7 +66,7 @@ protected slots:
   void minVolumeButtonClicked();
   void maxVolumeButtonClicked();
   void volumeSliderValueChanged(int);
-  void networkButtonClicked();
+  void networkButtonToggled(bool);
 
   // Slots to handle status updates from server
   void setSoundVolume(int);
