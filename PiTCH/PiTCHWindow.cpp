@@ -30,6 +30,7 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   ui_(new Ui::PiTCHWindow),
   serverInfo_(QHostInfo::localHostName(), 8049),
   buttonHeld_(false),
+  buttonHeldDelay_(300),
   sequenceId_(0)
 {
   ui_->setupUi(this);
@@ -131,14 +132,25 @@ void PiTCHWindow::timeSliderValueChanged(int value)
 
 void PiTCHWindow::backButtonPressed()
 {
-  // Start a timer to detect if button is held for fast forward mode
+  connect(&buttonTimer_, SIGNAL(timeout()), this, SLOT(rewindTimeout()));
+  buttonTimer_.setSingleShot(true);
+  buttonTimer_.start(buttonHeldDelay_);
 }
 
 void PiTCHWindow::backButtonReleased()
 {
+  buttonTimer_.stop();
+  buttonTimer_.disconnect();
+
   if (buttonHeld_)
   {
     buttonHeld_ = false;
+
+    // Restore the player state to playing or paused, sending a play
+    // or paused request doesn't seem to stop the fast forward so we
+    // send pauseplay twice
+    client_.sendMessage(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
+    client_.sendMessage(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
   }
   else
   {
@@ -146,21 +158,44 @@ void PiTCHWindow::backButtonReleased()
   }
 }
 
+void PiTCHWindow::rewindTimeout()
+{
+  buttonHeld_ = true;
+  client_.sendMessage(iTCH::MessageBuilder::makeFastForwardRequest(nextSequenceId()));
+}
+
 void PiTCHWindow::forwardButtonPressed()
 {
-  // Start a timer to detect if button is held for fast forward mode
+  connect(&buttonTimer_, SIGNAL(timeout()), this, SLOT(fastForwardTimeout()));
+  buttonTimer_.setSingleShot(true);
+  buttonTimer_.start(buttonHeldDelay_);
 }
 
 void PiTCHWindow::forwardButtonReleased()
 {
+  buttonTimer_.stop();
+  buttonTimer_.disconnect();
+
   if (buttonHeld_)
   {
     buttonHeld_ = false;
+
+    // Restore the player state to playing or paused, sending a play
+    // or paused request doesn't seem to stop the fast forward so we
+    // send pauseplay twice
+    client_.sendMessage(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
+    client_.sendMessage(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
   }
   else
   {
     client_.sendMessage(iTCH::MessageBuilder::makeNextTrackRequest(nextSequenceId()));
   }
+}
+
+void PiTCHWindow::fastForwardTimeout()
+{
+  buttonHeld_ = true;
+  client_.sendMessage(iTCH::MessageBuilder::makeFastForwardRequest(nextSequenceId()));
 }
 
 void PiTCHWindow::playPauseButtonClicked()

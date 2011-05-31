@@ -23,6 +23,7 @@
 #ifndef PITCHWINDOW_H
 #define PITCHWINDOW_H
 
+#include <QtCore/QTimer>
 #include <QtGui/QMainWindow>
 #include "iTCH/MessageBuilder.h"
 #include "iTCH/Client.h"
@@ -57,8 +58,10 @@ protected slots:
   void timeSliderValueChanged(int);
   void backButtonPressed();
   void backButtonReleased();
+  void rewindTimeout();
   void forwardButtonPressed();
   void forwardButtonReleased();
+  void fastForwardTimeout();
   void playPauseButtonClicked();
   void minVolumeButtonClicked();
   void maxVolumeButtonClicked();
@@ -83,6 +86,8 @@ private:
   unsigned int      autoConnectInterval_;
   bool              autoConnect_;
   bool              buttonHeld_;
+  unsigned int      buttonHeldDelay_;
+  QTimer            buttonTimer_;
   unsigned long     sequenceId_;
   iTCH::Track       currentTrack_;
 };
