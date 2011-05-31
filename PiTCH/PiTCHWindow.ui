@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>125</height>
+    <width>350</width>
+    <height>130</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>300</width>
-    <height>125</height>
+    <width>350</width>
+    <height>130</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -290,7 +290,7 @@
    <sender>maxVolumeButton</sender>
    <signal>clicked()</signal>
    <receiver>PiTCHWindow</receiver>
-   <slot>fullVolumeButtonClicked()</slot>
+   <slot>maxVolumeButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>318</x>
@@ -354,7 +354,7 @@
    <sender>minVolumeButton</sender>
    <signal>clicked()</signal>
    <receiver>PiTCHWindow</receiver>
-   <slot>muteButtonClicked()</slot>
+   <slot>minVolumeButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>197</x>
@@ -390,8 +390,8 @@
   <slot>playPauseButtonClicked()</slot>
   <slot>forwardButtonPressed()</slot>
   <slot>forwardButtonReleased()</slot>
-  <slot>muteButtonClicked()</slot>
-  <slot>fullVolumeButtonClicked()</slot>
+  <slot>minVolumeButtonClicked()</slot>
+  <slot>maxVolumeButtonClicked()</slot>
   <slot>volumeSliderValueChanged(int)</slot>
   <slot>networkButtonClicked()</slot>
  </slots>
