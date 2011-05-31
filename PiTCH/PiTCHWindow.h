@@ -73,6 +73,7 @@ protected slots:
   void setCurrentTrack(const iTCH::Track &);
 
 private:
+  void createStandardIcons();
   unsigned long nextSequenceId();
 
 private:

@@ -133,7 +133,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="muteButton">
+       <widget class="QToolButton" name="minVolumeButton">
         <property name="text">
          <string>...</string>
         </property>
@@ -150,7 +150,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="fullVolumeButton">
+       <widget class="QToolButton" name="maxVolumeButton">
         <property name="text">
          <string>...</string>
         </property>
@@ -197,9 +197,9 @@
   <tabstop>backButton</tabstop>
   <tabstop>playPauseToggleButton</tabstop>
   <tabstop>forwardButton</tabstop>
-  <tabstop>muteButton</tabstop>
+  <tabstop>minVolumeButton</tabstop>
   <tabstop>volumeSlider</tabstop>
-  <tabstop>fullVolumeButton</tabstop>
+  <tabstop>maxVolumeButton</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -284,7 +284,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>fullVolumeButton</sender>
+   <sender>maxVolumeButton</sender>
    <signal>clicked()</signal>
    <receiver>PiTCHWindow</receiver>
    <slot>fullVolumeButtonClicked()</slot>
@@ -348,7 +348,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>muteButton</sender>
+   <sender>minVolumeButton</sender>
    <signal>clicked()</signal>
    <receiver>PiTCHWindow</receiver>
    <slot>muteButtonClicked()</slot>

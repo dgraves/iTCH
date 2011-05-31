@@ -35,6 +35,8 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   ui_->setupUi(this);
   ui_->statusBar->showMessage(tr("Unconnected"));
 
+  createStandardIcons();
+
   connect(&client_, SIGNAL(hostnameResolved()), this, SLOT(resolvedHostname()));
   connect(&client_, SIGNAL(connected()), this, SLOT(connectedToServer()));
   connect(&client_, SIGNAL(disconnected(bool,QString)), this, SLOT(disconnectedFromServer(bool,QString)));
@@ -70,6 +72,12 @@ void PiTCHWindow::resolvedHostname()
 void PiTCHWindow::connectedToServer()
 {
   ui_->statusBar->showMessage(tr("Connected"));
+
+  // Request sound volume, mute, player state, and current track
+  client_.sendMessage(iTCH::MessageBuilder::makeGetSoundVolumeRequest(nextSequenceId()));
+  client_.sendMessage(iTCH::MessageBuilder::makeGetMuteRequest(nextSequenceId()));
+  client_.sendMessage(iTCH::MessageBuilder::makeGetPlayerStateRequest(nextSequenceId()));
+  client_.sendMessage(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
 }
 
 void PiTCHWindow::disconnectedFromServer(bool closedByServer, const QString &message)
@@ -210,8 +218,16 @@ void PiTCHWindow::setPlayerPosition(int newPosition)
   ui_->timeSlider->blockSignals(false);
 }
 
-void PiTCHWindow::setPlayerState(iTCH::PlayerState)
+void PiTCHWindow::setPlayerState(iTCH::PlayerState newState)
 {
+  if (newState == iTCH::PLAYING)
+  {
+    ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+  }
+  else if (newState == iTCH::STOPPED)
+  {
+    ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+  }
 }
 
 void PiTCHWindow::setCurrentTrack(const iTCH::Track &track)
@@ -221,6 +237,16 @@ void PiTCHWindow::setCurrentTrack(const iTCH::Track &track)
   ui_->artist->setText(QString("%1 -- %2")
     .arg(track.artist().c_str())
     .arg(track.album().c_str()));
+}
+
+void PiTCHWindow::createStandardIcons()
+{
+  ui_->backButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+  ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+  ui_->forwardButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
+  ui_->minVolumeButton->setIcon(style()->standardIcon(QStyle::SP_MediaVolumeMuted));
+  ui_->maxVolumeButton->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
+  ui_->networkButton->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
 }
 
 unsigned long PiTCHWindow::nextSequenceId()
