@@ -27,6 +27,7 @@
 #include "iTCH/MessageBuilder.h"
 
 struct IiTunes;
+struct IITTrack;
 struct IConnectionPoint;
 
 namespace iTCH
@@ -43,13 +44,17 @@ class Controller : public QObject
   friend class EventSink;
 
 public:
+  // Static utility functions for iTunesCOMInterface to protobuf type conversion
+  static void Controller::convertTrack(IITTrack *iittrack, Track *track);
+
+public:
   Controller();
 
   virtual ~Controller();
 
   bool hasInstance() const;
 
-  void processRequest(const ClientRequest &request, iTCH::Connection *connection);
+  void processRequest(const ClientRequest &request, Connection *connection);
 
   void createInstance();
 
@@ -58,12 +63,13 @@ public:
 signals:
   void createdInstance();
   void destroyedInstance();
+  void statusChanged(const iTCH::EnvelopePtr envelope);  // Status message to send to clients
 
 protected slots:
-  // Slots to handle events from iTunes
-  void play();
+  // Slots to handle events from iTunes - called by EventSink friend class
+  void play(const Track &track);
   void stop();
-  void playingTrackChanged();
+  void playingTrackChanged(const Track &track);
   void volumeChanged(long newVolume);
   void aboutToQuit();
   void quitting();

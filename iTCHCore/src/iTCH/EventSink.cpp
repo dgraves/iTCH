@@ -31,10 +31,9 @@ EventSink::EventSink(Controller *controller) :
   refCount_(0)
 {
   // Retrieve the type information for the _IiTiunesEvents base
-  // All functionality needed by this class was provided with the
-  // iTunes COM SDK version 1.2
+  // Requesting iTunes COM SDK version 1.12
   VARIANT_BOOL compatible;
-  HRESULT result = controller_->itunes_->CheckVersion(1, 2, &compatible);
+  HRESULT result = controller_->itunes_->CheckVersion(1, 12, &compatible);
   if (FAILED(result))
   {
     // throw exception
@@ -142,7 +141,7 @@ HRESULT STDMETHODCALLTYPE EventSink::Invoke(DISPID dispIdMember, REFIID riid, LC
   UINT uArgErr;
   HRESULT hresult;
   VARIANTARG varg;
-  IITTrack* track = NULL;
+  IITTrack* iittrack = NULL;
 
   if (!::IsEqualIID(riid, IID_NULL))
   {
@@ -164,33 +163,68 @@ HRESULT STDMETHODCALLTYPE EventSink::Invoke(DISPID dispIdMember, REFIID riid, LC
   switch (dispIdMember)
   {
   case ITEventPlayerPlay:
+    // Generated whenever a new track starts playing, either when
+    // user clicks the play button or player advances to next track
+    // in playlist
+    if (pDispParams->cArgs != 1)
+    {
+      return DISP_E_PARAMNOTFOUND;
+    }
+
     hresult = ::DispGetParam(pDispParams, 0, VT_DISPATCH, &varg, puArgErr);
     if(hresult != NOERROR)
     {
       return hresult;
     }
 
-    hresult = V_DISPATCH(&varg)->QueryInterface(IID_IITTrack, (void **)&track);
+    hresult = V_DISPATCH(&varg)->QueryInterface(IID_IITTrack, (void **)&iittrack);
     if(hresult != NOERROR)
     {
       return hresult;
     }
 
-    track->Release();
+    {
+      Track track;
+      Controller::convertTrack(iittrack, &track);
+      iittrack->Release();
+
+      controller_->play(track);
+    }
+
     break;
   case ITEventPlayerStop:
-    hresult = ::DispGetParam(pDispParams, 0, VT_DISPATCH, &varg, puArgErr);
-    if(hresult != NOERROR)
-    {
-      return hresult;
-    }
+    // Raised whenever a track stops playing, either when user clicks
+    // stop button or track plays to completion
+    controller_->stop();
     break;
   case ITEventPlayerPlayingTrackChanged:
+    // Raised when the playing track's information is edited or
+    // the next CD joined track in a CD playlist starts playing
+    if (pDispParams->cArgs != 1)
+    {
+      return DISP_E_PARAMNOTFOUND;
+    }
+
     hresult = ::DispGetParam(pDispParams, 0, VT_DISPATCH, &varg, puArgErr);
     if(hresult != NOERROR)
     {
       return hresult;
     }
+
+    hresult = V_DISPATCH(&varg)->QueryInterface(IID_IITTrack, (void **)&iittrack);
+    if(hresult != NOERROR)
+    {
+      return hresult;
+    }
+
+    {
+      Track track;
+      Controller::convertTrack(iittrack, &track);
+      iittrack->Release();
+
+      controller_->play(track);
+    }
+
     break;
   case ITEventAboutToPromptUserToQuit:
     controller_->aboutToQuit();
@@ -198,6 +232,9 @@ HRESULT STDMETHODCALLTYPE EventSink::Invoke(DISPID dispIdMember, REFIID riid, LC
     controller_->quitting();
     break;
   case ITEventSoundVolumeChanged:
+    // Raised when volume is changed, when playing track's info is
+    // changed or when a track starts playing after user clicks play
+    // button (does not get raised if track plays to completion)
     if (pDispParams->cArgs != 1)
     {
       return DISP_E_PARAMNOTFOUND;

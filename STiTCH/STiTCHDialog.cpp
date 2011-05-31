@@ -49,6 +49,7 @@ STiTCHDialog::STiTCHDialog(QWidget *parent) :
 
   connect(&controller_, SIGNAL(createdInstance()), this, SLOT(createdInstance()));
   connect(&controller_, SIGNAL(destroyedInstance()), this, SLOT(destroyedInstance()));
+  connect(&controller_, SIGNAL(statusChanged(iTCH::EnvelopePtr)), this, SLOT(sendMessage(iTCH::EnvelopePtr)));
   connect(ui_->connectionsList->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateDisconnectButton()));
   connect(ui_->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
   connect(trayIcon_, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
@@ -283,6 +284,15 @@ void STiTCHDialog::destroyedInstance()
   ui_->connectPlayerButton->setEnabled(true);
   ui_->disconnectPlayerButton->setEnabled(false);
   setIcon();
+}
+
+void STiTCHDialog::sendMessage(iTCH::EnvelopePtr envelope)
+{
+  QList<iTCH::Connection *> connections = connectionIndexes_.keys();
+  for (QList<iTCH::Connection *>::iterator iter = connections.begin(); iter != connections.end(); ++iter)
+  {
+    (*iter)->sendMessage(envelope);
+  }
 }
 
 void STiTCHDialog::connectController()

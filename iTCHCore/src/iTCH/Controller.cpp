@@ -20,11 +20,126 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+#include <atlbase.h>
+
 #include "iTunesCOMInterface.h"
+#include "iTCH/Connection.h"
 #include "iTCH/EventSink.h"
 #include "iTCH/Controller.h"
 
 using namespace iTCH;
+
+namespace
+{
+
+inline PlayerState convertState(ITPlayerState state)
+{
+  switch (state)
+  {
+  case ITPlayerStateStopped:
+    return iTCH::STOPPED;
+  case ITPlayerStatePlaying:
+    return iTCH::PLAYING;
+  case ITPlayerStateFastForward:
+    return iTCH::FASTFORWARD;
+  case ITPlayerStateRewind:
+    return iTCH::REWIND;
+  default:
+    return iTCH::UNKNOWN;
+  }
+}
+
+inline QString convertKind(ITTrackKind kind)
+{
+  switch (kind)
+  {
+  case ITTrackKindFile:
+    return "File track";
+  case ITTrackKindCD:
+    return "CD track";
+  case ITTrackKindURL:
+    return "URL track";
+  case ITTrackKindDevice:
+    return "Device track";
+  case ITTrackKindSharedLibrary:
+    return "Shared library track";
+  case ITTrackKindUnknown:
+  default:
+    return "Unknown track kind";
+  }
+}
+
+} // End of anonymous name space
+
+void Controller::convertTrack(IITTrack *iittrack, Track *track)
+{
+  // Initialize required fields with empty values
+  track->set_name("");
+  track->set_artist("");
+  track->set_album("");
+  track->set_duration(0);
+  track->set_genre("");
+  track->set_year(0);
+
+  if (iittrack != NULL)
+  {
+    CComBSTR bstr;
+    long value = 0;
+    ITTrackKind kind = ITTrackKindUnknown;
+
+    // !bstr resolves as true if string is NULL
+    if (iittrack->get_Name(&bstr) == S_OK && !bstr == false)
+    {
+      track->set_name(CW2A(bstr));
+    }
+
+    if (iittrack->get_Artist(&bstr) == S_OK && !bstr == false)
+    {
+      track->set_artist(CW2A(bstr));
+    }
+
+    if (iittrack->get_Album(&bstr) == S_OK && !bstr == false)
+    {
+      track->set_album(CW2A(bstr));
+    }
+
+    if (iittrack->get_Duration(&value) == S_OK)
+    {
+      track->set_duration(value);
+    }
+
+    if (iittrack->get_Genre(&bstr) == S_OK && !bstr == false)
+    {
+      track->set_genre(CW2A(bstr));
+    }
+
+    if (iittrack->get_Year(&value) == S_OK)
+    {
+      track->set_year(value);
+    }
+
+    // Non-required fields
+    if (iittrack->get_BitRate(&value) == S_OK)
+    {
+      track->set_bitrate(value);
+    }
+
+    if (iittrack->get_SampleRate(&value) == S_OK)
+    {
+      track->set_sample_rate(value);
+    }
+
+    if (iittrack->get_Comment(&bstr) == S_OK && !bstr == false)
+    {
+      track->set_comment(CW2A(bstr));
+    }
+
+    if (iittrack->get_Kind(&kind) == S_OK)
+    {
+      track->set_kind(convertKind(kind).toStdString());
+    }
+  }
+}
 
 Controller::Controller() :
   itunes_(NULL),
@@ -47,7 +162,7 @@ bool Controller::hasInstance() const
   return itunes_ != NULL;
 }
 
-void Controller::processRequest(const ClientRequest &request, iTCH::Connection *connection)
+void Controller::processRequest(const ClientRequest &request, Connection *connection)
 {
   if (!hasInstance())
   {
@@ -87,23 +202,58 @@ void Controller::processRequest(const ClientRequest &request, iTCH::Connection *
     itunes_->Stop();
     break;
   case ClientRequest::GET_SOUNDVOLUME:                  // Returns a long (0-100%)
+    {
+      long volume = 0;
+      itunes_->get_SoundVolume(&volume);
+      connection->sendMessage(iTCH::MessageBuilder::makeSoundVolumeStatus(
+        request.seqid(), volume));
+    }
     break;
   case ClientRequest::PUT_SOUNDVOLUME:                  // Takes a long (0-100%); No value is returned
     itunes_->put_SoundVolume(request.value().volume());
     break;
   case ClientRequest::GET_MUTE:                         // Returns a bool
+    {
+      VARIANT_BOOL isMute = FALSE;
+      itunes_->get_Mute(&isMute);
+        connection->sendMessage(iTCH::MessageBuilder::makeMuteStatus(
+        request.seqid(), isMute == VARIANT_TRUE ? true : false));
+    }
     break;
   case ClientRequest::PUT_MUTE:                         // Takes a bool; No value is returned
     itunes_->put_Mute(request.value().mute());
     break;
   case ClientRequest::GET_PLAYERPOSITION:               // Returns a long (0-100%)
+    {
+      long position = 0;
+      itunes_->get_PlayerPosition(&position);
+      connection->sendMessage(iTCH::MessageBuilder::makePlayerPositionStatus(
+        request.seqid(), position));
+    }
     break;
   case ClientRequest::PUT_PLAYERPOSITION:               // Takes a long (0-100%); No value is returned
     itunes_->put_PlayerPosition(request.value().position());
     break;
   case ClientRequest::GET_PLAYERSTATE:                  // Returns an iTCHPlayerState enumeration value (generated from ITPlayserState)
+    {
+      ITPlayerState state = ITPlayerStateStopped;
+      itunes_->get_PlayerState(&state);
+      connection->sendMessage(iTCH::MessageBuilder::makePlayerStateStatus(
+        request.seqid(), convertState(state)));
+    }
     break;
   case ClientRequest::GET_CURRENTTRACK:                 // Returns an iTCHTrack object (generated from IITTrack)
+    {
+      IITTrack *iittrack = 0;
+      itunes_->get_CurrentTrack(&iittrack);
+
+      Track track;
+      convertTrack(iittrack, &track);
+      iittrack->Release();
+
+      connection->sendMessage(iTCH::MessageBuilder::makeCurrentTrackStatus(
+        request.seqid(), track));
+    }
     break;
   case ClientRequest::GET_CURRENTPLAYLIST:              // Returns an iTCHPlayList object (generated from IITPlayList)
     break;
@@ -204,20 +354,32 @@ void Controller::destroyInstance()
   destroyedInstance();
 }
 
-void Controller::play()
+void Controller::play(const Track &track)
 {
+  // Send play notification and information for playing track
+  statusChanged(iTCH::MessageBuilder::makePlayerStateStatus(0, STOPPED));
+  statusChanged(iTCH::MessageBuilder::makeCurrentTrackStatus(0, track));
 }
 
 void Controller::stop()
 {
+  statusChanged(iTCH::MessageBuilder::makePlayerStateStatus(0, STOPPED));
 }
 
-void Controller::playingTrackChanged()
+void Controller::playingTrackChanged(const Track &track)
 {
+  statusChanged(iTCH::MessageBuilder::makeCurrentTrackStatus(0, track));
 }
 
 void Controller::volumeChanged(long newVolume)
 {
+  statusChanged(iTCH::MessageBuilder::makeSoundVolumeStatus(0, newVolume));
+
+  // Also send mute state in case it triggered volume change, although
+  // I haven't yet encountered a situtation where get_Mute yields true
+  VARIANT_BOOL isMute = FALSE;
+  itunes_->get_Mute(&isMute);
+  statusChanged(iTCH::MessageBuilder::makeMuteStatus(0, isMute == VARIANT_TRUE ? true : false));
 }
 
 void Controller::aboutToQuit()

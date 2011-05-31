@@ -60,10 +60,17 @@ protected slots:
   void forwardButtonPressed();
   void forwardButtonReleased();
   void playPauseButtonClicked();
-  void muteButtonClicked();
-  void fullVolumeButtonClicked();
+  void minVolumeButtonClicked();
+  void maxVolumeButtonClicked();
   void volumeSliderValueChanged(int);
   void networkButtonClicked();
+
+  // Slots to handle status updates from server
+  void setSoundVolume(int);
+  void setMute(bool);
+  void setPlayerPosition(int);
+  void setPlayerState(iTCH::PlayerState);
+  void setCurrentTrack(const iTCH::Track &);
 
 private:
   unsigned long nextSequenceId();
@@ -75,7 +82,8 @@ private:
   unsigned int      autoConnectInterval_;
   bool              autoConnect_;
   bool              buttonHeld_;
-  unsigned long sequenceId_;
+  unsigned long     sequenceId_;
+  iTCH::Track       currentTrack_;
 };
 
 #endif // PITCHWINDOW_H

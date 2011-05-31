@@ -85,6 +85,30 @@ void PiTCHWindow::disconnectedFromServer(bool closedByServer, const QString &mes
 
 void PiTCHWindow::processMessage(const iTCH::EnvelopePtr envelope)
 {
+  // Make sure envelope contains a ServerStatus message with valid values
+  if (iTCH::MessageBuilder::containsValidServerStatus(envelope))
+  {
+    const iTCH::ServerStatus &status = envelope->status();
+
+    switch (status.type())
+    {
+    case iTCH::ServerStatus::SOUNDVOLUME:
+      setSoundVolume(status.value().volume());
+      break;
+    case iTCH::ServerStatus::MUTE:
+      setMute(status.value().mute());
+      break;
+    case iTCH::ServerStatus::PLAYERPOSITION:
+      setPlayerPosition(status.value().position());
+      break;
+    case iTCH::ServerStatus::PLAYERSTATE:
+      setPlayerState(status.value().state());
+      break;
+    case iTCH::ServerStatus::CURRENTTRACK:
+      setCurrentTrack(status.value().track(0));
+      break;
+    }
+  }
 }
 
 void PiTCHWindow::error(const QString &message)
@@ -136,14 +160,14 @@ void PiTCHWindow::playPauseButtonClicked()
   client_.sendMessage(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
 }
 
-void PiTCHWindow::muteButtonClicked()
+void PiTCHWindow::minVolumeButtonClicked()
 {
-  ui_->volumeSlider->setSliderPosition(0);
+  ui_->volumeSlider->setValue(0);
 }
 
-void PiTCHWindow::fullVolumeButtonClicked()
+void PiTCHWindow::maxVolumeButtonClicked()
 {
-  ui_->volumeSlider->setSliderPosition(100);
+  ui_->volumeSlider->setValue(100);
 }
 
 void PiTCHWindow::volumeSliderValueChanged(int value)
@@ -161,6 +185,42 @@ void PiTCHWindow::networkButtonClicked()
     ui_->statusBar->showMessage(tr("Looking up host..."));
     client_.openConnection(dialog.getNetworkInfo());
   }
+}
+
+void PiTCHWindow::setSoundVolume(int newVolume)
+{
+  ui_->volumeSlider->blockSignals(true);
+  ui_->volumeSlider->setValue(newVolume);
+  ui_->volumeSlider->blockSignals(false);
+}
+
+void PiTCHWindow::setMute(bool isMute)
+{
+  if (isMute)
+  {
+    // We interpret mute as setting volume to 0
+    setSoundVolume(0);
+  }
+}
+
+void PiTCHWindow::setPlayerPosition(int newPosition)
+{
+  ui_->timeSlider->blockSignals(true);
+  ui_->timeSlider->setValue(newPosition);
+  ui_->timeSlider->blockSignals(false);
+}
+
+void PiTCHWindow::setPlayerState(iTCH::PlayerState)
+{
+}
+
+void PiTCHWindow::setCurrentTrack(const iTCH::Track &track)
+{
+  currentTrack_.CopyFrom(track);
+  ui_->songTitle->setText(track.name().c_str());
+  ui_->artist->setText(QString("%1 -- %2")
+    .arg(track.artist().c_str())
+    .arg(track.album().c_str()));
 }
 
 unsigned long PiTCHWindow::nextSequenceId()

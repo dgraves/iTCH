@@ -67,15 +67,16 @@ public slots:
   void appendLogMessage(const QString &message);
 
 protected slots:
-  // Slots to handle signals from iTCHServer
+  // Slots to handle signals from iTCH::Server
   void connectionReceived(iTCH::Connection *connection);
   void connectionLost(iTCH::Connection *connection, bool closedByPeer, const QString &message);
   void processMessage(iTCH::Connection *connection, const iTCH::EnvelopePtr envelope);
-  void communicationError(iTCH::Connection *connection, const QString &message);                    // Receive JSON error messages
+  void communicationError(iTCH::Connection *connection, const QString &message);                 // Receive message formatting error
 
-  // Slots to handle signals from iTCHController
+  // Slots to handle signals from iTCH::Controller
   void createdInstance();
   void destroyedInstance();
+  void sendMessage(iTCH::EnvelopePtr envelope);  // Send message to all connections
 
   // Slots to handle signals from widgets
   void connectController();

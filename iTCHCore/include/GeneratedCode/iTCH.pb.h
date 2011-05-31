@@ -179,13 +179,14 @@ inline bool Version_Parse(
     Version_descriptor(), name, value);
 }
 enum PlayerState {
-  STOPPED = 0,
-  PLAYING = 1,
-  FASTFORWARD = 2,
-  REWIND = 3
+  UNKNOWN = 0,
+  STOPPED = 1,
+  PLAYING = 2,
+  FASTFORWARD = 3,
+  REWIND = 4
 };
 bool PlayerState_IsValid(int value);
-const PlayerState PlayerState_MIN = STOPPED;
+const PlayerState PlayerState_MIN = UNKNOWN;
 const PlayerState PlayerState_MAX = REWIND;
 const int PlayerState_ARRAYSIZE = PlayerState_MAX + 1;
 

@@ -249,7 +249,7 @@ EnvelopePtr MessageBuilder::makePlayerStateStatus(unsigned int sequenceId, Playe
   return envelope;
 }
 
-EnvelopePtr MessageBuilder::makeTrackStatus(unsigned int sequenceId, const Track &track)
+EnvelopePtr MessageBuilder::makeCurrentTrackStatus(unsigned int sequenceId, const Track &track)
 {
   EnvelopePtr envelope = makeServerStatus(sequenceId,ServerStatus::CURRENTTRACK);
   ServerStatus *status = envelope->mutable_status();

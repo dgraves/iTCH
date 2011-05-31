@@ -286,8 +286,9 @@ void protobuf_AddDesc_iTCH_2eproto() {
     "UME\020\000\022\010\n\004MUTE\020\001\022\022\n\016PLAYERPOSITION\020\002\022\017\n\013P"
     "LAYERSTATE\020\003\022\020\n\014CURRENTTRACK\020\004\022\023\n\017CURREN"
     "TPLAYLIST\020\005*\037\n\007Version\022\024\n\020PROTOCOL_VERSI"
-    "ON\020\000*D\n\013PlayerState\022\013\n\007STOPPED\020\000\022\013\n\007PLAY"
-    "ING\020\001\022\017\n\013FASTFORWARD\020\002\022\n\n\006REWIND\020\003", 1634);
+    "ON\020\000*Q\n\013PlayerState\022\013\n\007UNKNOWN\020\000\022\013\n\007STOP"
+    "PED\020\001\022\013\n\007PLAYING\020\002\022\017\n\013FASTFORWARD\020\003\022\n\n\006R"
+    "EWIND\020\004", 1647);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "iTCH.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -337,6 +338,7 @@ bool PlayerState_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;

@@ -89,7 +89,7 @@ public:
 
   static EnvelopePtr makePlayerStateStatus(unsigned int sequenceId, PlayerState state);
 
-  static EnvelopePtr makeTrackStatus(unsigned int sequenceId, const Track &track);
+  static EnvelopePtr makeCurrentTrackStatus(unsigned int sequenceId, const Track &track);
 
   static bool containsValidServerStatus(const EnvelopePtr envelope);
 
