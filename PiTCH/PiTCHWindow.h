@@ -52,7 +52,7 @@ protected slots:
   void connectedToServer();
   void disconnectedFromServer(bool closedByHost, const QString &message);
   void processMessage(const iTCH::EnvelopePtr envelope);
-  void error(const QString &message);
+  void processProtocolError(const QString &message);
 
   // Slots to handle signals from widgets
   void timeSliderValueChanged(int);

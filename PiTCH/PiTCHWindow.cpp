@@ -68,7 +68,7 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   connect(&client_, SIGNAL(connected()), this, SLOT(connectedToServer()));
   connect(&client_, SIGNAL(disconnected(bool,QString)), this, SLOT(disconnectedFromServer(bool,QString)));
   connect(&client_, SIGNAL(receivedMessage(iTCH::EnvelopePtr)), this, SLOT(processMessage(iTCH::EnvelopePtr)));
-  connect(&client_, SIGNAL(error(QString)), this, SLOT(error(QString)));
+  connect(&client_, SIGNAL(protocolError(QString)), this, SLOT(processProtocolError(QString)));
 }
 
 PiTCHWindow::~PiTCHWindow()
@@ -155,7 +155,7 @@ void PiTCHWindow::processMessage(const iTCH::EnvelopePtr envelope)
   }
 }
 
-void PiTCHWindow::error(const QString &message)
+void PiTCHWindow::processProtocolError(const QString &message)
 {
    ui_->statusBar->showMessage(message.toLocal8Bit().constData(), 5);
 }

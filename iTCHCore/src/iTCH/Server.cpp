@@ -94,12 +94,12 @@ void Server::receiveMessage(const EnvelopePtr envelope)
   }
 }
 
-void Server::connectionError(const QString &message)
+void Server::processProtocolError(const QString &message)
 {
   Connection *connection = dynamic_cast<Connection *>(sender());
   if (connection)
   {
-    error(connection, message);
+    protocolError(connection, message);
   }
 }
 
@@ -109,7 +109,7 @@ void Server::acceptConnection()
 
   connect(connection, SIGNAL(disconnected(bool,QString)), this, SLOT(disconnectedFromPeer(bool,QString)));
   connect(connection, SIGNAL(receivedMessage(iTCH::EnvelopePtr)), this, SLOT(receiveMessage(iTCH::EnvelopePtr)));
-  connect(connection, SIGNAL(error(QString)), this, SLOT(connectionError(QString)));
+  connect(connection, SIGNAL(protocolError(QString)), this, SLOT(processProtocolError(QString)));
 
   // Signal receipt of new connection
   connectionReceived(connection);

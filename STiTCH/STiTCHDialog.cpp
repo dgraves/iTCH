@@ -45,7 +45,7 @@ STiTCHDialog::STiTCHDialog(QWidget *parent) :
   connect(&server_, SIGNAL(connectionReceived(iTCH::Connection*)), this, SLOT(connectionReceived(iTCH::Connection*)));
   connect(&server_, SIGNAL(connectionLost(iTCH::Connection*,bool,QString)), this, SLOT(connectionLost(iTCH::Connection*,bool,QString)));
   connect(&server_, SIGNAL(receivedMessage(iTCH::Connection*,iTCH::EnvelopePtr)), this, SLOT(processMessage(iTCH::Connection*,iTCH::EnvelopePtr)));
-  connect(&server_, SIGNAL(error(iTCH::Connection*,QString)), this, SLOT(communicationError(iTCH::Connection*,QString)));
+  connect(&server_, SIGNAL(protocolError(iTCH::Connection*,QString)), this, SLOT(processProtocolError(iTCH::Connection*,QString)));
 
   connect(&controller_, SIGNAL(createdInstance()), this, SLOT(createdInstance()));
   connect(&controller_, SIGNAL(destroyedInstance()), this, SLOT(destroyedInstance()));
@@ -265,10 +265,10 @@ void STiTCHDialog::processMessage(iTCH::Connection *connection, const iTCH::Enve
   }
 }
 
-void STiTCHDialog::communicationError(iTCH::Connection *connection, const QString &message)
+void STiTCHDialog::processProtocolError(iTCH::Connection *connection, const QString &message)
 {
   appendLogMessage(QString("%1 %2 -> %3")
-                   .arg(tr("ERROR: Received invalid command from"))
+                   .arg(tr("ERROR: Received invalid request message from"))
                    .arg(connection->getAddress())
                    .arg(message));
 }

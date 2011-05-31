@@ -71,7 +71,7 @@ protected slots:
   void connectionReceived(iTCH::Connection *connection);
   void connectionLost(iTCH::Connection *connection, bool closedByHost, const QString &message);
   void processMessage(iTCH::Connection *connection, const iTCH::EnvelopePtr envelope);
-  void communicationError(iTCH::Connection *connection, const QString &message);                 // Receive message formatting error
+  void processProtocolError(iTCH::Connection *connection, const QString &message);              // Receive a message formatting error
 
   // Slots to handle signals from iTCH::Controller
   void createdInstance();

@@ -87,7 +87,7 @@ void Client::sendMessage(const EnvelopePtr envelope)
   }
   else
   {
-    error(QString("Failed to prepare network message for transmission: %1").arg(envelope->DebugString().c_str()));
+    protocolError(QString("Failed to prepare network message for transmission: %1").arg(envelope->DebugString().c_str()));
   }
 }
 
@@ -134,7 +134,7 @@ void Client::receiveMessage()
       }
       else
       {
-        error("Failed to process network message");
+        protocolError("Failed to process network message");
       }
 
       pos += messageSize;
