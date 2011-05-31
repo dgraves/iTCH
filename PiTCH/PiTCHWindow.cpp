@@ -188,7 +188,7 @@ void PiTCHWindow::backButtonReleased()
 void PiTCHWindow::rewindTimeout()
 {
   buttonHeld_ = true;
-  client_.sendMessage(iTCH::MessageBuilder::makeFastForwardRequest(nextSequenceId()));
+  client_.sendMessage(iTCH::MessageBuilder::makeRewindRequest(nextSequenceId()));
 }
 
 void PiTCHWindow::forwardButtonPressed()
