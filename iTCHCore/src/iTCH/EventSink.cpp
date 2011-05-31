@@ -186,7 +186,10 @@ HRESULT STDMETHODCALLTYPE EventSink::Invoke(DISPID dispIdMember, REFIID riid, LC
     {
       Track track;
       Controller::convertTrack(iittrack, &track);
-      iittrack->Release();
+      if (iittrack != NULL)
+      {
+        iittrack->Release();
+      }
 
       controller_->play(track);
     }
@@ -220,7 +223,10 @@ HRESULT STDMETHODCALLTYPE EventSink::Invoke(DISPID dispIdMember, REFIID riid, LC
     {
       Track track;
       Controller::convertTrack(iittrack, &track);
-      iittrack->Release();
+      if (iittrack != NULL)
+      {
+        iittrack->Release();
+      }
 
       controller_->play(track);
     }

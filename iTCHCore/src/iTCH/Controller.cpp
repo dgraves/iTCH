@@ -145,8 +145,10 @@ Controller::Controller() :
   itunes_(NULL),
   events_(NULL),
   eventsConnectionPoint_(NULL),
-  eventsCookie_(0)
+  eventsCookie_(0),
+  positionTimerInterval_(1000)  // 1 second interval
 {
+  connect(&positionTimer_, SIGNAL(timeout()), this, SLOT(positionTimeout()));
 }
 
 Controller::~Controller()
@@ -249,7 +251,10 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
 
       Track track;
       convertTrack(iittrack, &track);
-      iittrack->Release();
+      if (iittrack != NULL)
+      {
+        iittrack->Release();
+      }
 
       connection->sendMessage(iTCH::MessageBuilder::makeCurrentTrackStatus(
         request.seqid(), track));
@@ -359,11 +364,23 @@ void Controller::play(const Track &track)
   // Send play notification and information for playing track
   statusChanged(iTCH::MessageBuilder::makePlayerStateStatus(0, PLAYING));
   statusChanged(iTCH::MessageBuilder::makeCurrentTrackStatus(0, track));
+
+  // Send initial player position
+  sendPlayerPosition(0);
+
+  // Start the position timer to periodically transmit player position
+  positionTimer_.start(positionTimerInterval_);
 }
 
 void Controller::stop()
 {
   statusChanged(iTCH::MessageBuilder::makePlayerStateStatus(0, STOPPED));
+
+  // Stop the position timer
+  positionTimer_.stop();
+
+  // Send final player position
+  sendPlayerPosition(0);
 }
 
 void Controller::playingTrackChanged(const Track &track)
@@ -396,4 +413,17 @@ void Controller::quitting()
   {
     destroyInstance();
   }
+}
+
+void Controller::positionTimeout()
+{
+  // Send current player position
+  sendPlayerPosition(0);
+}
+
+void Controller::sendPlayerPosition(unsigned long sequenceId)
+{
+  long position = 0;
+  itunes_->get_PlayerPosition(&position);
+  statusChanged(iTCH::MessageBuilder::makePlayerPositionStatus(sequenceId, position));
 }

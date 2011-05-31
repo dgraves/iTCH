@@ -20,10 +20,36 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+#include <QtCore/QTime>
 #include <QtNetwork/QHostInfo>
 #include "PiTCHNetworkDialog.h"
 #include "PiTCHWindow.h"
 #include "ui_PiTCHWindow.h"
+
+namespace
+{
+
+// Create formatted time string for time elapsed/remaining display
+// Formats:
+//   Seconds only -> 0:ss
+//   Has minutes  -> m:ss
+//   Has hours    -> H:mm:ss
+// Will not accept more than 24 hours
+QString secondsToTimePositionString(int seconds)
+{
+  QTime converter = QTime().addSecs(seconds);
+
+  if (converter.hour() > 0)
+  {
+    return converter.toString("H:mm:ss");
+  }
+  else
+  {
+    return converter.toString("m:ss");
+  }
+}
+
+} // End of anonymous namespace
 
 PiTCHWindow::PiTCHWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -74,11 +100,12 @@ void PiTCHWindow::connectedToServer()
 {
   ui_->statusBar->showMessage(tr("Connected"));
 
-  // Request sound volume, mute, player state, and current track
+  // Request current track, sound volume, mute, player state, and player position
+  client_.sendMessage(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
   client_.sendMessage(iTCH::MessageBuilder::makeGetSoundVolumeRequest(nextSequenceId()));
   client_.sendMessage(iTCH::MessageBuilder::makeGetMuteRequest(nextSequenceId()));
   client_.sendMessage(iTCH::MessageBuilder::makeGetPlayerStateRequest(nextSequenceId()));
-  client_.sendMessage(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
+  client_.sendMessage(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
 }
 
 void PiTCHWindow::disconnectedFromServer(bool closedByServer, const QString &message)
@@ -251,6 +278,9 @@ void PiTCHWindow::setPlayerPosition(int newPosition)
   ui_->timeSlider->blockSignals(true);
   ui_->timeSlider->setValue(newPosition);
   ui_->timeSlider->blockSignals(false);
+
+  ui_->timeElapsed->setText(secondsToTimePositionString(newPosition));
+  ui_->timeRemaining->setText(QString("-%1").arg(secondsToTimePositionString(currentTrack_.duration() - newPosition)));
 }
 
 void PiTCHWindow::setPlayerState(iTCH::PlayerState newState)
@@ -272,6 +302,7 @@ void PiTCHWindow::setCurrentTrack(const iTCH::Track &track)
   ui_->artist->setText(QString("%1 -- %2")
     .arg(track.artist().c_str())
     .arg(track.album().c_str()));
+  ui_->timeSlider->setMaximum(track.duration());
 }
 
 void PiTCHWindow::createStandardIcons()
