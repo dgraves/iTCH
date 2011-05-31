@@ -357,7 +357,7 @@ void Controller::destroyInstance()
 void Controller::play(const Track &track)
 {
   // Send play notification and information for playing track
-  statusChanged(iTCH::MessageBuilder::makePlayerStateStatus(0, STOPPED));
+  statusChanged(iTCH::MessageBuilder::makePlayerStateStatus(0, PLAYING));
   statusChanged(iTCH::MessageBuilder::makeCurrentTrackStatus(0, track));
 }
 
