@@ -314,9 +314,26 @@ void PiTCHWindow::setCurrentTrack(const iTCH::Track &track)
 {
   currentTrack_.CopyFrom(track);
   ui_->songTitle->setText(track.name().c_str());
-  ui_->artist->setText(QString("%1 -- %2")
-    .arg(track.artist().c_str())
-    .arg(track.album().c_str()));
+
+  if (!track.artist().empty() && !track.album().empty())
+  {
+    ui_->artist->setText(QString("%1 -- %2")
+      .arg(track.artist().c_str())
+      .arg(track.album().c_str()));
+  }
+  else if (!track.artist().empty())
+  {
+    ui_->artist->setText(track.artist().c_str());
+  }
+  else if (!track.album().empty())
+  {
+    ui_->artist->setText(track.album().c_str());
+  }
+  else
+  {
+    ui_->artist->setText("");
+  }
+
   ui_->timeSlider->setMaximum(track.duration());
 }
 

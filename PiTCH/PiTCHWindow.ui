@@ -38,7 +38,7 @@
       <item row="0" column="0" colspan="3">
        <widget class="QLabel" name="songTitle">
         <property name="text">
-         <string>Song Title</string>
+         <string/>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -48,7 +48,7 @@
       <item row="1" column="0" colspan="3">
        <widget class="QLabel" name="artist">
         <property name="text">
-         <string>Artist</string>
+         <string/>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
