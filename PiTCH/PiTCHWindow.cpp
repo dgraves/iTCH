@@ -439,7 +439,7 @@ void PiTCHWindow::setPlayerState(bool playing)
     }
     else
     {
-      startPositionTimer();
+      stopPositionTimer();
       ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
     }
 
