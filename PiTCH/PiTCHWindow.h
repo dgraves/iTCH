@@ -73,7 +73,7 @@ protected slots:
   void setSoundVolume(int);
   void setMute(bool);
   void setPlayerPosition(int);
-  void setPlaying(bool playing);
+  void setPlayerState(bool playing);
   void setCurrentTrack(const iTCH::Track &);
   void requestPlayerPosition();
 
@@ -83,6 +83,8 @@ private:
   void sendTrackedRequest(iTCH::EnvelopePtr envelope);  // Store request in pending request queue and send
   void processNotification(iTCH::EnvelopePtr envelope);
   void processResponse(iTCH::EnvelopePtr envelope);
+  void startPositionTimer();
+  void stopPositionTimer();
 
 private:
   // Map of client requests, keyed by sequence ID

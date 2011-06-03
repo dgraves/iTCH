@@ -164,7 +164,10 @@ void PiTCHWindow::connectedToServer()
 
 void PiTCHWindow::disconnectedFromServer(bool closedByHost, const QString &message)
 {
+  stopPositionTimer();
+
   QString status(tr("Unconnected"));
+
   ui_->networkButton->blockSignals(true);
   ui_->networkButton->setChecked(false);
   ui_->networkButton->blockSignals(false);
@@ -209,14 +212,13 @@ void PiTCHWindow::processNotification(iTCH::EnvelopePtr envelope)
     break;
   case iTCH::ServerNotification::PLAYINGSTARTED:
     // Get the current track info and initial time slider position
-    setPlaying(true);
+    setPlayerState(true);
     sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
     sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
     break;
   case iTCH::ServerNotification::PLAYINGSTOPPED:
     // Get the current track info and final time slider position
-    setPlaying(false);
-    sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
+    setPlayerState(false);
     break;
   case iTCH::ServerNotification::TRACKINFOCHANGED:
     sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
@@ -268,7 +270,7 @@ void PiTCHWindow::processResponse(iTCH::EnvelopePtr envelope)
           setPlayerPosition(response.value().position());
           break;
         case iTCH::ServerResponse::Value::STATE:
-          setPlaying(response.value().state() == iTCH::PLAYING);
+          setPlayerState(response.value().state() == iTCH::PLAYING);
           break;
         case iTCH::ServerResponse::Value::TRACK:
           setCurrentTrack(response.value().track());
@@ -396,11 +398,6 @@ void PiTCHWindow::networkButtonToggled(bool isChecked)
   }
   else
   {
-    if (positionTimer_.isActive())
-    {
-      positionTimer_.stop();
-      positionTimer_.disconnect();
-    }
     client_.closeConnection();
   }
 }
@@ -431,33 +428,22 @@ void PiTCHWindow::setPlayerPosition(int newPosition)
   ui_->timeRemaining->setText(QString("-%1").arg(secondsToTimePositionString(currentTrack_.duration() - newPosition)));
 }
 
-void PiTCHWindow::setPlaying(bool playing)
+void PiTCHWindow::setPlayerState(bool playing)
 {
   if (playing_ != playing)
   {
-    playing_ = playing;
-
     if (playing)
     {
+      startPositionTimer();
       ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
-
-      // Start the timer to peridoically request time slider position
-      if (!positionTimer_.isActive())
-      {
-        connect(&positionTimer_, SIGNAL(timeout()), this, SLOT(requestPlayerPosition()));
-        positionTimer_.start(positionInterval_);
-      }
     }
     else
     {
-      if (positionTimer_.isActive())
-      {
-        positionTimer_.stop();
-        positionTimer_.disconnect();
-      }
-
+      startPositionTimer();
       ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
     }
+
+    playing_ = playing;
   }
 }
 
@@ -513,4 +499,23 @@ void PiTCHWindow::sendTrackedRequest(iTCH::EnvelopePtr envelope)
   assert(envelope->has_request());
   requests_.insert(envelope->request().seqid(), envelope);
   client_.sendMessage(envelope);
+}
+
+void PiTCHWindow::startPositionTimer()
+{
+  // Start the timer to peridoically request time slider position
+  if (!positionTimer_.isActive())
+  {
+    connect(&positionTimer_, SIGNAL(timeout()), this, SLOT(requestPlayerPosition()));
+    positionTimer_.start(positionInterval_);
+  }
+}
+
+void PiTCHWindow::stopPositionTimer()
+{
+  if (positionTimer_.isActive())
+  {
+    positionTimer_.stop();
+    positionTimer_.disconnect();
+  }
 }
