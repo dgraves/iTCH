@@ -57,7 +57,7 @@ public:
 
   void processRequest(const ClientRequest &request, Connection *connection);
 
-  void createInstance();
+  bool createInstance();
 
   void destroyInstance();
 
@@ -65,13 +65,14 @@ signals:
   void createdInstance();
   void destroyedInstance();
   void statusChanged(const iTCH::EnvelopePtr envelope);  // Status message to send to clients
+  void comError(const QString &message);                 // Error message to send when a COM error occurs
 
 protected slots:
   // Slots to handle events from iTunes - called by EventSink friend class
-  void play(const Track &track);
+  void play();
   void stop();
-  void playingTrackChanged(const Track &track);
-  void volumeChanged(long newVolume);
+  void playingTrackChanged();
+  void volumeChanged();
   void aboutToQuit();
   void quitting();
 

@@ -77,6 +77,7 @@ protected slots:
   void createdInstance();
   void destroyedInstance();
   void sendMessage(iTCH::EnvelopePtr envelope);  // Send message to all connections
+  void processComError(const QString &message);                                                 // Receive a COM related error
 
   // Slots to handle signals from widgets
   void connectController();

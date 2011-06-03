@@ -30,37 +30,47 @@ EventSink::EventSink(Controller *controller) :
   typeInfo_(NULL),
   refCount_(0)
 {
+}
+
+EventSink::~EventSink()
+{
+}
+
+bool EventSink::create()
+{
   // Retrieve the type information for the _IiTiunesEvents base
   // Requesting iTunes COM SDK version 1.12
   VARIANT_BOOL compatible;
   HRESULT result = controller_->itunes_->CheckVersion(1, 12, &compatible);
   if (FAILED(result))
   {
-    // throw exception
+    controller_->comError("Cannot query iTunes COM SDK version");
+    return false;
   }
 
   if (!compatible)
   {
-    // throw exception
+    controller_->comError("iTunes is not compatible with iTunes COM SDK version 1.2 (it is too old)");
+    return false;
   }
 
   ITypeLib *typeLib = NULL ;
-  result = ::LoadRegTypeLib(LIBID_iTunesLib, 1, 2, 0, &typeLib);
+  result = ::LoadRegTypeLib(LIBID_iTunesLib, 1, 12, 0, &typeLib);
   if (FAILED(result))
   {
-    // throw exception
+    controller_->comError("Could not load iTunes COM SDK version 1.2");
+    return false;
   }
 
   result = typeLib->GetTypeInfoOfGuid(DIID__IiTunesEvents, &typeInfo_) ;
   typeLib->Release();
   if (FAILED(result))
   {
-    // throw exception
+    controller_->comError("Could not retrieve iTunes COM SDK type info");
+    return false;
   }
-}
 
-EventSink::~EventSink()
-{
+  return true;
 }
 
 HRESULT STDMETHODCALLTYPE EventSink::QueryInterface(REFIID riid, void **ppvObject)
@@ -139,7 +149,6 @@ HRESULT STDMETHODCALLTYPE EventSink::GetIDsOfNames(REFIID riid, OLECHAR **rgszNa
 HRESULT STDMETHODCALLTYPE EventSink::Invoke(DISPID dispIdMember, REFIID riid, LCID, WORD wFlags, DISPPARAMS *pDispParams, VARIANT *, EXCEPINFO *, UINT *puArgErr)
 {
   UINT uArgErr;
-  HRESULT hresult;
   VARIANTARG varg;
   IITTrack* iittrack = NULL;
 
@@ -163,37 +172,7 @@ HRESULT STDMETHODCALLTYPE EventSink::Invoke(DISPID dispIdMember, REFIID riid, LC
   switch (dispIdMember)
   {
   case ITEventPlayerPlay:
-    // Generated whenever a new track starts playing, either when
-    // user clicks the play button or player advances to next track
-    // in playlist
-    if (pDispParams->cArgs != 1)
-    {
-      return DISP_E_PARAMNOTFOUND;
-    }
-
-    hresult = ::DispGetParam(pDispParams, 0, VT_DISPATCH, &varg, puArgErr);
-    if(hresult != NOERROR)
-    {
-      return hresult;
-    }
-
-    hresult = V_DISPATCH(&varg)->QueryInterface(IID_IITTrack, (void **)&iittrack);
-    if(hresult != NOERROR)
-    {
-      return hresult;
-    }
-
-    {
-      Track track;
-      Controller::convertTrack(iittrack, &track);
-      if (iittrack != NULL)
-      {
-        iittrack->Release();
-      }
-
-      controller_->play(track);
-    }
-
+    controller_->play();
     break;
   case ITEventPlayerStop:
     // Raised whenever a track stops playing, either when user clicks
@@ -201,36 +180,7 @@ HRESULT STDMETHODCALLTYPE EventSink::Invoke(DISPID dispIdMember, REFIID riid, LC
     controller_->stop();
     break;
   case ITEventPlayerPlayingTrackChanged:
-    // Raised when the playing track's information is edited or
-    // the next CD joined track in a CD playlist starts playing
-    if (pDispParams->cArgs != 1)
-    {
-      return DISP_E_PARAMNOTFOUND;
-    }
-
-    hresult = ::DispGetParam(pDispParams, 0, VT_DISPATCH, &varg, puArgErr);
-    if(hresult != NOERROR)
-    {
-      return hresult;
-    }
-
-    hresult = V_DISPATCH(&varg)->QueryInterface(IID_IITTrack, (void **)&iittrack);
-    if(hresult != NOERROR)
-    {
-      return hresult;
-    }
-
-    {
-      Track track;
-      Controller::convertTrack(iittrack, &track);
-      if (iittrack != NULL)
-      {
-        iittrack->Release();
-      }
-
-      controller_->play(track);
-    }
-
+      controller_->playingTrackChanged();
     break;
   case ITEventAboutToPromptUserToQuit:
     controller_->aboutToQuit();
@@ -238,22 +188,7 @@ HRESULT STDMETHODCALLTYPE EventSink::Invoke(DISPID dispIdMember, REFIID riid, LC
     controller_->quitting();
     break;
   case ITEventSoundVolumeChanged:
-    // Raised when volume is changed, when playing track's info is
-    // changed or when a track starts playing after user clicks play
-    // button (does not get raised if track plays to completion)
-    if (pDispParams->cArgs != 1)
-    {
-      return DISP_E_PARAMNOTFOUND;
-    }
-
-    // Need to extract a long from the arg list
-    hresult = ::DispGetParam(pDispParams, 0, VT_I4, &varg, puArgErr);
-    if(hresult != NOERROR)
-    {
-      return hresult;
-    }
-
-    controller_->volumeChanged(V_I4(&varg));
+    controller_->volumeChanged();
     break;
   case ITEventDatabaseChanged:
   case ITEventCOMCallsDisabled:

@@ -40,6 +40,9 @@ public:
 
   virtual ~EventSink();
 
+  // Initialize COM state
+  bool create();
+
   HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
 
   ULONG STDMETHODCALLTYPE AddRef();
@@ -53,24 +56,6 @@ public:
   HRESULT STDMETHODCALLTYPE GetIDsOfNames(REFIID riid, OLECHAR **rgszNames, UINT cNames, LCID, DISPID *rgDispId);
 
   HRESULT STDMETHODCALLTYPE Invoke(DISPID dispIdMember, REFIID riid, LCID, WORD wFlags, DISPPARAMS *pDispParams, VARIANT *, EXCEPINFO *, UINT *puArgErr);
-
-  HRESULT STDMETHODCALLTYPE OnDatabaseChangedEvent(VARIANT deletedObjectIDs, VARIANT changedObjectIDs);
-
-  HRESULT STDMETHODCALLTYPE OnPlayerPlayEvent(VARIANT iTrack);
-
-  HRESULT STDMETHODCALLTYPE OnPlayerStopEvent(VARIANT iTrack);
-
-  HRESULT STDMETHODCALLTYPE OnPlayerPlayingTrackChangedEvent(VARIANT iTrack);
-
-  HRESULT STDMETHODCALLTYPE OnCOMCallsDisabledEvent(ITCOMDisabledReason reason);
-
-  HRESULT STDMETHODCALLTYPE OnCOMCallsEnabledEvent();
-
-  HRESULT STDMETHODCALLTYPE OnQuittingEvent();
-
-  HRESULT STDMETHODCALLTYPE OnAboutToPromptUserToQuitEvent();
-
-  HRESULT STDMETHODCALLTYPE OnSoundVolumeChangedEvent(long newVolume);
 
 private:
   Controller     *controller_;

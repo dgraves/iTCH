@@ -328,102 +328,96 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
   }
 }
 
-void Controller::createInstance()
+bool Controller::createInstance()
 {
-  if (hasInstance())
+  if (!hasInstance())
   {
-    // Throw exception
-  }
-
-  HRESULT result = ::CoInitialize(0);
-  if(FAILED(result))
-  {
-    // throw exception
-      int t;
-      t = 0;
-  }
-
-  result = ::CoCreateInstance(CLSID_iTunesApp, NULL, CLSCTX_LOCAL_SERVER, IID_IiTunes, (PVOID *)&itunes_);
-  if(FAILED(result))
-  {
-    ::CoUninitialize();
-    itunes_ = NULL;
-    // throw exception
-      int t;
-      t = 0;
-  }
-
-  try
-  {
-    IConnectionPointContainer *icpc;
-    result = itunes_->QueryInterface(IID_IConnectionPointContainer, (PVOID *)&icpc);
+    HRESULT result = ::CoInitialize(0);
     if(FAILED(result))
     {
-      // throw exception
-      int t;
-      t = 0;
+      comError("Failed to initialize COM library");
+      return false;
     }
 
-    result = icpc->FindConnectionPoint(DIID__IiTunesEvents, &eventsConnectionPoint_);
-    icpc->Release();
+    result = ::CoCreateInstance(CLSID_iTunesApp, NULL, CLSCTX_LOCAL_SERVER, IID_IiTunes, (PVOID *)&itunes_);
     if(FAILED(result))
     {
-      // throw exception
-      int t;
-      t = 0;
+      comError("Failed to create IiTunes COM instance");
+      ::CoUninitialize();
+      itunes_ = NULL;
+      return false;
     }
 
-    events_ = new EventSink(this);
-    events_->AddRef();
-    result = eventsConnectionPoint_->Advise((IUnknown *)events_, &eventsCookie_);
-    if(FAILED(result))
+    try
     {
-      events_->Release();
-      events_ = NULL;
+      IConnectionPointContainer *icpc;
+      result = itunes_->QueryInterface(IID_IConnectionPointContainer, (PVOID *)&icpc);
+      if(FAILED(result))
+      {
+        throw 0;
+      }
 
-      // throw exception
-      int t;
-      t = 0;
+      result = icpc->FindConnectionPoint(DIID__IiTunesEvents, &eventsConnectionPoint_);
+      icpc->Release();
+      if(FAILED(result))
+      {
+        throw 0;
+      }
+
+      events_ = new EventSink(this);
+      if (!events_->create())
+      {
+        throw 0;
+      }
+
+      events_->AddRef();
+      result = eventsConnectionPoint_->Advise((IUnknown *)events_, &eventsCookie_);
+      if(FAILED(result))
+      {
+        events_->Release();
+        events_ = NULL;
+        throw 0;
+      }
     }
+    catch(...)
+    {
+      itunes_->Release();
+      itunes_ = NULL;
+
+      ::CoUninitialize();
+
+      return false;
+    }
+
+    createdInstance();
   }
-  catch(...)
-  {
-    itunes_->Release();
-    ::CoUninitialize();
 
-    itunes_ = NULL;
-
-    // Rethrow exception
-  }
-
-  createdInstance();
+  return true;
 }
 
 void Controller::destroyInstance()
 {
-  if (!hasInstance())
+  if (hasInstance())
   {
-    // Throw exception
+    // Need to send stopped notification to clients
+    statusChanged(iTCH::MessageBuilder::makePlayingStoppedNotification());
+
+    // Disconnect from player
+    eventsConnectionPoint_->Unadvise(eventsCookie_);
+    eventsConnectionPoint_->Release();
+    events_->Release();
+    itunes_->Release();
+    ::CoUninitialize();
+
+    eventsConnectionPoint_ = NULL;
+    events_ = NULL;
+    itunes_ = NULL;
+
+    destroyedInstance();
   }
-
-  // Need to send stopped notification to client
-  statusChanged(iTCH::MessageBuilder::makePlayingStoppedNotification());
-
-  // Disconnect from player
-  eventsConnectionPoint_->Unadvise(eventsCookie_);
-  eventsConnectionPoint_->Release();
-  events_->Release();
-  itunes_->Release();
-  ::CoUninitialize();
-
-  eventsConnectionPoint_ = NULL;
-  events_ = NULL;
-  itunes_ = NULL;
-
-  destroyedInstance();
 }
 
-void Controller::play(const Track &track)
+void Controller::play()
 {
   // Send play notification and information for playing track
   statusChanged(MessageBuilder::makePlayingStartedNotification());
@@ -434,12 +428,12 @@ void Controller::stop()
   statusChanged(MessageBuilder::makePlayingStoppedNotification());
 }
 
-void Controller::playingTrackChanged(const Track &track)
+void Controller::playingTrackChanged()
 {
   statusChanged(MessageBuilder::makeTrackInfoChangedNotification());
 }
 
-void Controller::volumeChanged(long newVolume)
+void Controller::volumeChanged()
 {
   statusChanged(MessageBuilder::makeVolumeChangedNotification());
 }

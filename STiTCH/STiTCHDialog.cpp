@@ -268,9 +268,9 @@ void STiTCHDialog::processMessage(iTCH::Connection *connection, const iTCH::Enve
 void STiTCHDialog::processProtocolError(iTCH::Connection *connection, const QString &message)
 {
   appendLogMessage(QString("%1 %2 -> %3")
-                   .arg(tr("ERROR: Received invalid request message from"))
-                   .arg(connection->getAddress())
-                   .arg(message));
+    .arg(tr("Error communication with client: Invalid message ->"))
+    .arg(connection->getAddress())
+    .arg(message));
 }
 
 void STiTCHDialog::createdInstance()
@@ -300,6 +300,13 @@ void STiTCHDialog::sendMessage(iTCH::EnvelopePtr envelope)
   {
     (*iter)->sendMessage(envelope);
   }
+}
+
+void STiTCHDialog::processComError(const QString &message)
+{
+  appendLogMessage(QString("%1 %2")
+    .arg(tr("Error communicating with iTunes:"))
+    .arg(message));
 }
 
 void STiTCHDialog::connectController()
