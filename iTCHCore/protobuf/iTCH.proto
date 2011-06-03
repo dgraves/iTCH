@@ -40,13 +40,29 @@ message Hello {
 // Message container for client and server message types
 message Envelope {
   enum Type {
-    CLIENTREQUEST = 0;
-    SERVERSTATUS = 1;
+    SERVERNOTIFICATION = 0;
+    CLIENTREQUEST = 1;
+    SERVERRESPONSE = 2;
   }
   
   required Type type = 1;
-  optional ClientRequest request = 2;
-  optional ServerStatus status = 3;
+  optional ServerNotification notification = 2;
+  optional ClientRequest request = 3;
+  optional ServerResponse response = 4;
+}
+
+// Notification that the player state has changed to be sent by server to client
+// Server does not send any additional data; client is expected to request data
+// related to the notification if interested
+message ServerNotification {
+  enum Type {
+    VOLUMECHANGED    = 0;    // Sends a volume changed message to client; No response
+    PLAYINGSTARTED   = 1;    // Sends a playing started notification to client; No response
+    PLAYINGSTOPPED   = 2;    // Sends a playing stopped notification to client; No response
+    TRACKINFOCHANGED = 3;    // Sends a notification that the currently playing track's info has changed to client; No response
+  }
+
+  required Type type = 1;
 }
 
 // Request to be sent from client to server
@@ -105,7 +121,7 @@ message Track {
   optional string kind = 10;                // Text description of the track
 }
 
-// Enumeration describing the iTunes player state
+// Enumeration describing the player state
 enum PlayerState {
  UNKNOWN = 0;
  STOPPED = 1;
@@ -114,18 +130,10 @@ enum PlayerState {
  REWIND = 4;
 }
 
-// Server status messages sent to client, either as a response to a client request
-// or a result of a player state change
-message ServerStatus {
-  enum Type {
-    SOUNDVOLUME = 0;
-    MUTE = 1;
-    PLAYERPOSITION = 2;
-    PLAYERSTATE = 3;
-    CURRENTTRACK = 4;
-    CURRENTPLAYLIST = 5;
-  }
-
+// Response to client request sent from server to client
+// A response is generated for every client request, indicating success or failure
+// Only 'get' requests generate a response with a valie
+message ServerResponse {
   message Value {
     enum Type {
 	  VOLUME = 0;
@@ -133,6 +141,7 @@ message ServerStatus {
 	  POSITION = 2;
 	  STATE = 3;
 	  TRACK = 4;
+	  PLAYLIST = 5;
 	}
 
 	required Type type = 1;
@@ -140,10 +149,12 @@ message ServerStatus {
     optional bool mute = 3;
     optional uint32 position = 4;
 	optional PlayerState state = 5;
-	repeated Track track = 6;
+	optional Track track = 6;
+	repeated Track playlist = 7;
   }
 
-  required Type type = 1;
-  required uint32 seqid = 2 [default = 0];  // Sequence ID, will be 0 for player generated state change or sequence ID from the ClientRequest to which this is a response
-  required Value value = 3;
+  required uint32 seqid = 1 [default = 0];  // Sequence ID, will be 0 for player generated state change or sequence ID from the ClientRequest to which this is a response
+  required bool success = 2;                // Indicates success or failure of ClientRequest processing
+  optional string error_message = 3;        // Present if success is false to explain failure
+  optional Value value = 4;
 }

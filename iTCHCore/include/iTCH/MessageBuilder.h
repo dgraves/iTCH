@@ -38,6 +38,18 @@ public:
   static EnvelopePtr createEnvelope() { return EnvelopePtr(new Envelope()); }
 
 
+  //--------------- Make server notification RPC messages ---------------
+  static EnvelopePtr makeVolumeChangedNotification();
+
+  static EnvelopePtr makePlayingStartedNotification();
+
+  static EnvelopePtr makePlayingStoppedNotification();
+
+  static EnvelopePtr makeTrackInfoChangedNotification();
+
+  static bool containsValidServerNotification(const EnvelopePtr envelope);
+
+
   //--------------- Make client request RPC messages ---------------
   static EnvelopePtr makeBackTrackRequest(unsigned int sequenceId);
 
@@ -81,17 +93,23 @@ public:
 
 
   //--------------- Make server status RPC messages ---------------
-  static EnvelopePtr makeSoundVolumeStatus(unsigned int sequenceId, long volume);
+  // For failure of any request
+  static EnvelopePtr makeFailedResponse(unsigned int sequenceId, const std::string &message);
 
-  static EnvelopePtr makeMuteStatus(unsigned int sequenceId, bool isMute);
+  // For reporting success of requests that do not return a value
+  static EnvelopePtr makeSuccessfulResponse(unsigned int sequenceId);
 
-  static EnvelopePtr makePlayerPositionStatus(unsigned int sequenceId, long position);
+  static EnvelopePtr makeSoundVolumeResponse(unsigned int sequenceId, long volume);
 
-  static EnvelopePtr makePlayerStateStatus(unsigned int sequenceId, PlayerState state);
+  static EnvelopePtr makeMuteResponse(unsigned int sequenceId, bool isMute);
 
-  static EnvelopePtr makeCurrentTrackStatus(unsigned int sequenceId, const Track &track);
+  static EnvelopePtr makePlayerPositionResponse(unsigned int sequenceId, long position);
 
-  static bool containsValidServerStatus(const EnvelopePtr envelope);
+  static EnvelopePtr makePlayerStateResponse(unsigned int sequenceId, PlayerState state);
+
+  static EnvelopePtr makeCurrentTrackResponse(unsigned int sequenceId, const Track &track);
+
+  static bool containsValidServerResponse(const EnvelopePtr envelope);
 
   static bool containsValidServerResponse(const EnvelopePtr envelope, const ClientRequest &originalRequest);
 

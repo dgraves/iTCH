@@ -28,6 +28,18 @@ using namespace iTCH;
 
 namespace
 {
+  EnvelopePtr makeServerNotification(ServerNotification::Type type)
+  {
+    EnvelopePtr envelope = MessageBuilder::createEnvelope();
+    envelope->set_type(Envelope::SERVERNOTIFICATION);
+
+    ServerNotification *message = envelope->mutable_notification();
+    assert(message);
+    message->set_type(type);
+
+    return envelope;
+  }
+
   EnvelopePtr makeClientRequest(unsigned int sequenceId, ClientRequest::Type type)
   {
     EnvelopePtr envelope = MessageBuilder::createEnvelope();
@@ -41,18 +53,66 @@ namespace
     return envelope;
   }
 
-  EnvelopePtr makeServerStatus(unsigned int sequenceId, ServerStatus::Type type)
+  EnvelopePtr makeServerResponse(unsigned int sequenceId, bool success)
   {
     EnvelopePtr envelope = MessageBuilder::createEnvelope();
-    envelope->set_type(Envelope::SERVERSTATUS);
+    envelope->set_type(Envelope::SERVERRESPONSE);
 
-    ServerStatus *message = envelope->mutable_status();
+    ServerResponse *message = envelope->mutable_response();
     assert(message);
     message->set_seqid(sequenceId);
-    message->set_type(type);
+    message->set_success(success);
 
     return envelope;
   }
+}
+
+EnvelopePtr MessageBuilder::makeVolumeChangedNotification()
+{
+  return makeServerNotification(ServerNotification::VOLUMECHANGED);
+//  ServerNotification *notification = envelope->mutable_notification();
+//  request->mutable_value()->set_type(ServerNotification::Value::VOLUME);
+//  request->mutable_value()->set_volume(volume);
+//  return envelope;
+}
+
+EnvelopePtr MessageBuilder::makePlayingStartedNotification()
+{
+  return makeServerNotification(ServerNotification::PLAYINGSTARTED);
+//  ServerNotification *notification = envelope->mutable_notification();
+//  request->mutable_value()->set_type(ServerNotification::Value::TRACK);
+//  request->mutable_value()->set_track(track);
+//  return envelope;
+}
+
+EnvelopePtr MessageBuilder::makePlayingStoppedNotification()
+{
+  return makeServerNotification(ServerNotification::PLAYINGSTOPPED);
+//  ServerNotification *notification = envelope->mutable_notification();
+//  request->mutable_value()->set_type(ServerNotification::Value::TRACK);
+//  request->mutable_value()->set_track(track);
+//  return envelope;
+}
+
+EnvelopePtr MessageBuilder::makeTrackInfoChangedNotification()
+{
+  return makeServerNotification(ServerNotification::TRACKINFOCHANGED);
+//  ServerNotification *notification = envelope->mutable_notification();
+//  request->mutable_value()->set_type(ServerNotification::Value::TRACK);
+//  request->mutable_value()->set_track(track);
+//  return envelope;
+}
+
+bool MessageBuilder::containsValidServerNotification(const EnvelopePtr envelope)
+{
+  // Make sure the envelope contains a ServerNotification object
+  if (Envelope::Type_IsValid(envelope->type()) && (envelope->type() == Envelope::SERVERNOTIFICATION) && envelope->has_notification())
+  {
+    // Check notification type for valid value; no params to check for this message
+    const ServerNotification &message = envelope->notification();
+    return ServerNotification::Type_IsValid(message.type());
+  }
+  return false;
 }
 
 EnvelopePtr MessageBuilder::makeBackTrackRequest(unsigned int sequenceId)
@@ -213,114 +273,125 @@ bool MessageBuilder::containsValidClientRequest(const EnvelopePtr envelope)
   return false;
 }
 
-EnvelopePtr MessageBuilder::makeSoundVolumeStatus(unsigned int sequenceId, long volume)
+EnvelopePtr MessageBuilder::makeFailedResponse(unsigned int sequenceId, const std::string &message)
 {
-  EnvelopePtr envelope = makeServerStatus(sequenceId, ServerStatus::SOUNDVOLUME);
-  ServerStatus *status = envelope->mutable_status();
-  status->mutable_value()->set_type(ServerStatus::Value::VOLUME);
-  status->mutable_value()->set_volume(volume);
+  EnvelopePtr envelope = makeServerResponse(sequenceId, false);
+  ServerResponse *response = envelope->mutable_response();
+  response->set_error_message(message);
   return envelope;
 }
 
-EnvelopePtr MessageBuilder::makeMuteStatus(unsigned int sequenceId, bool isMute)
+EnvelopePtr MessageBuilder::makeSuccessfulResponse(unsigned int sequenceId)
 {
-  EnvelopePtr envelope = makeServerStatus(sequenceId, ServerStatus::MUTE);
-  ServerStatus *status = envelope->mutable_status();
-  status->mutable_value()->set_type(ServerStatus::Value::MUTE);
-  status->mutable_value()->set_mute(isMute);
+  return makeServerResponse(sequenceId, true);
+}
+
+EnvelopePtr MessageBuilder::makeSoundVolumeResponse(unsigned int sequenceId, long volume)
+{
+  EnvelopePtr envelope = makeServerResponse(sequenceId, true);
+  ServerResponse *response = envelope->mutable_response();
+  response->mutable_value()->set_type(ServerResponse::Value::VOLUME);
+  response->mutable_value()->set_volume(volume);
   return envelope;
 }
 
-EnvelopePtr MessageBuilder::makePlayerPositionStatus(unsigned int sequenceId, long position)
+EnvelopePtr MessageBuilder::makeMuteResponse(unsigned int sequenceId, bool isMute)
 {
-  EnvelopePtr envelope = makeServerStatus(sequenceId, ServerStatus::PLAYERPOSITION);
-  ServerStatus *status = envelope->mutable_status();
-  status->mutable_value()->set_type(ServerStatus::Value::POSITION);
-  status->mutable_value()->set_position(position);
+  EnvelopePtr envelope = makeServerResponse(sequenceId, true);
+  ServerResponse *response = envelope->mutable_response();
+  response->mutable_value()->set_type(ServerResponse::Value::MUTE);
+  response->mutable_value()->set_mute(isMute);
   return envelope;
 }
 
-EnvelopePtr MessageBuilder::makePlayerStateStatus(unsigned int sequenceId, PlayerState state)
+EnvelopePtr MessageBuilder::makePlayerPositionResponse(unsigned int sequenceId, long position)
 {
-  EnvelopePtr envelope = makeServerStatus(sequenceId, ServerStatus::PLAYERSTATE);
-  ServerStatus *status = envelope->mutable_status();
-  status->mutable_value()->set_type(ServerStatus::Value::STATE);
-  status->mutable_value()->set_state(state);
+  EnvelopePtr envelope = makeServerResponse(sequenceId, true);
+  ServerResponse *response = envelope->mutable_response();
+  response->mutable_value()->set_type(ServerResponse::Value::POSITION);
+  response->mutable_value()->set_position(position);
   return envelope;
 }
 
-EnvelopePtr MessageBuilder::makeCurrentTrackStatus(unsigned int sequenceId, const Track &track)
+EnvelopePtr MessageBuilder::makePlayerStateResponse(unsigned int sequenceId, PlayerState state)
 {
-  EnvelopePtr envelope = makeServerStatus(sequenceId,ServerStatus::CURRENTTRACK);
-  ServerStatus *status = envelope->mutable_status();
-  status->mutable_value()->set_type(ServerStatus::Value::TRACK);
-  status->mutable_value()->add_track()->CopyFrom(track);
+  EnvelopePtr envelope = makeServerResponse(sequenceId, true);
+  ServerResponse *response = envelope->mutable_response();
+  response->mutable_value()->set_type(ServerResponse::Value::STATE);
+  response->mutable_value()->set_state(state);
   return envelope;
 }
 
-bool MessageBuilder::containsValidServerStatus(const EnvelopePtr envelope)
+EnvelopePtr MessageBuilder::makeCurrentTrackResponse(unsigned int sequenceId, const Track &track)
+{
+  EnvelopePtr envelope = makeServerResponse(sequenceId, true);
+  ServerResponse *response = envelope->mutable_response();
+  response->mutable_value()->set_type(ServerResponse::Value::TRACK);
+  response->mutable_value()->mutable_track()->CopyFrom(track);
+  return envelope;
+}
+
+bool MessageBuilder::containsValidServerResponse(const EnvelopePtr envelope)
 {
   // Make sure the envelope contains a ServerNotification object
-  if (Envelope::Type_IsValid(envelope->type()) && (envelope->type() == Envelope::SERVERSTATUS) && envelope->has_status())
+  if (Envelope::Type_IsValid(envelope->type()) && (envelope->type() == Envelope::SERVERRESPONSE) && envelope->has_response())
   {
-    const ServerStatus &message = envelope->status();
+    const ServerResponse &message = envelope->response();
 
-    // First make sure that the status type is valid
-    if (ServerStatus::Type_IsValid(message.type()))
+    // If response indicates failure, it must have an error message
+    if (!message.success() && message.has_error_message())
     {
-      // Make sure that the action types with associated parameters have those parameters
-      switch(message.type())
+      return true;
+    }
+    else
+    {
+      // If response does not have an optional value, it has already passed all validity tests that apply to it
+      if (!message.has_value())
       {
-      case ServerStatus::SOUNDVOLUME:
-        if (message.has_value() &&
-            (message.value().type() == ServerStatus::Value::VOLUME) &&
-            message.value().has_volume())
+        return true;
+      }
+
+      // This response has a value, check validity of the value
+      if (ServerResponse::Value::Type_IsValid(message.value().type()))
+      {
+        // Make sure that the action types with associated parameters have those parameters
+        switch(message.value().type())
         {
+        case ServerResponse::Value::VOLUME:
+          if (message.value().has_volume())
+          {
+            return true;
+          }
+          break;
+        case ServerResponse::Value::MUTE:
+          if (message.value().has_mute())
+          {
+            return true;
+          }
+          break;
+        case ServerResponse::Value::POSITION:
+          if (message.value().has_position())
+          {
+            return true;
+          }
+          break;
+        case ServerResponse::Value::STATE:
+          if (message.value().has_state() && iTCH::PlayerState_IsValid(message.value().state()))
+          {
+            return true;
+          }
+          break;
+        case ServerResponse::Value::TRACK:
+          // Should have only one track
+          if (message.value().has_track())
+          {
+            return true;
+          }
+          break;
+        case ServerResponse::Value::PLAYLIST:
+          // Playlist can have 0 or more tracks
           return true;
         }
-        break;
-      case ServerStatus::MUTE:
-        if (message.has_value() &&
-            (message.value().type() == ServerStatus::Value::MUTE) &&
-            message.value().has_mute())
-        {
-          return true;
-        }
-        break;
-      case ServerStatus::PLAYERPOSITION:
-        if (message.has_value() &&
-            (message.value().type() == ServerStatus::Value::POSITION) &&
-            message.value().has_position())
-        {
-          return true;
-        }
-        break;
-      case ServerStatus::PLAYERSTATE:
-        if (message.has_value() &&
-            (message.value().type() == ServerStatus::Value::STATE) &&
-            message.value().has_state() &&
-            iTCH::PlayerState_IsValid(message.value().state()))
-        {
-          return true;
-        }
-        break;
-      case ServerStatus::CURRENTTRACK:
-        // Should have only one track
-        if (message.has_value() &&
-            (message.value().type() == ServerStatus::Value::TRACK) &&
-            (message.value().track_size() == 1))
-        {
-          return true;
-        }
-        break;
-      case ServerStatus::CURRENTPLAYLIST:
-        // Treat playlist as having 0 or more tracks
-        if (message.has_value() &&
-            (message.value().type() == ServerStatus::Value::TRACK))
-        {
-          return true;
-        }
-        break;
       }
     }
   }
@@ -331,49 +402,55 @@ bool MessageBuilder::containsValidServerStatus(const EnvelopePtr envelope)
 bool MessageBuilder::containsValidServerResponse(const EnvelopePtr envelope, const ClientRequest &originalRequest)
 {
   // Make sure the envelope contains a valid ServerStatus object
-  if (containsValidServerStatus(envelope))
+  if (containsValidServerResponse(envelope))
   {
-    const ServerStatus &message = envelope->status();
+    const ServerResponse &message = envelope->response();
 
     // Make sure that the server response has the appropriate return value for the original request
     // First make sure that the request type is valid and sequence IDs match
     if (ClientRequest::Type_IsValid(originalRequest.type()) && (message.seqid() == originalRequest.seqid()))
     {
+      // We don't check the value type if request failed, failure is technically a valid response
+      if (!message.success())
+      {
+        return true;
+      }
+
       // Make sure that the action types with associated parameters have those parameters
       switch(originalRequest.type())
       {
       case ClientRequest::GET_SOUNDVOLUME:
-        if (message.type() == ServerStatus::SOUNDVOLUME)
+        if (message.has_value() && message.value().type() == ServerResponse::Value::VOLUME)
         {
           return true;
         }
         break;
       case ClientRequest::GET_MUTE:
-        if (message.type() == ServerStatus::MUTE)
+        if (message.has_value() && message.value().type() == ServerResponse::Value::MUTE)
         {
           return true;
         }
         break;
       case ClientRequest::GET_PLAYERPOSITION:
-        if (message.type() == ServerStatus::PLAYERPOSITION)
+        if (message.has_value() && message.value().type() == ServerResponse::Value::POSITION)
         {
           return true;
         }
         break;
       case ClientRequest::GET_PLAYERSTATE:
-        if (message.type() == ServerStatus::PLAYERSTATE)
+        if (message.has_value() && message.value().type() == ServerResponse::Value::STATE)
         {
           return true;
         }
         break;
       case ClientRequest::GET_CURRENTTRACK:
-        if (message.type() == ServerStatus::CURRENTTRACK)
+        if (message.has_value() && message.value().type() == ServerResponse::Value::TRACK)
         {
           return true;
         }
         break;
       case ClientRequest::GET_CURRENTPLAYLIST:
-        if (message.type() == ServerStatus::CURRENTPLAYLIST)
+        if (message.has_value() && message.value().type() == ServerResponse::Value::PLAYLIST)
         {
           return true;
         }

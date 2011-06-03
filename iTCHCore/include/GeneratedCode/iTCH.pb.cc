@@ -24,6 +24,10 @@ const ::google::protobuf::Descriptor* Envelope_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Envelope_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* Envelope_Type_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* ServerNotification_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ServerNotification_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* ServerNotification_Type_descriptor_ = NULL;
 const ::google::protobuf::Descriptor* ClientRequest_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ClientRequest_reflection_ = NULL;
@@ -35,14 +39,13 @@ const ::google::protobuf::EnumDescriptor* ClientRequest_Type_descriptor_ = NULL;
 const ::google::protobuf::Descriptor* Track_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Track_reflection_ = NULL;
-const ::google::protobuf::Descriptor* ServerStatus_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* ServerResponse_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  ServerStatus_reflection_ = NULL;
-const ::google::protobuf::Descriptor* ServerStatus_Value_descriptor_ = NULL;
+  ServerResponse_reflection_ = NULL;
+const ::google::protobuf::Descriptor* ServerResponse_Value_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  ServerStatus_Value_reflection_ = NULL;
-const ::google::protobuf::EnumDescriptor* ServerStatus_Value_Type_descriptor_ = NULL;
-const ::google::protobuf::EnumDescriptor* ServerStatus_Type_descriptor_ = NULL;
+  ServerResponse_Value_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* ServerResponse_Value_Type_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* Version_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* PlayerState_descriptor_ = NULL;
 
@@ -74,10 +77,11 @@ void protobuf_AssignDesc_iTCH_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Hello));
   Envelope_descriptor_ = file->message_type(1);
-  static const int Envelope_offsets_[3] = {
+  static const int Envelope_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Envelope, type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Envelope, notification_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Envelope, request_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Envelope, status_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Envelope, response_),
   };
   Envelope_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -91,7 +95,23 @@ void protobuf_AssignDesc_iTCH_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Envelope));
   Envelope_Type_descriptor_ = Envelope_descriptor_->enum_type(0);
-  ClientRequest_descriptor_ = file->message_type(2);
+  ServerNotification_descriptor_ = file->message_type(2);
+  static const int ServerNotification_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerNotification, type_),
+  };
+  ServerNotification_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      ServerNotification_descriptor_,
+      ServerNotification::default_instance_,
+      ServerNotification_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerNotification, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerNotification, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(ServerNotification));
+  ServerNotification_Type_descriptor_ = ServerNotification_descriptor_->enum_type(0);
+  ClientRequest_descriptor_ = file->message_type(3);
   static const int ClientRequest_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientRequest, seqid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientRequest, type_),
@@ -128,7 +148,7 @@ void protobuf_AssignDesc_iTCH_2eproto() {
       sizeof(ClientRequest_Value));
   ClientRequest_Value_Type_descriptor_ = ClientRequest_Value_descriptor_->enum_type(0);
   ClientRequest_Type_descriptor_ = ClientRequest_descriptor_->enum_type(0);
-  Track_descriptor_ = file->message_type(3);
+  Track_descriptor_ = file->message_type(4);
   static const int Track_offsets_[10] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Track, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Track, artist_),
@@ -152,45 +172,46 @@ void protobuf_AssignDesc_iTCH_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Track));
-  ServerStatus_descriptor_ = file->message_type(4);
-  static const int ServerStatus_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus, type_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus, seqid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus, value_),
+  ServerResponse_descriptor_ = file->message_type(5);
+  static const int ServerResponse_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse, seqid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse, success_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse, error_message_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse, value_),
   };
-  ServerStatus_reflection_ =
+  ServerResponse_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      ServerStatus_descriptor_,
-      ServerStatus::default_instance_,
-      ServerStatus_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus, _unknown_fields_),
+      ServerResponse_descriptor_,
+      ServerResponse::default_instance_,
+      ServerResponse_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(ServerStatus));
-  ServerStatus_Value_descriptor_ = ServerStatus_descriptor_->nested_type(0);
-  static const int ServerStatus_Value_offsets_[6] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus_Value, type_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus_Value, volume_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus_Value, mute_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus_Value, position_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus_Value, state_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus_Value, track_),
+      sizeof(ServerResponse));
+  ServerResponse_Value_descriptor_ = ServerResponse_descriptor_->nested_type(0);
+  static const int ServerResponse_Value_offsets_[7] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse_Value, type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse_Value, volume_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse_Value, mute_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse_Value, position_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse_Value, state_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse_Value, track_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse_Value, playlist_),
   };
-  ServerStatus_Value_reflection_ =
+  ServerResponse_Value_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      ServerStatus_Value_descriptor_,
-      ServerStatus_Value::default_instance_,
-      ServerStatus_Value_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus_Value, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerStatus_Value, _unknown_fields_),
+      ServerResponse_Value_descriptor_,
+      ServerResponse_Value::default_instance_,
+      ServerResponse_Value_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse_Value, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerResponse_Value, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(ServerStatus_Value));
-  ServerStatus_Value_Type_descriptor_ = ServerStatus_Value_descriptor_->enum_type(0);
-  ServerStatus_Type_descriptor_ = ServerStatus_descriptor_->enum_type(0);
+      sizeof(ServerResponse_Value));
+  ServerResponse_Value_Type_descriptor_ = ServerResponse_Value_descriptor_->enum_type(0);
   Version_descriptor_ = file->enum_type(0);
   PlayerState_descriptor_ = file->enum_type(1);
 }
@@ -210,15 +231,17 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Envelope_descriptor_, &Envelope::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    ServerNotification_descriptor_, &ServerNotification::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ClientRequest_descriptor_, &ClientRequest::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ClientRequest_Value_descriptor_, &ClientRequest_Value::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Track_descriptor_, &Track::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    ServerStatus_descriptor_, &ServerStatus::default_instance());
+    ServerResponse_descriptor_, &ServerResponse::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    ServerStatus_Value_descriptor_, &ServerStatus_Value::default_instance());
+    ServerResponse_Value_descriptor_, &ServerResponse_Value::default_instance());
 }
 
 }  // namespace
@@ -228,16 +251,18 @@ void protobuf_ShutdownFile_iTCH_2eproto() {
   delete Hello_reflection_;
   delete Envelope::default_instance_;
   delete Envelope_reflection_;
+  delete ServerNotification::default_instance_;
+  delete ServerNotification_reflection_;
   delete ClientRequest::default_instance_;
   delete ClientRequest_reflection_;
   delete ClientRequest_Value::default_instance_;
   delete ClientRequest_Value_reflection_;
   delete Track::default_instance_;
   delete Track_reflection_;
-  delete ServerStatus::default_instance_;
-  delete ServerStatus_reflection_;
-  delete ServerStatus_Value::default_instance_;
-  delete ServerStatus_Value_reflection_;
+  delete ServerResponse::default_instance_;
+  delete ServerResponse_reflection_;
+  delete ServerResponse_Value::default_instance_;
+  delete ServerResponse_Value_reflection_;
 }
 
 void protobuf_AddDesc_iTCH_2eproto() {
@@ -250,61 +275,67 @@ void protobuf_AddDesc_iTCH_2eproto() {
     "\n\niTCH.proto\022\004iTCH\"z\n\005Hello\0220\n\007version\030\001"
     " \002(\0162\r.iTCH.Version:\020PROTOCOL_VERSION\022\020\n"
     "\010hostname\030\002 \001(\t\022\024\n\014program_name\030\003 \001(\t\022\027\n"
-    "\017program_version\030\004 \001(\t\"\244\001\n\010Envelope\022!\n\004t"
-    "ype\030\001 \002(\0162\023.iTCH.Envelope.Type\022$\n\007reques"
-    "t\030\002 \001(\0132\023.iTCH.ClientRequest\022\"\n\006status\030\003"
-    " \001(\0132\022.iTCH.ServerStatus\"+\n\004Type\022\021\n\rCLIE"
-    "NTREQUEST\020\000\022\020\n\014SERVERSTATUS\020\001\"\317\004\n\rClient"
-    "Request\022\r\n\005seqid\030\001 \002(\r\022&\n\004type\030\002 \002(\0162\030.i"
-    "TCH.ClientRequest.Type\022(\n\005value\030\003 \001(\0132\031."
-    "iTCH.ClientRequest.Value\032\221\001\n\005Value\022,\n\004ty"
-    "pe\030\001 \002(\0162\036.iTCH.ClientRequest.Value.Type"
-    "\022\016\n\006volume\030\002 \001(\r\022\014\n\004mute\030\003 \001(\010\022\020\n\010positi"
-    "on\030\004 \001(\r\"*\n\004Type\022\n\n\006VOLUME\020\000\022\010\n\004MUTE\020\001\022\014"
-    "\n\010POSITION\020\002\"\310\002\n\004Type\022\r\n\tBACKTRACK\020\000\022\017\n\013"
-    "FASTFORWARD\020\001\022\r\n\tNEXTTRACK\020\002\022\t\n\005PAUSE\020\003\022"
-    "\010\n\004PLAY\020\004\022\r\n\tPLAYPAUSE\020\005\022\021\n\rPREVIOUSTRAC"
-    "K\020\006\022\n\n\006RESUME\020\007\022\n\n\006REWIND\020\010\022\010\n\004STOP\020\t\022\023\n"
-    "\017GET_SOUNDVOLUME\020\n\022\023\n\017PUT_SOUNDVOLUME\020\013\022"
-    "\014\n\010GET_MUTE\020\014\022\014\n\010PUT_MUTE\020\r\022\026\n\022GET_PLAYE"
-    "RPOSITION\020\016\022\026\n\022PUT_PLAYERPOSITION\020\017\022\023\n\017G"
-    "ET_PLAYERSTATE\020\020\022\024\n\020GET_CURRENTTRACK\020\021\022\027"
-    "\n\023GET_CURRENTPLAYLIST\020\022\"\250\001\n\005Track\022\014\n\004nam"
-    "e\030\001 \002(\t\022\016\n\006artist\030\002 \002(\t\022\r\n\005album\030\003 \002(\t\022\020"
-    "\n\010duration\030\004 \002(\r\022\r\n\005genre\030\005 \002(\t\022\014\n\004year\030"
-    "\006 \002(\r\022\017\n\007bitrate\030\007 \001(\r\022\023\n\013sample_rate\030\010 "
-    "\001(\r\022\017\n\007comment\030\t \001(\t\022\014\n\004kind\030\n \001(\t\"\306\003\n\014S"
-    "erverStatus\022%\n\004type\030\001 \002(\0162\027.iTCH.ServerS"
-    "tatus.Type\022\020\n\005seqid\030\002 \002(\r:\0010\022\'\n\005value\030\003 "
-    "\002(\0132\030.iTCH.ServerStatus.Value\032\344\001\n\005Value\022"
-    "+\n\004type\030\001 \002(\0162\035.iTCH.ServerStatus.Value."
-    "Type\022\016\n\006volume\030\002 \001(\r\022\014\n\004mute\030\003 \001(\010\022\020\n\010po"
-    "sition\030\004 \001(\r\022 \n\005state\030\005 \001(\0162\021.iTCH.Playe"
-    "rState\022\032\n\005track\030\006 \003(\0132\013.iTCH.Track\"@\n\004Ty"
-    "pe\022\n\n\006VOLUME\020\000\022\010\n\004MUTE\020\001\022\014\n\010POSITION\020\002\022\t"
-    "\n\005STATE\020\003\022\t\n\005TRACK\020\004\"m\n\004Type\022\017\n\013SOUNDVOL"
-    "UME\020\000\022\010\n\004MUTE\020\001\022\022\n\016PLAYERPOSITION\020\002\022\017\n\013P"
-    "LAYERSTATE\020\003\022\020\n\014CURRENTTRACK\020\004\022\023\n\017CURREN"
-    "TPLAYLIST\020\005*\037\n\007Version\022\024\n\020PROTOCOL_VERSI"
-    "ON\020\000*Q\n\013PlayerState\022\013\n\007UNKNOWN\020\000\022\013\n\007STOP"
-    "PED\020\001\022\013\n\007PLAYING\020\002\022\017\n\013FASTFORWARD\020\003\022\n\n\006R"
-    "EWIND\020\004", 1647);
+    "\017program_version\030\004 \001(\t\"\362\001\n\010Envelope\022!\n\004t"
+    "ype\030\001 \002(\0162\023.iTCH.Envelope.Type\022.\n\014notifi"
+    "cation\030\002 \001(\0132\030.iTCH.ServerNotification\022$"
+    "\n\007request\030\003 \001(\0132\023.iTCH.ClientRequest\022&\n\010"
+    "response\030\004 \001(\0132\024.iTCH.ServerResponse\"E\n\004"
+    "Type\022\026\n\022SERVERNOTIFICATION\020\000\022\021\n\rCLIENTRE"
+    "QUEST\020\001\022\022\n\016SERVERRESPONSE\020\002\"\232\001\n\022ServerNo"
+    "tification\022+\n\004type\030\001 \002(\0162\035.iTCH.ServerNo"
+    "tification.Type\"W\n\004Type\022\021\n\rVOLUMECHANGED"
+    "\020\000\022\022\n\016PLAYINGSTARTED\020\001\022\022\n\016PLAYINGSTOPPED"
+    "\020\002\022\024\n\020TRACKINFOCHANGED\020\003\"\317\004\n\rClientReque"
+    "st\022\r\n\005seqid\030\001 \002(\r\022&\n\004type\030\002 \002(\0162\030.iTCH.C"
+    "lientRequest.Type\022(\n\005value\030\003 \001(\0132\031.iTCH."
+    "ClientRequest.Value\032\221\001\n\005Value\022,\n\004type\030\001 "
+    "\002(\0162\036.iTCH.ClientRequest.Value.Type\022\016\n\006v"
+    "olume\030\002 \001(\r\022\014\n\004mute\030\003 \001(\010\022\020\n\010position\030\004 "
+    "\001(\r\"*\n\004Type\022\n\n\006VOLUME\020\000\022\010\n\004MUTE\020\001\022\014\n\010POS"
+    "ITION\020\002\"\310\002\n\004Type\022\r\n\tBACKTRACK\020\000\022\017\n\013FASTF"
+    "ORWARD\020\001\022\r\n\tNEXTTRACK\020\002\022\t\n\005PAUSE\020\003\022\010\n\004PL"
+    "AY\020\004\022\r\n\tPLAYPAUSE\020\005\022\021\n\rPREVIOUSTRACK\020\006\022\n"
+    "\n\006RESUME\020\007\022\n\n\006REWIND\020\010\022\010\n\004STOP\020\t\022\023\n\017GET_"
+    "SOUNDVOLUME\020\n\022\023\n\017PUT_SOUNDVOLUME\020\013\022\014\n\010GE"
+    "T_MUTE\020\014\022\014\n\010PUT_MUTE\020\r\022\026\n\022GET_PLAYERPOSI"
+    "TION\020\016\022\026\n\022PUT_PLAYERPOSITION\020\017\022\023\n\017GET_PL"
+    "AYERSTATE\020\020\022\024\n\020GET_CURRENTTRACK\020\021\022\027\n\023GET"
+    "_CURRENTPLAYLIST\020\022\"\250\001\n\005Track\022\014\n\004name\030\001 \002"
+    "(\t\022\016\n\006artist\030\002 \002(\t\022\r\n\005album\030\003 \002(\t\022\020\n\010dur"
+    "ation\030\004 \002(\r\022\r\n\005genre\030\005 \002(\t\022\014\n\004year\030\006 \002(\r"
+    "\022\017\n\007bitrate\030\007 \001(\r\022\023\n\013sample_rate\030\010 \001(\r\022\017"
+    "\n\007comment\030\t \001(\t\022\014\n\004kind\030\n \001(\t\"\213\003\n\016Server"
+    "Response\022\020\n\005seqid\030\001 \002(\r:\0010\022\017\n\007success\030\002 "
+    "\002(\010\022\025\n\rerror_message\030\003 \001(\t\022)\n\005value\030\004 \001("
+    "\0132\032.iTCH.ServerResponse.Value\032\223\002\n\005Value\022"
+    "-\n\004type\030\001 \002(\0162\037.iTCH.ServerResponse.Valu"
+    "e.Type\022\016\n\006volume\030\002 \001(\r\022\014\n\004mute\030\003 \001(\010\022\020\n\010"
+    "position\030\004 \001(\r\022 \n\005state\030\005 \001(\0162\021.iTCH.Pla"
+    "yerState\022\032\n\005track\030\006 \001(\0132\013.iTCH.Track\022\035\n\010"
+    "playlist\030\007 \003(\0132\013.iTCH.Track\"N\n\004Type\022\n\n\006V"
+    "OLUME\020\000\022\010\n\004MUTE\020\001\022\014\n\010POSITION\020\002\022\t\n\005STATE"
+    "\020\003\022\t\n\005TRACK\020\004\022\014\n\010PLAYLIST\020\005*\037\n\007Version\022\024"
+    "\n\020PROTOCOL_VERSION\020\000*Q\n\013PlayerState\022\013\n\007U"
+    "NKNOWN\020\000\022\013\n\007STOPPED\020\001\022\013\n\007PLAYING\020\002\022\017\n\013FA"
+    "STFORWARD\020\003\022\n\n\006REWIND\020\004", 1823);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "iTCH.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
   Envelope::default_instance_ = new Envelope();
+  ServerNotification::default_instance_ = new ServerNotification();
   ClientRequest::default_instance_ = new ClientRequest();
   ClientRequest_Value::default_instance_ = new ClientRequest_Value();
   Track::default_instance_ = new Track();
-  ServerStatus::default_instance_ = new ServerStatus();
-  ServerStatus_Value::default_instance_ = new ServerStatus_Value();
+  ServerResponse::default_instance_ = new ServerResponse();
+  ServerResponse_Value::default_instance_ = new ServerResponse_Value();
   Hello::default_instance_->InitAsDefaultInstance();
   Envelope::default_instance_->InitAsDefaultInstance();
+  ServerNotification::default_instance_->InitAsDefaultInstance();
   ClientRequest::default_instance_->InitAsDefaultInstance();
   ClientRequest_Value::default_instance_->InitAsDefaultInstance();
   Track::default_instance_->InitAsDefaultInstance();
-  ServerStatus::default_instance_->InitAsDefaultInstance();
-  ServerStatus_Value::default_instance_->InitAsDefaultInstance();
+  ServerResponse::default_instance_->InitAsDefaultInstance();
+  ServerResponse_Value::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_iTCH_2eproto);
 }
 
@@ -741,6 +772,7 @@ bool Envelope_Type_IsValid(int value) {
   switch(value) {
     case 0:
     case 1:
+    case 2:
       return true;
     default:
       return false;
@@ -748,16 +780,18 @@ bool Envelope_Type_IsValid(int value) {
 }
 
 #ifndef _MSC_VER
+const Envelope_Type Envelope::SERVERNOTIFICATION;
 const Envelope_Type Envelope::CLIENTREQUEST;
-const Envelope_Type Envelope::SERVERSTATUS;
+const Envelope_Type Envelope::SERVERRESPONSE;
 const Envelope_Type Envelope::Type_MIN;
 const Envelope_Type Envelope::Type_MAX;
 const int Envelope::Type_ARRAYSIZE;
 #endif  // _MSC_VER
 #ifndef _MSC_VER
 const int Envelope::kTypeFieldNumber;
+const int Envelope::kNotificationFieldNumber;
 const int Envelope::kRequestFieldNumber;
-const int Envelope::kStatusFieldNumber;
+const int Envelope::kResponseFieldNumber;
 #endif  // !_MSC_VER
 
 Envelope::Envelope()
@@ -766,8 +800,9 @@ Envelope::Envelope()
 }
 
 void Envelope::InitAsDefaultInstance() {
+  notification_ = const_cast< ::iTCH::ServerNotification*>(&::iTCH::ServerNotification::default_instance());
   request_ = const_cast< ::iTCH::ClientRequest*>(&::iTCH::ClientRequest::default_instance());
-  status_ = const_cast< ::iTCH::ServerStatus*>(&::iTCH::ServerStatus::default_instance());
+  response_ = const_cast< ::iTCH::ServerResponse*>(&::iTCH::ServerResponse::default_instance());
 }
 
 Envelope::Envelope(const Envelope& from)
@@ -779,8 +814,9 @@ Envelope::Envelope(const Envelope& from)
 void Envelope::SharedCtor() {
   _cached_size_ = 0;
   type_ = 0;
+  notification_ = NULL;
   request_ = NULL;
-  status_ = NULL;
+  response_ = NULL;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -790,8 +826,9 @@ Envelope::~Envelope() {
 
 void Envelope::SharedDtor() {
   if (this != default_instance_) {
+    delete notification_;
     delete request_;
-    delete status_;
+    delete response_;
   }
 }
 
@@ -818,11 +855,14 @@ Envelope* Envelope::New() const {
 void Envelope::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     type_ = 0;
+    if (has_notification()) {
+      if (notification_ != NULL) notification_->::iTCH::ServerNotification::Clear();
+    }
     if (has_request()) {
       if (request_ != NULL) request_->::iTCH::ClientRequest::Clear();
     }
-    if (has_status()) {
-      if (status_ != NULL) status_->::iTCH::ServerStatus::Clear();
+    if (has_response()) {
+      if (response_ != NULL) response_->::iTCH::ServerResponse::Clear();
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -851,12 +891,26 @@ bool Envelope::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(18)) goto parse_request;
+        if (input->ExpectTag(18)) goto parse_notification;
         break;
       }
       
-      // optional .iTCH.ClientRequest request = 2;
+      // optional .iTCH.ServerNotification notification = 2;
       case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_notification:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_notification()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_request;
+        break;
+      }
+      
+      // optional .iTCH.ClientRequest request = 3;
+      case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_request:
@@ -865,17 +919,17 @@ bool Envelope::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(26)) goto parse_status;
+        if (input->ExpectTag(34)) goto parse_response;
         break;
       }
       
-      // optional .iTCH.ServerStatus status = 3;
-      case 3: {
+      // optional .iTCH.ServerResponse response = 4;
+      case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_status:
+         parse_response:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_status()));
+               input, mutable_response()));
         } else {
           goto handle_uninterpreted;
         }
@@ -907,16 +961,22 @@ void Envelope::SerializeWithCachedSizes(
       1, this->type(), output);
   }
   
-  // optional .iTCH.ClientRequest request = 2;
-  if (has_request()) {
+  // optional .iTCH.ServerNotification notification = 2;
+  if (has_notification()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->request(), output);
+      2, this->notification(), output);
   }
   
-  // optional .iTCH.ServerStatus status = 3;
-  if (has_status()) {
+  // optional .iTCH.ClientRequest request = 3;
+  if (has_request()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->status(), output);
+      3, this->request(), output);
+  }
+  
+  // optional .iTCH.ServerResponse response = 4;
+  if (has_response()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      4, this->response(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -933,18 +993,25 @@ void Envelope::SerializeWithCachedSizes(
       1, this->type(), target);
   }
   
-  // optional .iTCH.ClientRequest request = 2;
+  // optional .iTCH.ServerNotification notification = 2;
+  if (has_notification()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, this->notification(), target);
+  }
+  
+  // optional .iTCH.ClientRequest request = 3;
   if (has_request()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        2, this->request(), target);
+        3, this->request(), target);
   }
   
-  // optional .iTCH.ServerStatus status = 3;
-  if (has_status()) {
+  // optional .iTCH.ServerResponse response = 4;
+  if (has_response()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        3, this->status(), target);
+        4, this->response(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -964,18 +1031,25 @@ int Envelope::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
     }
     
-    // optional .iTCH.ClientRequest request = 2;
+    // optional .iTCH.ServerNotification notification = 2;
+    if (has_notification()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->notification());
+    }
+    
+    // optional .iTCH.ClientRequest request = 3;
     if (has_request()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->request());
     }
     
-    // optional .iTCH.ServerStatus status = 3;
-    if (has_status()) {
+    // optional .iTCH.ServerResponse response = 4;
+    if (has_response()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->status());
+          this->response());
     }
     
   }
@@ -1008,11 +1082,14 @@ void Envelope::MergeFrom(const Envelope& from) {
     if (from.has_type()) {
       set_type(from.type());
     }
+    if (from.has_notification()) {
+      mutable_notification()->::iTCH::ServerNotification::MergeFrom(from.notification());
+    }
     if (from.has_request()) {
       mutable_request()->::iTCH::ClientRequest::MergeFrom(from.request());
     }
-    if (from.has_status()) {
-      mutable_status()->::iTCH::ServerStatus::MergeFrom(from.status());
+    if (from.has_response()) {
+      mutable_response()->::iTCH::ServerResponse::MergeFrom(from.response());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -1033,11 +1110,14 @@ void Envelope::CopyFrom(const Envelope& from) {
 bool Envelope::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
+  if (has_notification()) {
+    if (!this->notification().IsInitialized()) return false;
+  }
   if (has_request()) {
     if (!this->request().IsInitialized()) return false;
   }
-  if (has_status()) {
-    if (!this->status().IsInitialized()) return false;
+  if (has_response()) {
+    if (!this->response().IsInitialized()) return false;
   }
   return true;
 }
@@ -1045,8 +1125,9 @@ bool Envelope::IsInitialized() const {
 void Envelope::Swap(Envelope* other) {
   if (other != this) {
     std::swap(type_, other->type_);
+    std::swap(notification_, other->notification_);
     std::swap(request_, other->request_);
-    std::swap(status_, other->status_);
+    std::swap(response_, other->response_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -1058,6 +1139,245 @@ void Envelope::Swap(Envelope* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = Envelope_descriptor_;
   metadata.reflection = Envelope_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+const ::google::protobuf::EnumDescriptor* ServerNotification_Type_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ServerNotification_Type_descriptor_;
+}
+bool ServerNotification_Type_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const ServerNotification_Type ServerNotification::VOLUMECHANGED;
+const ServerNotification_Type ServerNotification::PLAYINGSTARTED;
+const ServerNotification_Type ServerNotification::PLAYINGSTOPPED;
+const ServerNotification_Type ServerNotification::TRACKINFOCHANGED;
+const ServerNotification_Type ServerNotification::Type_MIN;
+const ServerNotification_Type ServerNotification::Type_MAX;
+const int ServerNotification::Type_ARRAYSIZE;
+#endif  // _MSC_VER
+#ifndef _MSC_VER
+const int ServerNotification::kTypeFieldNumber;
+#endif  // !_MSC_VER
+
+ServerNotification::ServerNotification()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void ServerNotification::InitAsDefaultInstance() {
+}
+
+ServerNotification::ServerNotification(const ServerNotification& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void ServerNotification::SharedCtor() {
+  _cached_size_ = 0;
+  type_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+ServerNotification::~ServerNotification() {
+  SharedDtor();
+}
+
+void ServerNotification::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void ServerNotification::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ServerNotification::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ServerNotification_descriptor_;
+}
+
+const ServerNotification& ServerNotification::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_iTCH_2eproto();  return *default_instance_;
+}
+
+ServerNotification* ServerNotification::default_instance_ = NULL;
+
+ServerNotification* ServerNotification::New() const {
+  return new ServerNotification;
+}
+
+void ServerNotification::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    type_ = 0;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool ServerNotification::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .iTCH.ServerNotification.Type type = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (::iTCH::ServerNotification_Type_IsValid(value)) {
+            set_type(static_cast< ::iTCH::ServerNotification_Type >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(1, value);
+          }
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void ServerNotification::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .iTCH.ServerNotification.Type type = 1;
+  if (has_type()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->type(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* ServerNotification::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .iTCH.ServerNotification.Type type = 1;
+  if (has_type()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->type(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int ServerNotification::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .iTCH.ServerNotification.Type type = 1;
+    if (has_type()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ServerNotification::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const ServerNotification* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const ServerNotification*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void ServerNotification::MergeFrom(const ServerNotification& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_type()) {
+      set_type(from.type());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void ServerNotification::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ServerNotification::CopyFrom(const ServerNotification& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ServerNotification::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  return true;
+}
+
+void ServerNotification::Swap(ServerNotification* other) {
+  if (other != this) {
+    std::swap(type_, other->type_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata ServerNotification::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ServerNotification_descriptor_;
+  metadata.reflection = ServerNotification_reflection_;
   return metadata;
 }
 
@@ -2452,11 +2772,11 @@ void Track::Swap(Track* other) {
 
 // ===================================================================
 
-const ::google::protobuf::EnumDescriptor* ServerStatus_Type_descriptor() {
+const ::google::protobuf::EnumDescriptor* ServerResponse_Value_Type_descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return ServerStatus_Type_descriptor_;
+  return ServerResponse_Value_Type_descriptor_;
 }
-bool ServerStatus_Type_IsValid(int value) {
+bool ServerResponse_Value_Type_IsValid(int value) {
   switch(value) {
     case 0:
     case 1:
@@ -2471,125 +2791,105 @@ bool ServerStatus_Type_IsValid(int value) {
 }
 
 #ifndef _MSC_VER
-const ServerStatus_Type ServerStatus::SOUNDVOLUME;
-const ServerStatus_Type ServerStatus::MUTE;
-const ServerStatus_Type ServerStatus::PLAYERPOSITION;
-const ServerStatus_Type ServerStatus::PLAYERSTATE;
-const ServerStatus_Type ServerStatus::CURRENTTRACK;
-const ServerStatus_Type ServerStatus::CURRENTPLAYLIST;
-const ServerStatus_Type ServerStatus::Type_MIN;
-const ServerStatus_Type ServerStatus::Type_MAX;
-const int ServerStatus::Type_ARRAYSIZE;
-#endif  // _MSC_VER
-const ::google::protobuf::EnumDescriptor* ServerStatus_Value_Type_descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return ServerStatus_Value_Type_descriptor_;
-}
-bool ServerStatus_Value_Type_IsValid(int value) {
-  switch(value) {
-    case 0:
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-      return true;
-    default:
-      return false;
-  }
-}
-
-#ifndef _MSC_VER
-const ServerStatus_Value_Type ServerStatus_Value::VOLUME;
-const ServerStatus_Value_Type ServerStatus_Value::MUTE;
-const ServerStatus_Value_Type ServerStatus_Value::POSITION;
-const ServerStatus_Value_Type ServerStatus_Value::STATE;
-const ServerStatus_Value_Type ServerStatus_Value::TRACK;
-const ServerStatus_Value_Type ServerStatus_Value::Type_MIN;
-const ServerStatus_Value_Type ServerStatus_Value::Type_MAX;
-const int ServerStatus_Value::Type_ARRAYSIZE;
+const ServerResponse_Value_Type ServerResponse_Value::VOLUME;
+const ServerResponse_Value_Type ServerResponse_Value::MUTE;
+const ServerResponse_Value_Type ServerResponse_Value::POSITION;
+const ServerResponse_Value_Type ServerResponse_Value::STATE;
+const ServerResponse_Value_Type ServerResponse_Value::TRACK;
+const ServerResponse_Value_Type ServerResponse_Value::PLAYLIST;
+const ServerResponse_Value_Type ServerResponse_Value::Type_MIN;
+const ServerResponse_Value_Type ServerResponse_Value::Type_MAX;
+const int ServerResponse_Value::Type_ARRAYSIZE;
 #endif  // _MSC_VER
 #ifndef _MSC_VER
-const int ServerStatus_Value::kTypeFieldNumber;
-const int ServerStatus_Value::kVolumeFieldNumber;
-const int ServerStatus_Value::kMuteFieldNumber;
-const int ServerStatus_Value::kPositionFieldNumber;
-const int ServerStatus_Value::kStateFieldNumber;
-const int ServerStatus_Value::kTrackFieldNumber;
+const int ServerResponse_Value::kTypeFieldNumber;
+const int ServerResponse_Value::kVolumeFieldNumber;
+const int ServerResponse_Value::kMuteFieldNumber;
+const int ServerResponse_Value::kPositionFieldNumber;
+const int ServerResponse_Value::kStateFieldNumber;
+const int ServerResponse_Value::kTrackFieldNumber;
+const int ServerResponse_Value::kPlaylistFieldNumber;
 #endif  // !_MSC_VER
 
-ServerStatus_Value::ServerStatus_Value()
+ServerResponse_Value::ServerResponse_Value()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void ServerStatus_Value::InitAsDefaultInstance() {
+void ServerResponse_Value::InitAsDefaultInstance() {
+  track_ = const_cast< ::iTCH::Track*>(&::iTCH::Track::default_instance());
 }
 
-ServerStatus_Value::ServerStatus_Value(const ServerStatus_Value& from)
+ServerResponse_Value::ServerResponse_Value(const ServerResponse_Value& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void ServerStatus_Value::SharedCtor() {
+void ServerResponse_Value::SharedCtor() {
   _cached_size_ = 0;
   type_ = 0;
   volume_ = 0u;
   mute_ = false;
   position_ = 0u;
   state_ = 0;
+  track_ = NULL;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-ServerStatus_Value::~ServerStatus_Value() {
+ServerResponse_Value::~ServerResponse_Value() {
   SharedDtor();
 }
 
-void ServerStatus_Value::SharedDtor() {
+void ServerResponse_Value::SharedDtor() {
   if (this != default_instance_) {
+    delete track_;
   }
 }
 
-void ServerStatus_Value::SetCachedSize(int size) const {
+void ServerResponse_Value::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* ServerStatus_Value::descriptor() {
+const ::google::protobuf::Descriptor* ServerResponse_Value::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return ServerStatus_Value_descriptor_;
+  return ServerResponse_Value_descriptor_;
 }
 
-const ServerStatus_Value& ServerStatus_Value::default_instance() {
+const ServerResponse_Value& ServerResponse_Value::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_iTCH_2eproto();  return *default_instance_;
 }
 
-ServerStatus_Value* ServerStatus_Value::default_instance_ = NULL;
+ServerResponse_Value* ServerResponse_Value::default_instance_ = NULL;
 
-ServerStatus_Value* ServerStatus_Value::New() const {
-  return new ServerStatus_Value;
+ServerResponse_Value* ServerResponse_Value::New() const {
+  return new ServerResponse_Value;
 }
 
-void ServerStatus_Value::Clear() {
+void ServerResponse_Value::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     type_ = 0;
     volume_ = 0u;
     mute_ = false;
     position_ = 0u;
     state_ = 0;
+    if (has_track()) {
+      if (track_ != NULL) track_->::iTCH::Track::Clear();
+    }
   }
-  track_.Clear();
+  playlist_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
-bool ServerStatus_Value::MergePartialFromCodedStream(
+bool ServerResponse_Value::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .iTCH.ServerStatus.Value.Type type = 1;
+      // required .iTCH.ServerResponse.Value.Type type = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -2597,8 +2897,8 @@ bool ServerStatus_Value::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          if (::iTCH::ServerStatus_Value_Type_IsValid(value)) {
-            set_type(static_cast< ::iTCH::ServerStatus_Value_Type >(value));
+          if (::iTCH::ServerResponse_Value_Type_IsValid(value)) {
+            set_type(static_cast< ::iTCH::ServerResponse_Value_Type >(value));
           } else {
             mutable_unknown_fields()->AddVarint(1, value);
           }
@@ -2678,17 +2978,31 @@ bool ServerStatus_Value::MergePartialFromCodedStream(
         break;
       }
       
-      // repeated .iTCH.Track track = 6;
+      // optional .iTCH.Track track = 6;
       case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_track:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_track()));
+               input, mutable_track()));
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(50)) goto parse_track;
+        if (input->ExpectTag(58)) goto parse_playlist;
+        break;
+      }
+      
+      // repeated .iTCH.Track playlist = 7;
+      case 7: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_playlist:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_playlist()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(58)) goto parse_playlist;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -2709,9 +3023,9 @@ bool ServerStatus_Value::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void ServerStatus_Value::SerializeWithCachedSizes(
+void ServerResponse_Value::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required .iTCH.ServerStatus.Value.Type type = 1;
+  // required .iTCH.ServerResponse.Value.Type type = 1;
   if (has_type()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->type(), output);
@@ -2738,10 +3052,16 @@ void ServerStatus_Value::SerializeWithCachedSizes(
       5, this->state(), output);
   }
   
-  // repeated .iTCH.Track track = 6;
-  for (int i = 0; i < this->track_size(); i++) {
+  // optional .iTCH.Track track = 6;
+  if (has_track()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      6, this->track(i), output);
+      6, this->track(), output);
+  }
+  
+  // repeated .iTCH.Track playlist = 7;
+  for (int i = 0; i < this->playlist_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, this->playlist(i), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -2750,9 +3070,9 @@ void ServerStatus_Value::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* ServerStatus_Value::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* ServerResponse_Value::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required .iTCH.ServerStatus.Value.Type type = 1;
+  // required .iTCH.ServerResponse.Value.Type type = 1;
   if (has_type()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       1, this->type(), target);
@@ -2779,11 +3099,18 @@ void ServerStatus_Value::SerializeWithCachedSizes(
       5, this->state(), target);
   }
   
-  // repeated .iTCH.Track track = 6;
-  for (int i = 0; i < this->track_size(); i++) {
+  // optional .iTCH.Track track = 6;
+  if (has_track()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        6, this->track(i), target);
+        6, this->track(), target);
+  }
+  
+  // repeated .iTCH.Track playlist = 7;
+  for (int i = 0; i < this->playlist_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        7, this->playlist(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2793,11 +3120,11 @@ void ServerStatus_Value::SerializeWithCachedSizes(
   return target;
 }
 
-int ServerStatus_Value::ByteSize() const {
+int ServerResponse_Value::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .iTCH.ServerStatus.Value.Type type = 1;
+    // required .iTCH.ServerResponse.Value.Type type = 1;
     if (has_type()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
@@ -2828,13 +3155,20 @@ int ServerStatus_Value::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->state());
     }
     
+    // optional .iTCH.Track track = 6;
+    if (has_track()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->track());
+    }
+    
   }
-  // repeated .iTCH.Track track = 6;
-  total_size += 1 * this->track_size();
-  for (int i = 0; i < this->track_size(); i++) {
+  // repeated .iTCH.Track playlist = 7;
+  total_size += 1 * this->playlist_size();
+  for (int i = 0; i < this->playlist_size(); i++) {
     total_size +=
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->track(i));
+        this->playlist(i));
   }
   
   if (!unknown_fields().empty()) {
@@ -2848,10 +3182,10 @@ int ServerStatus_Value::ByteSize() const {
   return total_size;
 }
 
-void ServerStatus_Value::MergeFrom(const ::google::protobuf::Message& from) {
+void ServerResponse_Value::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const ServerStatus_Value* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const ServerStatus_Value*>(
+  const ServerResponse_Value* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const ServerResponse_Value*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -2860,9 +3194,9 @@ void ServerStatus_Value::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void ServerStatus_Value::MergeFrom(const ServerStatus_Value& from) {
+void ServerResponse_Value::MergeFrom(const ServerResponse_Value& from) {
   GOOGLE_CHECK_NE(&from, this);
-  track_.MergeFrom(from.track_);
+  playlist_.MergeFrom(from.playlist_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_type()) {
       set_type(from.type());
@@ -2879,50 +3213,57 @@ void ServerStatus_Value::MergeFrom(const ServerStatus_Value& from) {
     if (from.has_state()) {
       set_state(from.state());
     }
+    if (from.has_track()) {
+      mutable_track()->::iTCH::Track::MergeFrom(from.track());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void ServerStatus_Value::CopyFrom(const ::google::protobuf::Message& from) {
+void ServerResponse_Value::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void ServerStatus_Value::CopyFrom(const ServerStatus_Value& from) {
+void ServerResponse_Value::CopyFrom(const ServerResponse_Value& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool ServerStatus_Value::IsInitialized() const {
+bool ServerResponse_Value::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
-  for (int i = 0; i < track_size(); i++) {
-    if (!this->track(i).IsInitialized()) return false;
+  if (has_track()) {
+    if (!this->track().IsInitialized()) return false;
+  }
+  for (int i = 0; i < playlist_size(); i++) {
+    if (!this->playlist(i).IsInitialized()) return false;
   }
   return true;
 }
 
-void ServerStatus_Value::Swap(ServerStatus_Value* other) {
+void ServerResponse_Value::Swap(ServerResponse_Value* other) {
   if (other != this) {
     std::swap(type_, other->type_);
     std::swap(volume_, other->volume_);
     std::swap(mute_, other->mute_);
     std::swap(position_, other->position_);
     std::swap(state_, other->state_);
-    track_.Swap(&other->track_);
+    std::swap(track_, other->track_);
+    playlist_.Swap(&other->playlist_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
   }
 }
 
-::google::protobuf::Metadata ServerStatus_Value::GetMetadata() const {
+::google::protobuf::Metadata ServerResponse_Value::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = ServerStatus_Value_descriptor_;
-  metadata.reflection = ServerStatus_Value_reflection_;
+  metadata.descriptor = ServerResponse_Value_descriptor_;
+  metadata.reflection = ServerResponse_Value_reflection_;
   return metadata;
 }
 
@@ -2930,107 +3271,96 @@ void ServerStatus_Value::Swap(ServerStatus_Value* other) {
 // -------------------------------------------------------------------
 
 #ifndef _MSC_VER
-const int ServerStatus::kTypeFieldNumber;
-const int ServerStatus::kSeqidFieldNumber;
-const int ServerStatus::kValueFieldNumber;
+const int ServerResponse::kSeqidFieldNumber;
+const int ServerResponse::kSuccessFieldNumber;
+const int ServerResponse::kErrorMessageFieldNumber;
+const int ServerResponse::kValueFieldNumber;
 #endif  // !_MSC_VER
 
-ServerStatus::ServerStatus()
+ServerResponse::ServerResponse()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void ServerStatus::InitAsDefaultInstance() {
-  value_ = const_cast< ::iTCH::ServerStatus_Value*>(&::iTCH::ServerStatus_Value::default_instance());
+void ServerResponse::InitAsDefaultInstance() {
+  value_ = const_cast< ::iTCH::ServerResponse_Value*>(&::iTCH::ServerResponse_Value::default_instance());
 }
 
-ServerStatus::ServerStatus(const ServerStatus& from)
+ServerResponse::ServerResponse(const ServerResponse& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void ServerStatus::SharedCtor() {
+void ServerResponse::SharedCtor() {
   _cached_size_ = 0;
-  type_ = 0;
   seqid_ = 0u;
+  success_ = false;
+  error_message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   value_ = NULL;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-ServerStatus::~ServerStatus() {
+ServerResponse::~ServerResponse() {
   SharedDtor();
 }
 
-void ServerStatus::SharedDtor() {
+void ServerResponse::SharedDtor() {
+  if (error_message_ != &::google::protobuf::internal::kEmptyString) {
+    delete error_message_;
+  }
   if (this != default_instance_) {
     delete value_;
   }
 }
 
-void ServerStatus::SetCachedSize(int size) const {
+void ServerResponse::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* ServerStatus::descriptor() {
+const ::google::protobuf::Descriptor* ServerResponse::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return ServerStatus_descriptor_;
+  return ServerResponse_descriptor_;
 }
 
-const ServerStatus& ServerStatus::default_instance() {
+const ServerResponse& ServerResponse::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_iTCH_2eproto();  return *default_instance_;
 }
 
-ServerStatus* ServerStatus::default_instance_ = NULL;
+ServerResponse* ServerResponse::default_instance_ = NULL;
 
-ServerStatus* ServerStatus::New() const {
-  return new ServerStatus;
+ServerResponse* ServerResponse::New() const {
+  return new ServerResponse;
 }
 
-void ServerStatus::Clear() {
+void ServerResponse::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    type_ = 0;
     seqid_ = 0u;
+    success_ = false;
+    if (has_error_message()) {
+      if (error_message_ != &::google::protobuf::internal::kEmptyString) {
+        error_message_->clear();
+      }
+    }
     if (has_value()) {
-      if (value_ != NULL) value_->::iTCH::ServerStatus_Value::Clear();
+      if (value_ != NULL) value_->::iTCH::ServerResponse_Value::Clear();
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
-bool ServerStatus::MergePartialFromCodedStream(
+bool ServerResponse::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .iTCH.ServerStatus.Type type = 1;
+      // required uint32 seqid = 1 [default = 0];
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-          int value;
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          if (::iTCH::ServerStatus_Type_IsValid(value)) {
-            set_type(static_cast< ::iTCH::ServerStatus_Type >(value));
-          } else {
-            mutable_unknown_fields()->AddVarint(1, value);
-          }
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(16)) goto parse_seqid;
-        break;
-      }
-      
-      // required uint32 seqid = 2 [default = 0];
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_seqid:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &seqid_)));
@@ -3038,12 +3368,45 @@ bool ServerStatus::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(26)) goto parse_value;
+        if (input->ExpectTag(16)) goto parse_success;
         break;
       }
       
-      // required .iTCH.ServerStatus.Value value = 3;
+      // required bool success = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_success:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &success_)));
+          set_has_success();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_error_message;
+        break;
+      }
+      
+      // optional string error_message = 3;
       case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_error_message:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_error_message()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->error_message().data(), this->error_message().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(34)) goto parse_value;
+        break;
+      }
+      
+      // optional .iTCH.ServerResponse.Value value = 4;
+      case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_value:
@@ -3072,23 +3435,31 @@ bool ServerStatus::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void ServerStatus::SerializeWithCachedSizes(
+void ServerResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required .iTCH.ServerStatus.Type type = 1;
-  if (has_type()) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      1, this->type(), output);
-  }
-  
-  // required uint32 seqid = 2 [default = 0];
+  // required uint32 seqid = 1 [default = 0];
   if (has_seqid()) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->seqid(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->seqid(), output);
   }
   
-  // required .iTCH.ServerStatus.Value value = 3;
+  // required bool success = 2;
+  if (has_success()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->success(), output);
+  }
+  
+  // optional string error_message = 3;
+  if (has_error_message()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->error_message().data(), this->error_message().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->error_message(), output);
+  }
+  
+  // optional .iTCH.ServerResponse.Value value = 4;
   if (has_value()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->value(), output);
+      4, this->value(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -3097,24 +3468,33 @@ void ServerStatus::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* ServerStatus::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* ServerResponse::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required .iTCH.ServerStatus.Type type = 1;
-  if (has_type()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      1, this->type(), target);
-  }
-  
-  // required uint32 seqid = 2 [default = 0];
+  // required uint32 seqid = 1 [default = 0];
   if (has_seqid()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->seqid(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->seqid(), target);
   }
   
-  // required .iTCH.ServerStatus.Value value = 3;
+  // required bool success = 2;
+  if (has_success()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->success(), target);
+  }
+  
+  // optional string error_message = 3;
+  if (has_error_message()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->error_message().data(), this->error_message().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->error_message(), target);
+  }
+  
+  // optional .iTCH.ServerResponse.Value value = 4;
   if (has_value()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        3, this->value(), target);
+        4, this->value(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -3124,24 +3504,30 @@ void ServerStatus::SerializeWithCachedSizes(
   return target;
 }
 
-int ServerStatus::ByteSize() const {
+int ServerResponse::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .iTCH.ServerStatus.Type type = 1;
-    if (has_type()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
-    }
-    
-    // required uint32 seqid = 2 [default = 0];
+    // required uint32 seqid = 1 [default = 0];
     if (has_seqid()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->seqid());
     }
     
-    // required .iTCH.ServerStatus.Value value = 3;
+    // required bool success = 2;
+    if (has_success()) {
+      total_size += 1 + 1;
+    }
+    
+    // optional string error_message = 3;
+    if (has_error_message()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->error_message());
+    }
+    
+    // optional .iTCH.ServerResponse.Value value = 4;
     if (has_value()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -3160,10 +3546,10 @@ int ServerStatus::ByteSize() const {
   return total_size;
 }
 
-void ServerStatus::MergeFrom(const ::google::protobuf::Message& from) {
+void ServerResponse::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const ServerStatus* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const ServerStatus*>(
+  const ServerResponse* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const ServerResponse*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -3172,36 +3558,39 @@ void ServerStatus::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void ServerStatus::MergeFrom(const ServerStatus& from) {
+void ServerResponse::MergeFrom(const ServerResponse& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_type()) {
-      set_type(from.type());
-    }
     if (from.has_seqid()) {
       set_seqid(from.seqid());
     }
+    if (from.has_success()) {
+      set_success(from.success());
+    }
+    if (from.has_error_message()) {
+      set_error_message(from.error_message());
+    }
     if (from.has_value()) {
-      mutable_value()->::iTCH::ServerStatus_Value::MergeFrom(from.value());
+      mutable_value()->::iTCH::ServerResponse_Value::MergeFrom(from.value());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void ServerStatus::CopyFrom(const ::google::protobuf::Message& from) {
+void ServerResponse::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void ServerStatus::CopyFrom(const ServerStatus& from) {
+void ServerResponse::CopyFrom(const ServerResponse& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool ServerStatus::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+bool ServerResponse::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
   
   if (has_value()) {
     if (!this->value().IsInitialized()) return false;
@@ -3209,10 +3598,11 @@ bool ServerStatus::IsInitialized() const {
   return true;
 }
 
-void ServerStatus::Swap(ServerStatus* other) {
+void ServerResponse::Swap(ServerResponse* other) {
   if (other != this) {
-    std::swap(type_, other->type_);
     std::swap(seqid_, other->seqid_);
+    std::swap(success_, other->success_);
+    std::swap(error_message_, other->error_message_);
     std::swap(value_, other->value_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
@@ -3220,11 +3610,11 @@ void ServerStatus::Swap(ServerStatus* other) {
   }
 }
 
-::google::protobuf::Metadata ServerStatus::GetMetadata() const {
+::google::protobuf::Metadata ServerResponse::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = ServerStatus_descriptor_;
-  metadata.reflection = ServerStatus_reflection_;
+  metadata.descriptor = ServerResponse_descriptor_;
+  metadata.reflection = ServerResponse_reflection_;
   return metadata;
 }
 

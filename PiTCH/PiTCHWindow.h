@@ -24,6 +24,7 @@
 #define PITCHWINDOW_H
 
 #include <QtCore/QTimer>
+#include <QtCore/QMap>
 #include <QtGui/QMainWindow>
 #include "iTCH/MessageBuilder.h"
 #include "iTCH/Client.h"
@@ -72,12 +73,20 @@ protected slots:
   void setSoundVolume(int);
   void setMute(bool);
   void setPlayerPosition(int);
-  void setPlayerState(iTCH::PlayerState);
+  void setPlaying(bool playing);
   void setCurrentTrack(const iTCH::Track &);
+  void requestPlayerPosition();
 
 private:
   void createStandardIcons();
   unsigned long nextSequenceId();
+  void sendTrackedRequest(iTCH::EnvelopePtr envelope);  // Store request in pending request queue and send
+  void processNotification(iTCH::EnvelopePtr envelope);
+  void processResponse(iTCH::EnvelopePtr envelope);
+
+private:
+  // Map of client requests, keyed by sequence ID
+  typedef QMap<unsigned int, iTCH::EnvelopePtr> PendingRequests;
 
 private:
   Ui::PiTCHWindow  *ui_;
@@ -88,7 +97,11 @@ private:
   bool              buttonHeld_;
   unsigned int      buttonHeldDelay_;
   QTimer            buttonTimer_;
-  unsigned long     sequenceId_;
+  unsigned long     sequenceId_;          // Last used sequence ID
+  PendingRequests   requests_;            // Requests sent to server that have not yet received a response
+  unsigned int      positionInterval_;    // Interval between player time position requests
+  QTimer            positionTimer_;       // Timer to request player time position
+  bool              playing_;
   iTCH::Track       currentTrack_;
 };
 

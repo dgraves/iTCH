@@ -31,44 +31,56 @@ using namespace iTCH;
 
 namespace
 {
-
-inline PlayerState convertState(ITPlayerState state)
-{
-  switch (state)
+  // Create a server response success or failure message for requests that
+  // do not receive a return value, with an error message on failure
+  inline EnvelopePtr createNoValueResponse(unsigned int seqid, HRESULT result)
   {
-  case ITPlayerStateStopped:
-    return iTCH::STOPPED;
-  case ITPlayerStatePlaying:
-    return iTCH::PLAYING;
-  case ITPlayerStateFastForward:
-    return iTCH::FASTFORWARD;
-  case ITPlayerStateRewind:
-    return iTCH::REWIND;
-  default:
-    return iTCH::UNKNOWN;
+    if (result == S_OK)
+    {
+      return MessageBuilder::makeSuccessfulResponse(seqid);
+    }
+    else
+    {
+      return MessageBuilder::makeFailedResponse(seqid, "An unexpected error occurred");
+    }
   }
-}
 
-inline QString convertKind(ITTrackKind kind)
-{
-  switch (kind)
+  inline PlayerState convertState(ITPlayerState state)
   {
-  case ITTrackKindFile:
-    return "File track";
-  case ITTrackKindCD:
-    return "CD track";
-  case ITTrackKindURL:
-    return "URL track";
-  case ITTrackKindDevice:
-    return "Device track";
-  case ITTrackKindSharedLibrary:
-    return "Shared library track";
-  case ITTrackKindUnknown:
-  default:
-    return "Unknown track kind";
+    switch (state)
+    {
+    case ITPlayerStateStopped:
+      return iTCH::STOPPED;
+    case ITPlayerStatePlaying:
+      return iTCH::PLAYING;
+    case ITPlayerStateFastForward:
+      return iTCH::FASTFORWARD;
+    case ITPlayerStateRewind:
+      return iTCH::REWIND;
+    default:
+      return iTCH::UNKNOWN;
+    }
   }
-}
 
+  inline QString convertKind(ITTrackKind kind)
+  {
+    switch (kind)
+    {
+    case ITTrackKindFile:
+      return "File track";
+    case ITTrackKindCD:
+      return "CD track";
+    case ITTrackKindURL:
+      return "URL track";
+    case ITTrackKindDevice:
+      return "Device track";
+    case ITTrackKindSharedLibrary:
+      return "Shared library track";
+    case ITTrackKindUnknown:
+    default:
+      return "Unknown track kind";
+    }
+  }
 } // End of anonymous name space
 
 void Controller::convertTrack(IITTrack *iittrack, Track *track)
@@ -145,10 +157,8 @@ Controller::Controller() :
   itunes_(NULL),
   events_(NULL),
   eventsConnectionPoint_(NULL),
-  eventsCookie_(0),
-  positionTimerInterval_(1000)  // 1 second interval
+  eventsCookie_(0)
 {
-  connect(&positionTimer_, SIGNAL(timeout()), this, SLOT(positionTimeout()));
 }
 
 Controller::~Controller()
@@ -168,96 +178,146 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
 {
   if (!hasInstance())
   {
-    // throw exception
+    connection->sendMessage(MessageBuilder::makeFailedResponse(request.seqid(),
+      "Server is not connected to an iTunes instace"));
   }
+
+  HRESULT result;
 
   switch (request.type())
   {
   case ClientRequest::BACKTRACK:                        // No value is returned
-    itunes_->BackTrack();
+    result = itunes_->BackTrack();
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::FASTFORWARD:                      // No value is returned
-    itunes_->FastForward();
+    result = itunes_->FastForward();
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::NEXTTRACK:                        // No value is returned
-    itunes_->NextTrack();
+    result = itunes_->NextTrack();
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::PAUSE:                            // No value is returned
-    itunes_->Pause();
+    result = itunes_->Pause();
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::PLAY:                             // No value is returned
-    itunes_->Play();
+    result = itunes_->Play();
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::PLAYPAUSE:                        // No value is returned
-    itunes_->PlayPause();
+    result = itunes_->PlayPause();
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::PREVIOUSTRACK:                    // No value is returned
-    itunes_->PreviousTrack();
+    result = itunes_->PreviousTrack();
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::RESUME:                           // No value is returned
-    itunes_->Resume();
+    result = itunes_->Resume();
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::REWIND:                           // No value is returned
-    itunes_->Rewind();
+    result = itunes_->Rewind();
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::STOP:                             // No value is returned
-    itunes_->Stop();
+    result = itunes_->Stop();
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::GET_SOUNDVOLUME:                  // Returns a long (0-100%)
     {
       long volume = 0;
-      itunes_->get_SoundVolume(&volume);
-      connection->sendMessage(iTCH::MessageBuilder::makeSoundVolumeStatus(
-        request.seqid(), volume));
+      result = itunes_->get_SoundVolume(&volume);
+      if (result == S_OK)
+      {
+        connection->sendMessage(iTCH::MessageBuilder::makeSoundVolumeResponse(
+          request.seqid(), volume));
+      }
+      else
+      {
+        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+      }
     }
     break;
   case ClientRequest::PUT_SOUNDVOLUME:                  // Takes a long (0-100%); No value is returned
-    itunes_->put_SoundVolume(request.value().volume());
+    result = itunes_->put_SoundVolume(request.value().volume());
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::GET_MUTE:                         // Returns a bool
     {
       VARIANT_BOOL isMute = FALSE;
-      itunes_->get_Mute(&isMute);
-        connection->sendMessage(iTCH::MessageBuilder::makeMuteStatus(
-        request.seqid(), isMute == VARIANT_TRUE ? true : false));
+      result = itunes_->get_Mute(&isMute);
+      if (result == S_OK)
+      {
+        connection->sendMessage(iTCH::MessageBuilder::makeMuteResponse(
+          request.seqid(), isMute == VARIANT_TRUE ? true : false));
+      }
+      else
+      {
+        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+      }
     }
     break;
   case ClientRequest::PUT_MUTE:                         // Takes a bool; No value is returned
-    itunes_->put_Mute(request.value().mute());
+    result = itunes_->put_Mute(request.value().mute());
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::GET_PLAYERPOSITION:               // Returns a long (0-100%)
     {
       long position = 0;
-      itunes_->get_PlayerPosition(&position);
-      connection->sendMessage(iTCH::MessageBuilder::makePlayerPositionStatus(
-        request.seqid(), position));
+      result = itunes_->get_PlayerPosition(&position);
+      if (result == S_OK)
+      {
+        connection->sendMessage(iTCH::MessageBuilder::makePlayerPositionResponse(
+          request.seqid(), position));
+      }
+      else
+      {
+        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+      }
     }
     break;
   case ClientRequest::PUT_PLAYERPOSITION:               // Takes a long (0-100%); No value is returned
-    itunes_->put_PlayerPosition(request.value().position());
+    result = itunes_->put_PlayerPosition(request.value().position());
+    connection->sendMessage(createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::GET_PLAYERSTATE:                  // Returns an iTCHPlayerState enumeration value (generated from ITPlayserState)
     {
       ITPlayerState state = ITPlayerStateStopped;
-      itunes_->get_PlayerState(&state);
-      connection->sendMessage(iTCH::MessageBuilder::makePlayerStateStatus(
-        request.seqid(), convertState(state)));
+      result = itunes_->get_PlayerState(&state);
+      if (result == S_OK)
+      {
+        connection->sendMessage(iTCH::MessageBuilder::makePlayerStateResponse(
+          request.seqid(), convertState(state)));
+      }
+      else
+      {
+        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+      }
     }
     break;
   case ClientRequest::GET_CURRENTTRACK:                 // Returns an iTCHTrack object (generated from IITTrack)
     {
       IITTrack *iittrack = 0;
-      itunes_->get_CurrentTrack(&iittrack);
-
-      Track track;
-      convertTrack(iittrack, &track);
-      if (iittrack != NULL)
+      result = itunes_->get_CurrentTrack(&iittrack);
+      if (result == S_OK)
       {
-        iittrack->Release();
-      }
+        Track track;
+        convertTrack(iittrack, &track);
+        if (iittrack != NULL)
+        {
+          iittrack->Release();
+        }
 
-      connection->sendMessage(iTCH::MessageBuilder::makeCurrentTrackStatus(
-        request.seqid(), track));
+        connection->sendMessage(iTCH::MessageBuilder::makeCurrentTrackResponse(
+          request.seqid(), track));
+      }
+      else
+      {
+        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+      }
     }
     break;
   case ClientRequest::GET_CURRENTPLAYLIST:              // Returns an iTCHPlayList object (generated from IITPlayList)
@@ -346,6 +406,10 @@ void Controller::destroyInstance()
     // Throw exception
   }
 
+  // Need to send stopped notification to client
+  statusChanged(iTCH::MessageBuilder::makePlayingStoppedNotification());
+
+  // Disconnect from player
   eventsConnectionPoint_->Unadvise(eventsCookie_);
   eventsConnectionPoint_->Release();
   events_->Release();
@@ -362,41 +426,22 @@ void Controller::destroyInstance()
 void Controller::play(const Track &track)
 {
   // Send play notification and information for playing track
-  statusChanged(iTCH::MessageBuilder::makePlayerStateStatus(0, PLAYING));
-  statusChanged(iTCH::MessageBuilder::makeCurrentTrackStatus(0, track));
-
-  // Send initial player position
-  sendPlayerPosition(0);
-
-  // Start the position timer to periodically transmit player position
-  positionTimer_.start(positionTimerInterval_);
+  statusChanged(MessageBuilder::makePlayingStartedNotification());
 }
 
 void Controller::stop()
 {
-  statusChanged(iTCH::MessageBuilder::makePlayerStateStatus(0, STOPPED));
-
-  // Stop the position timer
-  positionTimer_.stop();
-
-  // Send final player position
-  sendPlayerPosition(0);
+  statusChanged(MessageBuilder::makePlayingStoppedNotification());
 }
 
 void Controller::playingTrackChanged(const Track &track)
 {
-  statusChanged(iTCH::MessageBuilder::makeCurrentTrackStatus(0, track));
+  statusChanged(MessageBuilder::makeTrackInfoChangedNotification());
 }
 
 void Controller::volumeChanged(long newVolume)
 {
-  statusChanged(iTCH::MessageBuilder::makeSoundVolumeStatus(0, newVolume));
-
-  // Also send mute state in case it triggered volume change, although
-  // I haven't yet encountered a situtation where get_Mute yields true
-  VARIANT_BOOL isMute = FALSE;
-  itunes_->get_Mute(&isMute);
-  statusChanged(iTCH::MessageBuilder::makeMuteStatus(0, isMute == VARIANT_TRUE ? true : false));
+  statusChanged(MessageBuilder::makeVolumeChangedNotification());
 }
 
 void Controller::aboutToQuit()
@@ -413,17 +458,4 @@ void Controller::quitting()
   {
     destroyInstance();
   }
-}
-
-void Controller::positionTimeout()
-{
-  // Send current player position
-  sendPlayerPosition(0);
-}
-
-void Controller::sendPlayerPosition(unsigned long sequenceId)
-{
-  long position = 0;
-  itunes_->get_PlayerPosition(&position);
-  statusChanged(iTCH::MessageBuilder::makePlayerPositionStatus(sequenceId, position));
 }

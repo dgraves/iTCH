@@ -75,9 +75,6 @@ protected slots:
   void aboutToQuit();
   void quitting();
 
-  // Timer event
-  void positionTimeout();
-
 private:
   void sendPlayerPosition(unsigned long sequenceId);  // Generate statusChanged signal for player position
 
@@ -86,8 +83,6 @@ private:
   EventSink        *events_;
   IConnectionPoint *eventsConnectionPoint_;
   unsigned long     eventsCookie_;
-  QTimer            positionTimer_;          // Timer for reporting player position
-  unsigned int      positionTimerInterval_;  // Interval for reporting player position
 };
 
 } // end namespace iTCH

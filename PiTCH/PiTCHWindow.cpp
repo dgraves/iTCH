@@ -28,27 +28,79 @@
 
 namespace
 {
-
-// Create formatted time string for time elapsed/remaining display
-// Formats:
-//   Seconds only -> 0:ss
-//   Has minutes  -> m:ss
-//   Has hours    -> H:mm:ss
-// Will not accept more than 24 hours
-QString secondsToTimePositionString(int seconds)
-{
-  QTime converter = QTime().addSecs(seconds);
-
-  if (converter.hour() > 0)
+  // Default timer values
+  enum
   {
-    return converter.toString("H:mm:ss");
-  }
-  else
-  {
-    return converter.toString("m:ss");
-  }
-}
+    BUTTON_HELD_DELAY = 500,
+    POSITION_INTERVAL = 1000
+  };
 
+  // Create formatted time string for time elapsed/remaining display
+  // Formats:
+  //   Seconds only -> 0:ss
+  //   Has minutes  -> m:ss
+  //   Has hours    -> H:mm:ss
+  // Will not accept more than 24 hours
+  QString secondsToTimePositionString(int seconds)
+  {
+    QTime converter = QTime().addSecs(seconds);
+
+    if (converter.hour() > 0)
+    {
+      return converter.toString("H:mm:ss");
+    }
+    else
+    {
+      return converter.toString("m:ss");
+    }
+  }
+
+  QString requestTypeToString(iTCH::ClientRequest::Type type)
+  {
+    switch (type)
+    {
+    case iTCH::ClientRequest::BACKTRACK:
+      return "Back track";
+    case iTCH::ClientRequest::FASTFORWARD:
+      return "Fast forward";
+    case iTCH::ClientRequest::NEXTTRACK:
+      return "Next track";
+    case iTCH::ClientRequest::PAUSE:
+      return "Pause";
+    case iTCH::ClientRequest::PLAY:
+      return "Play";
+    case iTCH::ClientRequest::PLAYPAUSE:
+      return "Toggle play-pause";
+    case iTCH::ClientRequest::PREVIOUSTRACK:
+      return "Previous track";
+    case iTCH::ClientRequest::RESUME:
+      return "Resume";
+    case iTCH::ClientRequest::REWIND:
+      return "Rewind";
+    case iTCH::ClientRequest::STOP:
+      return "Stop";
+    case iTCH::ClientRequest::GET_SOUNDVOLUME:
+      return "Get volume";
+    case iTCH::ClientRequest::PUT_SOUNDVOLUME:
+      return "Set volume";
+    case iTCH::ClientRequest::GET_MUTE:
+      return "Get mute";
+    case iTCH::ClientRequest::PUT_MUTE:
+      return "Set mute";
+    case iTCH::ClientRequest::GET_PLAYERPOSITION:
+      return "Get player position";
+    case iTCH::ClientRequest::PUT_PLAYERPOSITION:
+      return "Set player position";
+    case iTCH::ClientRequest::GET_PLAYERSTATE:
+      return "Get player state";
+    case iTCH::ClientRequest::GET_CURRENTTRACK:
+      return "Get current track";
+    case iTCH::ClientRequest::GET_CURRENTPLAYLIST:
+      return "Get current playlist";
+    default:
+      return "Unrecognized";
+    }
+  }
 } // End of anonymous namespace
 
 PiTCHWindow::PiTCHWindow(QWidget *parent) :
@@ -56,8 +108,10 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   ui_(new Ui::PiTCHWindow),
   serverInfo_(QHostInfo::localHostName(), 8049),
   buttonHeld_(false),
-  buttonHeldDelay_(500),
-  sequenceId_(0)
+  buttonHeldDelay_(BUTTON_HELD_DELAY),
+  sequenceId_(0),
+  positionInterval_(POSITION_INTERVAL),
+  playing_(false)
 {
   ui_->setupUi(this);
   ui_->statusBar->showMessage(tr("Unconnected"));
@@ -101,11 +155,11 @@ void PiTCHWindow::connectedToServer()
   ui_->statusBar->showMessage(tr("Connected"));
 
   // Request current track, sound volume, mute, player state, and player position
-  client_.sendMessage(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
-  client_.sendMessage(iTCH::MessageBuilder::makeGetSoundVolumeRequest(nextSequenceId()));
-  client_.sendMessage(iTCH::MessageBuilder::makeGetMuteRequest(nextSequenceId()));
-  client_.sendMessage(iTCH::MessageBuilder::makeGetPlayerStateRequest(nextSequenceId()));
-  client_.sendMessage(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
+  sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
+  sendTrackedRequest(iTCH::MessageBuilder::makeGetSoundVolumeRequest(nextSequenceId()));
+  sendTrackedRequest(iTCH::MessageBuilder::makeGetMuteRequest(nextSequenceId()));
+  sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerStateRequest(nextSequenceId()));
+  sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
 }
 
 void PiTCHWindow::disconnectedFromServer(bool closedByHost, const QString &message)
@@ -129,40 +183,114 @@ void PiTCHWindow::disconnectedFromServer(bool closedByHost, const QString &messa
 
 void PiTCHWindow::processMessage(const iTCH::EnvelopePtr envelope)
 {
-  // Make sure envelope contains a ServerStatus message with valid values
-  if (iTCH::MessageBuilder::containsValidServerStatus(envelope))
+  // Determine message type
+  switch (envelope->type())
   {
-    const iTCH::ServerStatus &status = envelope->status();
+  case iTCH::Envelope::SERVERNOTIFICATION:
+    processNotification(envelope);
+    break;
+  case iTCH::Envelope::SERVERRESPONSE:
+    processResponse(envelope);
+    break;
+  default:
+    processProtocolError("Received unrecognized message from server");
+  }
+}
 
-    switch (status.type())
+void PiTCHWindow::processNotification(iTCH::EnvelopePtr envelope)
+{
+  assert(envelope->has_notification());
+  switch (envelope->notification().type())
+  {
+  case iTCH::ServerNotification::VOLUMECHANGED:
+    // Get the volume/mute status
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetSoundVolumeRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetMuteRequest(nextSequenceId()));
+    break;
+  case iTCH::ServerNotification::PLAYINGSTARTED:
+    // Get the current track info and initial time slider position
+    setPlaying(true);
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
+    break;
+  case iTCH::ServerNotification::PLAYINGSTOPPED:
+    // Get the current track info and final time slider position
+    setPlaying(false);
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
+    break;
+  case iTCH::ServerNotification::TRACKINFOCHANGED:
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
+    break;
+  default:
+    processProtocolError("Received unrecognized notification type");
+  }
+}
+
+void PiTCHWindow::processResponse(iTCH::EnvelopePtr envelope)
+{
+  assert(envelope->has_response());
+  bool isValid = false;
+  unsigned int seqid = envelope->response().seqid();
+
+  // Find the original request
+  PendingRequests::const_iterator iter = requests_.find(seqid);
+  if (iter == requests_.end())
+  {
+    processProtocolError("Server sent an unrequested response");
+  }
+  else
+  {
+    assert(iter.value()->has_request());
+    const iTCH::ClientRequest &request = iter.value()->request();
+
+    // Make sure envelope contains a server response message with valid values
+    if (iTCH::MessageBuilder::containsValidServerResponse(envelope, request))
     {
-    case iTCH::ServerStatus::SOUNDVOLUME:
-      setSoundVolume(status.value().volume());
-      break;
-    case iTCH::ServerStatus::MUTE:
-      setMute(status.value().mute());
-      break;
-    case iTCH::ServerStatus::PLAYERPOSITION:
-      setPlayerPosition(status.value().position());
-      break;
-    case iTCH::ServerStatus::PLAYERSTATE:
-      setPlayerState(status.value().state());
-      break;
-    case iTCH::ServerStatus::CURRENTTRACK:
-      setCurrentTrack(status.value().track(0));
-      break;
+      const iTCH::ServerResponse &response = envelope->response();
+      if (!response.success())
+      {
+        // Report failure of a request
+        processProtocolError(QString("%1 request failed: %2")
+          .arg(requestTypeToString(request.type()))
+          .arg(response.error_message().c_str()));
+      }
+      else
+      {
+        switch (response.value().type())
+        {
+        case iTCH::ServerResponse::Value::VOLUME:
+          setSoundVolume(response.value().volume());
+          break;
+        case iTCH::ServerResponse::Value::MUTE:
+          setMute(response.value().mute());
+          break;
+        case iTCH::ServerResponse::Value::POSITION:
+          setPlayerPosition(response.value().position());
+          break;
+        case iTCH::ServerResponse::Value::STATE:
+          setPlaying(response.value().state() == iTCH::PLAYING);
+          break;
+        case iTCH::ServerResponse::Value::TRACK:
+          setCurrentTrack(response.value().track());
+          break;
+        default:
+          processProtocolError("Received unrecognized notification type");
+        }
+      }
     }
+
+    // Remove the request from the pending request list, it has been processed
+    requests_.remove(seqid);
   }
 }
 
 void PiTCHWindow::processProtocolError(const QString &message)
 {
-   ui_->statusBar->showMessage(message.toLocal8Bit().constData(), 5);
 }
 
 void PiTCHWindow::timeSliderValueChanged(int value)
 {
-  client_.sendMessage(iTCH::MessageBuilder::makePutPlayerPositionRequest(nextSequenceId(), value));
+  sendTrackedRequest(iTCH::MessageBuilder::makePutPlayerPositionRequest(nextSequenceId(), value));
 }
 
 void PiTCHWindow::backButtonPressed()
@@ -184,19 +312,19 @@ void PiTCHWindow::backButtonReleased()
     // Restore the player state to playing or paused, sending a play
     // or paused request doesn't seem to stop the fast forward so we
     // send pauseplay twice
-    client_.sendMessage(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
-    client_.sendMessage(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
   }
   else
   {
-    client_.sendMessage(iTCH::MessageBuilder::makeBackTrackRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeBackTrackRequest(nextSequenceId()));
   }
 }
 
 void PiTCHWindow::rewindTimeout()
 {
   buttonHeld_ = true;
-  client_.sendMessage(iTCH::MessageBuilder::makeRewindRequest(nextSequenceId()));
+  sendTrackedRequest(iTCH::MessageBuilder::makeRewindRequest(nextSequenceId()));
 }
 
 void PiTCHWindow::forwardButtonPressed()
@@ -218,24 +346,24 @@ void PiTCHWindow::forwardButtonReleased()
     // Restore the player state to playing or paused, sending a play
     // or paused request doesn't seem to stop the fast forward so we
     // send pauseplay twice
-    client_.sendMessage(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
-    client_.sendMessage(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
   }
   else
   {
-    client_.sendMessage(iTCH::MessageBuilder::makeNextTrackRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeNextTrackRequest(nextSequenceId()));
   }
 }
 
 void PiTCHWindow::fastForwardTimeout()
 {
   buttonHeld_ = true;
-  client_.sendMessage(iTCH::MessageBuilder::makeFastForwardRequest(nextSequenceId()));
+  sendTrackedRequest(iTCH::MessageBuilder::makeFastForwardRequest(nextSequenceId()));
 }
 
 void PiTCHWindow::playPauseButtonClicked()
 {
-  client_.sendMessage(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
+  sendTrackedRequest(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
 }
 
 void PiTCHWindow::minVolumeButtonClicked()
@@ -250,7 +378,7 @@ void PiTCHWindow::maxVolumeButtonClicked()
 
 void PiTCHWindow::volumeSliderValueChanged(int value)
 {
-  client_.sendMessage(iTCH::MessageBuilder::makePutSoundVolumeRequest(nextSequenceId(), value));
+  sendTrackedRequest(iTCH::MessageBuilder::makePutSoundVolumeRequest(nextSequenceId(), value));
 }
 
 void PiTCHWindow::networkButtonToggled(bool isChecked)
@@ -268,6 +396,11 @@ void PiTCHWindow::networkButtonToggled(bool isChecked)
   }
   else
   {
+    if (positionTimer_.isActive())
+    {
+      positionTimer_.stop();
+      positionTimer_.disconnect();
+    }
     client_.closeConnection();
   }
 }
@@ -298,15 +431,33 @@ void PiTCHWindow::setPlayerPosition(int newPosition)
   ui_->timeRemaining->setText(QString("-%1").arg(secondsToTimePositionString(currentTrack_.duration() - newPosition)));
 }
 
-void PiTCHWindow::setPlayerState(iTCH::PlayerState newState)
+void PiTCHWindow::setPlaying(bool playing)
 {
-  if (newState == iTCH::PLAYING)
+  if (playing_ != playing)
   {
-    ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
-  }
-  else if (newState == iTCH::STOPPED)
-  {
-    ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    playing_ = playing;
+
+    if (playing)
+    {
+      ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+
+      // Start the timer to peridoically request time slider position
+      if (!positionTimer_.isActive())
+      {
+        connect(&positionTimer_, SIGNAL(timeout()), this, SLOT(requestPlayerPosition()));
+        positionTimer_.start(positionInterval_);
+      }
+    }
+    else
+    {
+      if (positionTimer_.isActive())
+      {
+        positionTimer_.stop();
+        positionTimer_.disconnect();
+      }
+
+      ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    }
   }
 }
 
@@ -337,6 +488,11 @@ void PiTCHWindow::setCurrentTrack(const iTCH::Track &track)
   ui_->timeSlider->setMaximum(track.duration());
 }
 
+void PiTCHWindow::requestPlayerPosition()
+{
+  sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
+}
+
 void PiTCHWindow::createStandardIcons()
 {
   ui_->backButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
@@ -350,4 +506,11 @@ void PiTCHWindow::createStandardIcons()
 unsigned long PiTCHWindow::nextSequenceId()
 {
   return ++sequenceId_;
+}
+
+void PiTCHWindow::sendTrackedRequest(iTCH::EnvelopePtr envelope)
+{
+  assert(envelope->has_request());
+  requests_.insert(envelope->request().seqid(), envelope);
+  client_.sendMessage(envelope);
 }
