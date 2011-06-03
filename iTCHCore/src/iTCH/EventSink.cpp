@@ -50,7 +50,7 @@ bool EventSink::create()
 
   if (!compatible)
   {
-    controller_->comError("iTunes is not compatible with iTunes COM SDK version 1.2 (it is too old)");
+    controller_->comError("iTunes is not compatible with iTunes COM SDK version 1.12 (it is too old)");
     return false;
   }
 
@@ -58,7 +58,7 @@ bool EventSink::create()
   result = ::LoadRegTypeLib(LIBID_iTunesLib, 1, 12, 0, &typeLib);
   if (FAILED(result))
   {
-    controller_->comError("Could not load iTunes COM SDK version 1.2");
+    controller_->comError("Could not load iTunes COM SDK version 1.12");
     return false;
   }
 
