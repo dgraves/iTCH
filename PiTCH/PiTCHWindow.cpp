@@ -155,7 +155,9 @@ void PiTCHWindow::resolvedHostname()
 
 void PiTCHWindow::connectedToServer()
 {
-  ui_->statusBar->showMessage(tr("Connected"));
+  ui_->statusBar->showMessage(QString("%1 %2")
+    .arg(tr("Connected to"))
+    .arg(serverInfo_.getHostname()));
 
   // Request current track, sound volume, mute, player state, and player position
   sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
