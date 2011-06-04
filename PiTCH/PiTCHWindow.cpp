@@ -32,7 +32,8 @@ namespace
   enum
   {
     BUTTON_HELD_DELAY = 500,
-    POSITION_INTERVAL = 1000
+    POSITION_INTERVAL = 1000,
+    POSITION_INTERVAL_RAPID = 250
   };
 
   // Create formatted time string for time elapsed/remaining display
@@ -111,6 +112,7 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   buttonHeldDelay_(BUTTON_HELD_DELAY),
   sequenceId_(0),
   positionInterval_(POSITION_INTERVAL),
+  positionIntervalRapid_(POSITION_INTERVAL_RAPID),
   playing_(false)
 {
   ui_->setupUi(this);
@@ -322,6 +324,16 @@ void PiTCHWindow::backButtonReleased()
   {
     buttonHeld_ = false;
 
+    // Reset timer state
+    if (playing_)
+    {
+      positionTimer_.setInterval(positionInterval_);
+    }
+    else
+    {
+      stopPositionTimer();
+    }
+
     // Restore the player state to playing or paused, sending a play
     // or paused request doesn't seem to stop the fast forward so we
     // send pauseplay twice
@@ -331,6 +343,13 @@ void PiTCHWindow::backButtonReleased()
   else
   {
     sendTrackedRequest(iTCH::MessageBuilder::makeBackTrackRequest(nextSequenceId()));
+
+    // Need to update the slider and track information if player is stopped
+    if (!playing_)
+    {
+      sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
+      sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
+    }
   }
 }
 
@@ -338,6 +357,17 @@ void PiTCHWindow::rewindTimeout()
 {
   buttonHeld_ = true;
   sendTrackedRequest(iTCH::MessageBuilder::makeRewindRequest(nextSequenceId()));
+
+  // Increase the position request rate to update time slider position during fast forward
+  // If player is not playing, the timer needs to be started
+  if (playing_)
+  {
+    positionTimer_.setInterval(positionIntervalRapid_);
+  }
+  else
+  {
+    startPositionTimer(positionIntervalRapid_);
+  }
 }
 
 void PiTCHWindow::forwardButtonPressed()
@@ -356,6 +386,16 @@ void PiTCHWindow::forwardButtonReleased()
   {
     buttonHeld_ = false;
 
+    // Reset timer state
+    if (playing_)
+    {
+      positionTimer_.setInterval(positionInterval_);
+    }
+    else
+    {
+      stopPositionTimer();
+    }
+
     // Restore the player state to playing or paused, sending a play
     // or paused request doesn't seem to stop the fast forward so we
     // send pauseplay twice
@@ -365,6 +405,13 @@ void PiTCHWindow::forwardButtonReleased()
   else
   {
     sendTrackedRequest(iTCH::MessageBuilder::makeNextTrackRequest(nextSequenceId()));
+
+    // Need to update the slider and track information if player is stopped
+    if (!playing_)
+    {
+      sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
+      sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
+    }
   }
 }
 
@@ -372,6 +419,17 @@ void PiTCHWindow::fastForwardTimeout()
 {
   buttonHeld_ = true;
   sendTrackedRequest(iTCH::MessageBuilder::makeFastForwardRequest(nextSequenceId()));
+
+  // Increase the position request rate to update time slider position during fast forward
+  // If player is not playing, the timer needs to be started
+  if (playing_)
+  {
+    positionTimer_.setInterval(positionIntervalRapid_);
+  }
+  else
+  {
+    startPositionTimer(positionIntervalRapid_);
+  }
 }
 
 void PiTCHWindow::playPauseButtonClicked()
@@ -445,7 +503,7 @@ void PiTCHWindow::setPlayerState(bool playing)
   {
     if (playing)
     {
-      startPositionTimer();
+      startPositionTimer(positionInterval_);
     }
     else
     {
@@ -553,13 +611,13 @@ void PiTCHWindow::sendTrackedRequest(iTCH::EnvelopePtr envelope)
   client_.sendMessage(envelope);
 }
 
-void PiTCHWindow::startPositionTimer()
+void PiTCHWindow::startPositionTimer(unsigned int interval)
 {
   // Start the timer to peridoically request time slider position
   if (!positionTimer_.isActive())
   {
     connect(&positionTimer_, SIGNAL(timeout()), this, SLOT(requestPlayerPosition()));
-    positionTimer_.start(positionInterval_);
+    positionTimer_.start(interval);
   }
 }
 

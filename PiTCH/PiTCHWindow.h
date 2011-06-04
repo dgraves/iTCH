@@ -85,7 +85,7 @@ private:
   void sendTrackedRequest(iTCH::EnvelopePtr envelope);  // Store request in pending request queue and send
   void processNotification(iTCH::EnvelopePtr envelope);
   void processResponse(iTCH::EnvelopePtr envelope);
-  void startPositionTimer();
+  void startPositionTimer(unsigned int interval);
   void stopPositionTimer();
 
 private:
@@ -101,10 +101,11 @@ private:
   bool              buttonHeld_;
   unsigned int      buttonHeldDelay_;
   QTimer            buttonTimer_;
-  unsigned long     sequenceId_;          // Last used sequence ID
-  PendingRequests   requests_;            // Requests sent to server that have not yet received a response
-  unsigned int      positionInterval_;    // Interval between player time position requests
-  QTimer            positionTimer_;       // Timer to request player time position
+  unsigned long     sequenceId_;            // Last used sequence ID
+  PendingRequests   requests_;              // Requests sent to server that have not yet received a response
+  unsigned int      positionInterval_;      // Interval between player time position requests
+  unsigned int      positionIntervalRapid_; // Interval between player time position requests when fast-forward/rewind active
+  QTimer            positionTimer_;         // Timer to request player time position
   bool              playing_;
   iTCH::Track       currentTrack_;
 };
