@@ -1,9 +1,6 @@
-Fix error handling in Controller and EventSink
-Need way for responding to client requests with failure indicator
 Logging of message content for messages sent and received
 Add SSL support
 Add handshake with PIN validation
 Add playlist support
-Track sequence IDs in client
 Implement client auto-connect
 Label scrolling for labels that are wider than the window
