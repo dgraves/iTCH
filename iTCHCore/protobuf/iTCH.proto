@@ -68,25 +68,26 @@ message ServerNotification {
 // Request to be sent from client to server
 message ClientRequest {
   enum Type {
-    BACKTRACK           = 0;     // No value is returned
-    FASTFORWARD         = 1;     // No value is returned
-    NEXTTRACK           = 2;     // No value is returned
-    PAUSE               = 3;     // No value is returned
-    PLAY                = 4;     // No value is returned
-    PLAYPAUSE           = 5;     // No value is returned
-    PREVIOUSTRACK       = 6;     // No value is returned
-    RESUME              = 7;     // No value is returned
-    REWIND              = 8;     // No value is returned
-    STOP                = 9;     // No value is returned
-    GET_SOUNDVOLUME     = 10;    // Returns a long (0-100%)
-    PUT_SOUNDVOLUME     = 11;    // Takes a long (0-100%); No value is returned
-    GET_MUTE            = 12;    // Returns a bool
-    PUT_MUTE            = 13;    // Takes a bool; No value is returned
-    GET_PLAYERPOSITION  = 14;    // Returns a long (0-100%)
-    PUT_PLAYERPOSITION  = 15;    // Takes a long (0-100%); No value is returned
-    GET_PLAYERSTATE     = 16;    // Returns player state enumeration value (generated from ITPlayserState)
-    GET_CURRENTTRACK    = 17;    // Returns a track message (generated from IITTrack)
-    GET_CURRENTPLAYLIST = 18;    // Returns a list of track messages sorted by play order (generated from IITTrackCollection member of IITPlaylist)
+    BACKTRACK              = 0;     // No value is returned
+    FASTFORWARD            = 1;     // No value is returned
+    NEXTTRACK              = 2;     // No value is returned
+    PAUSE                  = 3;     // No value is returned
+    PLAY                   = 4;     // No value is returned
+    PLAYPAUSE              = 5;     // No value is returned
+    PREVIOUSTRACK          = 6;     // No value is returned
+    RESUME                 = 7;     // No value is returned
+    REWIND                 = 8;     // No value is returned
+    STOP                   = 9;     // No value is returned
+    GET_SOUNDVOLUME        = 10;    // Returns a long (0-100%)
+    PUT_SOUNDVOLUME        = 11;    // Takes a long (0-100%); No value is returned
+    GET_MUTE               = 12;    // Returns a bool
+    PUT_MUTE               = 13;    // Takes a bool; No value is returned
+    GET_PLAYERPOSITION     = 14;    // Returns a long (0-100%)
+    PUT_PLAYERPOSITION     = 15;    // Takes a long (0-100%); No value is returned
+    GET_PLAYERSTATE        = 16;    // Returns player state enumeration value (generated from ITPlayserState)
+    GET_CURRENTTRACK       = 17;    // Returns a track message (generated from IITTrack)
+    GET_CURRENTPLAYLIST    = 18;    // Returns a list of track messages sorted by play order (generated from IITTrackCollection member of IITPlaylist)
+    GET_PLAYERBUTTONSSTATE = 19;    // Returns the states of the previous, play/pause/stop, and next buttons
   }
 
   message Value {
@@ -107,6 +108,32 @@ message ClientRequest {
   optional Value value = 3;         // Value supporting action
 }
 
+// Enumeration describing the player state
+enum PlayerState {
+  STOPPED = 0;
+  PLAYING = 1;
+  FASTFORWARD = 2;
+  REWIND = 3;
+}
+
+// Enumeration describing the state of the play button
+enum PlayButtonState {
+  PLAY_DISABLED = 0;
+  PLAY_ENABLED = 1;
+  PAUSE_ENABLED = 2;
+  PAUSE_DISABLED = 3;
+  STOP_ENABLED = 4;
+  STOP_DISABLED = 5;
+}
+
+// Message containing the states of all buttons on the player
+message PlayerButtonsState
+{
+  required PlayButtonState play_pause_stop_state = 1;
+  required bool previous_enabled = 2;
+  required bool next_enabled = 3;
+}
+
 // Message describing a track
 message Track {
   required string name = 1;
@@ -121,15 +148,6 @@ message Track {
   optional string kind = 10;                // Text description of the track
 }
 
-// Enumeration describing the player state
-enum PlayerState {
- UNKNOWN = 0;
- STOPPED = 1;
- PLAYING = 2;
- FASTFORWARD = 3;
- REWIND = 4;
-}
-
 // Response to client request sent from server to client
 // A response is generated for every client request, indicating success or failure
 // Only 'get' requests generate a response with a valie
@@ -142,6 +160,7 @@ message ServerResponse {
 	  STATE = 3;
 	  TRACK = 4;
 	  PLAYLIST = 5;
+	  BUTTONS = 6;
 	}
 
 	required Type type = 1;
@@ -151,6 +170,7 @@ message ServerResponse {
 	optional PlayerState state = 5;
 	optional Track track = 6;
 	repeated Track playlist = 7;
+	optional PlayerButtonsState buttons = 8;
   }
 
   required uint32 seqid = 1 [default = 0];  // Sequence ID, will be 0 for player generated state change or sequence ID from the ClientRequest to which this is a response

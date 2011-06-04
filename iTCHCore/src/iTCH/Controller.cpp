@@ -49,16 +49,15 @@ namespace
   {
     switch (state)
     {
-    case ITPlayerStateStopped:
-      return iTCH::STOPPED;
     case ITPlayerStatePlaying:
       return iTCH::PLAYING;
     case ITPlayerStateFastForward:
       return iTCH::FASTFORWARD;
     case ITPlayerStateRewind:
       return iTCH::REWIND;
+    case ITPlayerStateStopped:
     default:
-      return iTCH::UNKNOWN;
+      return iTCH::STOPPED;
     }
   }
 
@@ -79,6 +78,26 @@ namespace
     case ITTrackKindUnknown:
     default:
       return "Unknown track kind";
+    }
+  }
+
+  inline iTCH::PlayButtonState convertPlayButtonState(ITPlayButtonState state)
+  {
+    switch (state)
+    {
+    case ITPlayButtonStatePlayEnabled:
+      return iTCH::PLAY_ENABLED;
+    case ITPlayButtonStatePauseEnabled:
+      return iTCH::PAUSE_ENABLED;
+    case ITPlayButtonStatePauseDisabled:
+      return iTCH::PAUSE_DISABLED;
+    case ITPlayButtonStateStopEnabled:
+      return iTCH::STOP_ENABLED;
+    case ITPlayButtonStateStopDisabled:
+      return iTCH::STOP_DISABLED;
+    case ITPlayButtonStatePlayDisabled:
+    default:
+      return iTCH::PLAY_DISABLED;
     }
   }
 } // End of anonymous name space
@@ -247,7 +266,7 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
     break;
   case ClientRequest::GET_MUTE:                         // Returns a bool
     {
-      VARIANT_BOOL isMute = FALSE;
+      VARIANT_BOOL isMute = VARIANT_FALSE;
       result = itunes_->get_Mute(&isMute);
       if (result == S_OK)
       {
@@ -322,8 +341,31 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
     break;
   case ClientRequest::GET_CURRENTPLAYLIST:              // Returns an iTCHPlayList object (generated from IITPlayList)
     break;
+  case ClientRequest::GET_PLAYERBUTTONSSTATE:
+    {
+      VARIANT_BOOL previousEnabled = VARIANT_FALSE;
+      VARIANT_BOOL nextEnabled = VARIANT_FALSE;
+      ITPlayButtonState playPauseStopState = ITPlayButtonStatePlayDisabled;
+      result = itunes_->GetPlayerButtonsState(&previousEnabled, &playPauseStopState, &nextEnabled);
+      if (result == S_OK)
+      {
+        iTCH::PlayerButtonsState buttons;
+
+        buttons.set_previous_enabled(previousEnabled == VARIANT_TRUE ? true : false);
+        buttons.set_next_enabled(nextEnabled == VARIANT_TRUE ? true : false);
+        buttons.set_play_pause_stop_state(convertPlayButtonState(playPauseStopState));
+
+        connection->sendMessage(iTCH::MessageBuilder::makePlayerButtonsStateResponse(
+          request.seqid(), buttons));
+      }
+      else
+      {
+        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+      }
+    }
+    break;
   default:
-    // throw exception
+    connection->sendMessage(iTCH::MessageBuilder::makeFailedResponse(request.seqid(), "Unrecognized request"));
     break;
   }
 }

@@ -37,6 +37,7 @@ class Envelope;
 class ServerNotification;
 class ClientRequest;
 class ClientRequest_Value;
+class PlayerButtonsState;
 class Track;
 class ServerResponse;
 class ServerResponse_Value;
@@ -121,11 +122,12 @@ enum ClientRequest_Type {
   ClientRequest_Type_PUT_PLAYERPOSITION = 15,
   ClientRequest_Type_GET_PLAYERSTATE = 16,
   ClientRequest_Type_GET_CURRENTTRACK = 17,
-  ClientRequest_Type_GET_CURRENTPLAYLIST = 18
+  ClientRequest_Type_GET_CURRENTPLAYLIST = 18,
+  ClientRequest_Type_GET_PLAYERBUTTONSSTATE = 19
 };
 bool ClientRequest_Type_IsValid(int value);
 const ClientRequest_Type ClientRequest_Type_Type_MIN = ClientRequest_Type_BACKTRACK;
-const ClientRequest_Type ClientRequest_Type_Type_MAX = ClientRequest_Type_GET_CURRENTPLAYLIST;
+const ClientRequest_Type ClientRequest_Type_Type_MAX = ClientRequest_Type_GET_PLAYERBUTTONSSTATE;
 const int ClientRequest_Type_Type_ARRAYSIZE = ClientRequest_Type_Type_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ClientRequest_Type_descriptor();
@@ -144,11 +146,12 @@ enum ServerResponse_Value_Type {
   ServerResponse_Value_Type_POSITION = 2,
   ServerResponse_Value_Type_STATE = 3,
   ServerResponse_Value_Type_TRACK = 4,
-  ServerResponse_Value_Type_PLAYLIST = 5
+  ServerResponse_Value_Type_PLAYLIST = 5,
+  ServerResponse_Value_Type_BUTTONS = 6
 };
 bool ServerResponse_Value_Type_IsValid(int value);
 const ServerResponse_Value_Type ServerResponse_Value_Type_Type_MIN = ServerResponse_Value_Type_VOLUME;
-const ServerResponse_Value_Type ServerResponse_Value_Type_Type_MAX = ServerResponse_Value_Type_PLAYLIST;
+const ServerResponse_Value_Type ServerResponse_Value_Type_Type_MAX = ServerResponse_Value_Type_BUTTONS;
 const int ServerResponse_Value_Type_Type_ARRAYSIZE = ServerResponse_Value_Type_Type_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ServerResponse_Value_Type_descriptor();
@@ -180,14 +183,13 @@ inline bool Version_Parse(
     Version_descriptor(), name, value);
 }
 enum PlayerState {
-  UNKNOWN = 0,
-  STOPPED = 1,
-  PLAYING = 2,
-  FASTFORWARD = 3,
-  REWIND = 4
+  STOPPED = 0,
+  PLAYING = 1,
+  FASTFORWARD = 2,
+  REWIND = 3
 };
 bool PlayerState_IsValid(int value);
-const PlayerState PlayerState_MIN = UNKNOWN;
+const PlayerState PlayerState_MIN = STOPPED;
 const PlayerState PlayerState_MAX = REWIND;
 const int PlayerState_ARRAYSIZE = PlayerState_MAX + 1;
 
@@ -200,6 +202,29 @@ inline bool PlayerState_Parse(
     const ::std::string& name, PlayerState* value) {
   return ::google::protobuf::internal::ParseNamedEnum<PlayerState>(
     PlayerState_descriptor(), name, value);
+}
+enum PlayButtonState {
+  PLAY_DISABLED = 0,
+  PLAY_ENABLED = 1,
+  PAUSE_ENABLED = 2,
+  PAUSE_DISABLED = 3,
+  STOP_ENABLED = 4,
+  STOP_DISABLED = 5
+};
+bool PlayButtonState_IsValid(int value);
+const PlayButtonState PlayButtonState_MIN = PLAY_DISABLED;
+const PlayButtonState PlayButtonState_MAX = STOP_DISABLED;
+const int PlayButtonState_ARRAYSIZE = PlayButtonState_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* PlayButtonState_descriptor();
+inline const ::std::string& PlayButtonState_Name(PlayButtonState value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    PlayButtonState_descriptor(), value);
+}
+inline bool PlayButtonState_Parse(
+    const ::std::string& name, PlayButtonState* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<PlayButtonState>(
+    PlayButtonState_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -786,6 +811,7 @@ class ClientRequest : public ::google::protobuf::Message {
   static const Type GET_PLAYERSTATE = ClientRequest_Type_GET_PLAYERSTATE;
   static const Type GET_CURRENTTRACK = ClientRequest_Type_GET_CURRENTTRACK;
   static const Type GET_CURRENTPLAYLIST = ClientRequest_Type_GET_CURRENTPLAYLIST;
+  static const Type GET_PLAYERBUTTONSSTATE = ClientRequest_Type_GET_PLAYERBUTTONSSTATE;
   static inline bool Type_IsValid(int value) {
     return ClientRequest_Type_IsValid(value);
   }
@@ -855,6 +881,108 @@ class ClientRequest : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static ClientRequest* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class PlayerButtonsState : public ::google::protobuf::Message {
+ public:
+  PlayerButtonsState();
+  virtual ~PlayerButtonsState();
+  
+  PlayerButtonsState(const PlayerButtonsState& from);
+  
+  inline PlayerButtonsState& operator=(const PlayerButtonsState& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PlayerButtonsState& default_instance();
+  
+  void Swap(PlayerButtonsState* other);
+  
+  // implements Message ----------------------------------------------
+  
+  PlayerButtonsState* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const PlayerButtonsState& from);
+  void MergeFrom(const PlayerButtonsState& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .iTCH.PlayButtonState play_pause_stop_state = 1;
+  inline bool has_play_pause_stop_state() const;
+  inline void clear_play_pause_stop_state();
+  static const int kPlayPauseStopStateFieldNumber = 1;
+  inline iTCH::PlayButtonState play_pause_stop_state() const;
+  inline void set_play_pause_stop_state(iTCH::PlayButtonState value);
+  
+  // required bool previous_enabled = 2;
+  inline bool has_previous_enabled() const;
+  inline void clear_previous_enabled();
+  static const int kPreviousEnabledFieldNumber = 2;
+  inline bool previous_enabled() const;
+  inline void set_previous_enabled(bool value);
+  
+  // required bool next_enabled = 3;
+  inline bool has_next_enabled() const;
+  inline void clear_next_enabled();
+  static const int kNextEnabledFieldNumber = 3;
+  inline bool next_enabled() const;
+  inline void set_next_enabled(bool value);
+  
+  // @@protoc_insertion_point(class_scope:iTCH.PlayerButtonsState)
+ private:
+  inline void set_has_play_pause_stop_state();
+  inline void clear_has_play_pause_stop_state();
+  inline void set_has_previous_enabled();
+  inline void clear_has_previous_enabled();
+  inline void set_has_next_enabled();
+  inline void clear_has_next_enabled();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  int play_pause_stop_state_;
+  bool previous_enabled_;
+  bool next_enabled_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_iTCH_2eproto();
+  friend void protobuf_AssignDesc_iTCH_2eproto();
+  friend void protobuf_ShutdownFile_iTCH_2eproto();
+  
+  void InitAsDefaultInstance();
+  static PlayerButtonsState* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1113,6 +1241,7 @@ class ServerResponse_Value : public ::google::protobuf::Message {
   static const Type STATE = ServerResponse_Value_Type_STATE;
   static const Type TRACK = ServerResponse_Value_Type_TRACK;
   static const Type PLAYLIST = ServerResponse_Value_Type_PLAYLIST;
+  static const Type BUTTONS = ServerResponse_Value_Type_BUTTONS;
   static inline bool Type_IsValid(int value) {
     return ServerResponse_Value_Type_IsValid(value);
   }
@@ -1191,6 +1320,14 @@ class ServerResponse_Value : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::iTCH::Track >*
       mutable_playlist();
   
+  // optional .iTCH.PlayerButtonsState buttons = 8;
+  inline bool has_buttons() const;
+  inline void clear_buttons();
+  static const int kButtonsFieldNumber = 8;
+  inline const ::iTCH::PlayerButtonsState& buttons() const;
+  inline ::iTCH::PlayerButtonsState* mutable_buttons();
+  inline ::iTCH::PlayerButtonsState* release_buttons();
+  
   // @@protoc_insertion_point(class_scope:iTCH.ServerResponse.Value)
  private:
   inline void set_has_type();
@@ -1205,6 +1342,8 @@ class ServerResponse_Value : public ::google::protobuf::Message {
   inline void clear_has_state();
   inline void set_has_track();
   inline void clear_has_track();
+  inline void set_has_buttons();
+  inline void clear_has_buttons();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -1214,10 +1353,11 @@ class ServerResponse_Value : public ::google::protobuf::Message {
   ::google::protobuf::uint32 position_;
   ::iTCH::Track* track_;
   ::google::protobuf::RepeatedPtrField< ::iTCH::Track > playlist_;
+  ::iTCH::PlayerButtonsState* buttons_;
   int state_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
   
   friend void  protobuf_AddDesc_iTCH_2eproto();
   friend void protobuf_AssignDesc_iTCH_2eproto();
@@ -1863,6 +2003,77 @@ inline ::iTCH::ClientRequest_Value* ClientRequest::release_value() {
 
 // -------------------------------------------------------------------
 
+// PlayerButtonsState
+
+// required .iTCH.PlayButtonState play_pause_stop_state = 1;
+inline bool PlayerButtonsState::has_play_pause_stop_state() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void PlayerButtonsState::set_has_play_pause_stop_state() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void PlayerButtonsState::clear_has_play_pause_stop_state() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void PlayerButtonsState::clear_play_pause_stop_state() {
+  play_pause_stop_state_ = 0;
+  clear_has_play_pause_stop_state();
+}
+inline iTCH::PlayButtonState PlayerButtonsState::play_pause_stop_state() const {
+  return static_cast< iTCH::PlayButtonState >(play_pause_stop_state_);
+}
+inline void PlayerButtonsState::set_play_pause_stop_state(iTCH::PlayButtonState value) {
+  GOOGLE_DCHECK(iTCH::PlayButtonState_IsValid(value));
+  set_has_play_pause_stop_state();
+  play_pause_stop_state_ = value;
+}
+
+// required bool previous_enabled = 2;
+inline bool PlayerButtonsState::has_previous_enabled() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void PlayerButtonsState::set_has_previous_enabled() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void PlayerButtonsState::clear_has_previous_enabled() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void PlayerButtonsState::clear_previous_enabled() {
+  previous_enabled_ = false;
+  clear_has_previous_enabled();
+}
+inline bool PlayerButtonsState::previous_enabled() const {
+  return previous_enabled_;
+}
+inline void PlayerButtonsState::set_previous_enabled(bool value) {
+  set_has_previous_enabled();
+  previous_enabled_ = value;
+}
+
+// required bool next_enabled = 3;
+inline bool PlayerButtonsState::has_next_enabled() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void PlayerButtonsState::set_has_next_enabled() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void PlayerButtonsState::clear_has_next_enabled() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void PlayerButtonsState::clear_next_enabled() {
+  next_enabled_ = false;
+  clear_has_next_enabled();
+}
+inline bool PlayerButtonsState::next_enabled() const {
+  return next_enabled_;
+}
+inline void PlayerButtonsState::set_next_enabled(bool value) {
+  set_has_next_enabled();
+  next_enabled_ = value;
+}
+
+// -------------------------------------------------------------------
+
 // Track
 
 // required string name = 1;
@@ -2471,6 +2682,35 @@ ServerResponse_Value::mutable_playlist() {
   return &playlist_;
 }
 
+// optional .iTCH.PlayerButtonsState buttons = 8;
+inline bool ServerResponse_Value::has_buttons() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void ServerResponse_Value::set_has_buttons() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void ServerResponse_Value::clear_has_buttons() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void ServerResponse_Value::clear_buttons() {
+  if (buttons_ != NULL) buttons_->::iTCH::PlayerButtonsState::Clear();
+  clear_has_buttons();
+}
+inline const ::iTCH::PlayerButtonsState& ServerResponse_Value::buttons() const {
+  return buttons_ != NULL ? *buttons_ : *default_instance_->buttons_;
+}
+inline ::iTCH::PlayerButtonsState* ServerResponse_Value::mutable_buttons() {
+  set_has_buttons();
+  if (buttons_ == NULL) buttons_ = new ::iTCH::PlayerButtonsState;
+  return buttons_;
+}
+inline ::iTCH::PlayerButtonsState* ServerResponse_Value::release_buttons() {
+  clear_has_buttons();
+  ::iTCH::PlayerButtonsState* temp = buttons_;
+  buttons_ = NULL;
+  return temp;
+}
+
 // -------------------------------------------------------------------
 
 // ServerResponse
@@ -2642,6 +2882,10 @@ inline const EnumDescriptor* GetEnumDescriptor< iTCH::Version>() {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< iTCH::PlayerState>() {
   return iTCH::PlayerState_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< iTCH::PlayButtonState>() {
+  return iTCH::PlayButtonState_descriptor();
 }
 
 }  // namespace google

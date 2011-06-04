@@ -89,6 +89,8 @@ public:
 
   static EnvelopePtr makeGetCurrentPlaylistRequest(unsigned int sequenceId);
 
+  static EnvelopePtr makeGetPlayerButtonsStateRequest(unsigned int sequenceId);
+
   static bool containsValidClientRequest(const EnvelopePtr envelope);
 
 
@@ -108,6 +110,8 @@ public:
   static EnvelopePtr makePlayerStateResponse(unsigned int sequenceId, PlayerState state);
 
   static EnvelopePtr makeCurrentTrackResponse(unsigned int sequenceId, const Track &track);
+
+  static EnvelopePtr makePlayerButtonsStateResponse(unsigned int sequenceId, const PlayerButtonsState &buttons);
 
   static bool containsValidServerResponse(const EnvelopePtr envelope);
 

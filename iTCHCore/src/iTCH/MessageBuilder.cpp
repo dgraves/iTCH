@@ -222,6 +222,11 @@ EnvelopePtr MessageBuilder::makeGetCurrentPlaylistRequest(unsigned int sequenceI
   return makeClientRequest(sequenceId, ClientRequest::GET_CURRENTPLAYLIST);
 }
 
+EnvelopePtr MessageBuilder::makeGetPlayerButtonsStateRequest(unsigned int sequenceId)
+{
+  return makeClientRequest(sequenceId, ClientRequest::GET_PLAYERBUTTONSSTATE);
+}
+
 bool MessageBuilder::containsValidClientRequest(const EnvelopePtr envelope)
 {
   // Make sure the envelope contains a ServerNotification object
@@ -331,6 +336,15 @@ EnvelopePtr MessageBuilder::makeCurrentTrackResponse(unsigned int sequenceId, co
   return envelope;
 }
 
+EnvelopePtr MessageBuilder::makePlayerButtonsStateResponse(unsigned int sequenceId, const PlayerButtonsState &buttons)
+{
+  EnvelopePtr envelope = makeServerResponse(sequenceId, true);
+  ServerResponse *response = envelope->mutable_response();
+  response->mutable_value()->set_type(ServerResponse::Value::BUTTONS);
+  response->mutable_value()->mutable_buttons()->CopyFrom(buttons);
+  return envelope;
+}
+
 bool MessageBuilder::containsValidServerResponse(const EnvelopePtr envelope)
 {
   // Make sure the envelope contains a ServerNotification object
@@ -382,7 +396,6 @@ bool MessageBuilder::containsValidServerResponse(const EnvelopePtr envelope)
           }
           break;
         case ServerResponse::Value::TRACK:
-          // Should have only one track
           if (message.value().has_track())
           {
             return true;
@@ -391,6 +404,12 @@ bool MessageBuilder::containsValidServerResponse(const EnvelopePtr envelope)
         case ServerResponse::Value::PLAYLIST:
           // Playlist can have 0 or more tracks
           return true;
+        case ServerResponse::Value::BUTTONS:
+          if (message.value().has_buttons())
+          {
+            return true;
+          }
+          break;
         }
       }
     }
@@ -451,6 +470,12 @@ bool MessageBuilder::containsValidServerResponse(const EnvelopePtr envelope, con
         break;
       case ClientRequest::GET_CURRENTPLAYLIST:
         if (message.has_value() && message.value().type() == ServerResponse::Value::PLAYLIST)
+        {
+          return true;
+        }
+        break;
+      case ClientRequest::GET_PLAYERBUTTONSSTATE:
+        if (message.has_value() && message.value().type() == ServerResponse::Value::BUTTONS)
         {
           return true;
         }

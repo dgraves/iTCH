@@ -117,6 +117,7 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   ui_->statusBar->showMessage(tr("Unconnected"));
 
   createStandardIcons();
+  setDefaultPlayerButtonsState();
 
   connect(&client_, SIGNAL(hostnameResolved()), this, SLOT(resolvedHostname()));
   connect(&client_, SIGNAL(connected()), this, SLOT(connectedToServer()));
@@ -159,14 +160,16 @@ void PiTCHWindow::connectedToServer()
   sendTrackedRequest(iTCH::MessageBuilder::makeGetSoundVolumeRequest(nextSequenceId()));
   sendTrackedRequest(iTCH::MessageBuilder::makeGetMuteRequest(nextSequenceId()));
   sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerStateRequest(nextSequenceId()));
+  sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerButtonsStateRequest(nextSequenceId()));
   sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
 }
 
 void PiTCHWindow::disconnectedFromServer(bool closedByHost, const QString &message)
 {
-  stopPositionTimer();
-
   QString status(tr("Unconnected"));
+
+  stopPositionTimer();
+  setDefaultPlayerButtonsState();
 
   ui_->networkButton->blockSignals(true);
   ui_->networkButton->setChecked(false);
@@ -211,20 +214,24 @@ void PiTCHWindow::processNotification(iTCH::EnvelopePtr envelope)
     sendTrackedRequest(iTCH::MessageBuilder::makeGetMuteRequest(nextSequenceId()));
     break;
   case iTCH::ServerNotification::PLAYINGSTARTED:
-    // Get the current track info and initial time slider position
+    // Get the initial time slider position
     setPlayerState(true);
-    sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
     sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerButtonsStateRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
     break;
   case iTCH::ServerNotification::PLAYINGSTOPPED:
-    // Get the current track info and final time slider position
+    // Get the final time slider position
     setPlayerState(false);
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerButtonsStateRequest(nextSequenceId()));
     break;
   case iTCH::ServerNotification::TRACKINFOCHANGED:
     sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
     break;
   default:
     processProtocolError("Received unrecognized notification type");
+    break;
   }
 }
 
@@ -275,8 +282,12 @@ void PiTCHWindow::processResponse(iTCH::EnvelopePtr envelope)
         case iTCH::ServerResponse::Value::TRACK:
           setCurrentTrack(response.value().track());
           break;
+        case iTCH::ServerResponse::Value::BUTTONS:
+          setPlayerButtonsState(response.value().buttons());
+          break;
         default:
           processProtocolError("Received unrecognized notification type");
+          break;
         }
       }
     }
@@ -435,15 +446,47 @@ void PiTCHWindow::setPlayerState(bool playing)
     if (playing)
     {
       startPositionTimer();
-      ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
     }
     else
     {
       stopPositionTimer();
-      ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
     }
 
     playing_ = playing;
+  }
+}
+
+void PiTCHWindow::setPlayerButtonsState(const iTCH::PlayerButtonsState &buttons)
+{
+  ui_->backButton->setEnabled(buttons.previous_enabled());
+  ui_->forwardButton->setEnabled(buttons.next_enabled());
+
+  switch (buttons.play_pause_stop_state())
+  {
+  case iTCH::PLAY_ENABLED:
+    ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    ui_->playPauseToggleButton->setEnabled(true);
+    break;
+  case iTCH::PAUSE_ENABLED:
+    ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+    ui_->playPauseToggleButton->setEnabled(true);
+    break;
+  case iTCH::PAUSE_DISABLED:
+    ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+    ui_->playPauseToggleButton->setEnabled(false);
+    break;
+  case iTCH::STOP_ENABLED:
+    ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
+    ui_->playPauseToggleButton->setEnabled(true);
+    break;
+  case iTCH::STOP_DISABLED:
+    ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
+    ui_->playPauseToggleButton->setEnabled(false);
+    break;
+  case iTCH::PLAY_DISABLED:
+  default:
+    ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    ui_->playPauseToggleButton->setEnabled(false);
   }
 }
 
@@ -487,6 +530,15 @@ void PiTCHWindow::createStandardIcons()
   ui_->minVolumeButton->setIcon(style()->standardIcon(QStyle::SP_MediaVolumeMuted));
   ui_->maxVolumeButton->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
   ui_->networkButton->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
+}
+
+void PiTCHWindow::setDefaultPlayerButtonsState()
+{
+  // Default for player is previous/next buttons disabled and play enabled
+  ui_->backButton->setEnabled(false);
+  ui_->forwardButton->setEnabled(false);
+  ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+  ui_->playPauseToggleButton->setEnabled(true);
 }
 
 unsigned long PiTCHWindow::nextSequenceId()

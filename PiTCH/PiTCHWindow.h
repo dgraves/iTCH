@@ -74,11 +74,13 @@ protected slots:
   void setMute(bool);
   void setPlayerPosition(int);
   void setPlayerState(bool playing);
+  void setPlayerButtonsState(const iTCH::PlayerButtonsState &buttons);
   void setCurrentTrack(const iTCH::Track &);
   void requestPlayerPosition();
 
 private:
   void createStandardIcons();
+  void setDefaultPlayerButtonsState();
   unsigned long nextSequenceId();
   void sendTrackedRequest(iTCH::EnvelopePtr envelope);  // Store request in pending request queue and send
   void processNotification(iTCH::EnvelopePtr envelope);
