@@ -214,7 +214,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>41</x>
-     <y>124</y>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel">
      <x>9</x>
@@ -229,8 +229,8 @@
    <slot>backButtonReleased()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>26</x>
-     <y>124</y>
+     <x>36</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel">
      <x>26</x>
@@ -245,8 +245,8 @@
    <slot>playPauseButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>68</x>
-     <y>111</y>
+     <x>79</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -262,7 +262,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>117</x>
-     <y>124</y>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel">
      <x>123</x>
@@ -278,7 +278,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>117</x>
-     <y>124</y>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel">
      <x>136</x>
@@ -293,8 +293,8 @@
    <slot>maxVolumeButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>318</x>
-     <y>123</y>
+     <x>280</x>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
      <x>410</x>
@@ -309,8 +309,8 @@
    <slot>volumeSliderValueChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>287</x>
-     <y>122</y>
+     <x>249</x>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
      <x>351</x>
@@ -325,8 +325,8 @@
    <slot>timeSliderValueChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>141</x>
-     <y>73</y>
+     <x>179</x>
+     <y>66</y>
     </hint>
     <hint type="destinationlabel">
      <x>43</x>
@@ -341,8 +341,8 @@
    <slot>networkButtonToggled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>389</x>
-     <y>115</y>
+     <x>339</x>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
      <x>361</x>
@@ -357,8 +357,8 @@
    <slot>minVolumeButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>197</x>
-     <y>123</y>
+     <x>176</x>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
      <x>226</x>
@@ -368,17 +368,33 @@
   </connection>
   <connection>
    <sender>timeSlider</sender>
-   <signal>valueChanged(int)</signal>
+   <signal>sliderPressed()</signal>
    <receiver>PiTCHWindow</receiver>
-   <slot>timeSliderValueChanged(int)</slot>
+   <slot>timeSliderPressed()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>137</x>
-     <y>55</y>
+     <x>172</x>
+     <y>57</y>
     </hint>
     <hint type="destinationlabel">
-     <x>157</x>
-     <y>77</y>
+     <x>174</x>
+     <y>64</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeSlider</sender>
+   <signal>sliderReleased()</signal>
+   <receiver>PiTCHWindow</receiver>
+   <slot>timeSliderReleased()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>172</x>
+     <y>57</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>174</x>
+     <y>64</y>
     </hint>
    </hints>
   </connection>
@@ -394,5 +410,7 @@
   <slot>maxVolumeButtonClicked()</slot>
   <slot>volumeSliderValueChanged(int)</slot>
   <slot>networkButtonToggled(bool)</slot>
+  <slot>timeSliderPressed()</slot>
+  <slot>timeSliderReleased()</slot>
  </slots>
 </ui>

@@ -305,9 +305,28 @@ void PiTCHWindow::processProtocolError(const QString &message)
 {
 }
 
+void PiTCHWindow::timeSliderPressed()
+{
+  // Stop the position timer while dragging the slider
+  if (playing_)
+  {
+    stopPositionTimer();
+  }
+}
+
+void PiTCHWindow::timeSliderReleased()
+{
+  // Stop the position timer while dragging the slider
+  if (playing_)
+  {
+    startPositionTimer(positionInterval_);
+  }
+}
+
 void PiTCHWindow::timeSliderValueChanged(int value)
 {
   sendTrackedRequest(iTCH::MessageBuilder::makePutPlayerPositionRequest(nextSequenceId(), value));
+  setPlayerPosition(value);
 }
 
 void PiTCHWindow::backButtonPressed()
@@ -491,9 +510,13 @@ void PiTCHWindow::setMute(bool isMute)
 
 void PiTCHWindow::setPlayerPosition(int newPosition)
 {
-  ui_->timeSlider->blockSignals(true);
-  ui_->timeSlider->setValue(newPosition);
-  ui_->timeSlider->blockSignals(false);
+  // Don't update slider while it is being dragged
+  if (!ui_->timeSlider->isSliderDown())
+  {
+    ui_->timeSlider->blockSignals(true);
+    ui_->timeSlider->setValue(newPosition);
+    ui_->timeSlider->blockSignals(false);
+  }
 
   ui_->timeElapsed->setText(secondsToTimePositionString(newPosition));
   ui_->timeRemaining->setText(QString("-%1").arg(secondsToTimePositionString(currentTrack_.duration() - newPosition)));

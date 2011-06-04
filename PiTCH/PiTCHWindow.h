@@ -56,6 +56,8 @@ protected slots:
   void processProtocolError(const QString &message);
 
   // Slots to handle signals from widgets
+  void timeSliderPressed();
+  void timeSliderReleased();
   void timeSliderValueChanged(int);
   void backButtonPressed();
   void backButtonReleased();
