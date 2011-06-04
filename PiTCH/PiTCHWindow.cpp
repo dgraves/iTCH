@@ -119,7 +119,7 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   ui_->statusBar->showMessage(tr("Unconnected"));
 
   createStandardIcons();
-  setDefaultPlayerButtonsState();
+  setDisconnectedState();
 
   connect(&client_, SIGNAL(hostnameResolved()), this, SLOT(resolvedHostname()));
   connect(&client_, SIGNAL(connected()), this, SLOT(connectedToServer()));
@@ -159,6 +159,8 @@ void PiTCHWindow::connectedToServer()
     .arg(tr("Connected to"))
     .arg(serverInfo_.getHostname()));
 
+  setConnectedState();
+
   // Request current track, sound volume, mute, player state, and player position
   sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
   sendTrackedRequest(iTCH::MessageBuilder::makeGetSoundVolumeRequest(nextSequenceId()));
@@ -172,8 +174,8 @@ void PiTCHWindow::disconnectedFromServer(bool closedByHost, const QString &messa
 {
   QString status(tr("Unconnected"));
 
-  stopPositionTimer();
-  setDefaultPlayerButtonsState();
+  setPlayerState(false);
+  setDisconnectedState();
 
   ui_->networkButton->blockSignals(true);
   ui_->networkButton->setChecked(false);
@@ -615,13 +617,35 @@ void PiTCHWindow::createStandardIcons()
   ui_->networkButton->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
 }
 
-void PiTCHWindow::setDefaultPlayerButtonsState()
+void PiTCHWindow::setConnectedState()
 {
-  // Default for player is previous/next buttons disabled and play enabled
+  ui_->timeSlider->setEnabled(true);
+  ui_->volumeSlider->setEnabled(true);
+  ui_->minVolumeButton->setEnabled(true);
+  ui_->maxVolumeButton->setEnabled(true);
+
+  // Default player state is previous/next disabled and play button enabled
   ui_->backButton->setEnabled(false);
   ui_->forwardButton->setEnabled(false);
   ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
   ui_->playPauseToggleButton->setEnabled(true);
+}
+
+void PiTCHWindow::setDisconnectedState()
+{
+  currentTrack_.Clear();
+  setPlayerPosition(0);
+  setSoundVolume(0);
+
+  ui_->timeSlider->setEnabled(false);
+  ui_->volumeSlider->setEnabled(false);
+  ui_->minVolumeButton->setEnabled(false);
+  ui_->maxVolumeButton->setEnabled(false);
+
+  ui_->backButton->setEnabled(false);
+  ui_->forwardButton->setEnabled(false);
+  ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+  ui_->playPauseToggleButton->setEnabled(false);
 }
 
 unsigned long PiTCHWindow::nextSequenceId()

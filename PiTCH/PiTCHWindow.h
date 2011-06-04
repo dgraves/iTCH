@@ -82,8 +82,9 @@ protected slots:
 
 private:
   void createStandardIcons();
-  void setDefaultPlayerButtonsState();
-  unsigned long nextSequenceId();
+  void setDisconnectedState();                          // Disable controls when disconnected
+  void setConnectedState();                             // Enabled controls when connected
+  unsigned long nextSequenceId();                       // Retrieve next valid sequence ID for request messages
   void sendTrackedRequest(iTCH::EnvelopePtr envelope);  // Store request in pending request queue and send
   void processNotification(iTCH::EnvelopePtr envelope);
   void processResponse(iTCH::EnvelopePtr envelope);
