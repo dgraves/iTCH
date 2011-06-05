@@ -15,6 +15,10 @@ set(SERVER_RESOURCE_FILES
     STiTCH.qrc
 )
 
+set(SERVER_APPLICATION_ICON_FILE
+    STiTCH.res
+)
+
 # Execute Qt code generation tools
 qt4_wrap_cpp(SERVER_QOBJECT_HEADER_FILES_MOC ${SERVER_QOBJECT_HEADER_FILES})
 qt4_wrap_ui(SERVER_FORM_HEADER_FILES ${SERVER_FORM_FILES})
@@ -31,6 +35,7 @@ add_executable(STiTCH WIN32 ${SERVER_SOURCE_FILES}
                       ${SERVER_QOBJECT_HEADER_FILES_MOC}
                       ${SERVER_FORM_HEADER_FILES}
                       ${SERVER_RESOURCE_FILES_RCC}
+                      ${SERVER_APPLICATION_ICON_FILE}
 )
 
 # Add the Qt libraries as link dependencies

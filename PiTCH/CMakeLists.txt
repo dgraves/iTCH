@@ -18,6 +18,12 @@ set(CLIENT_RESOURCE_FILES
     PiTCH.qrc
 )
 
+if (WIN32)
+    set(CLIENT_APPLICATION_ICON_FILE
+        PiTCH.res
+    )
+endif(WIN32)
+
 # Execute Qt code generation tools
 qt4_wrap_cpp(CLIENT_QOBJECT_HEADER_FILES_MOC ${CLIENT_QOBJECT_HEADER_FILES})
 qt4_wrap_ui(CLIENT_FORM_HEADER_FILES ${CLIENT_FORM_FILES})
@@ -34,6 +40,7 @@ add_executable(PiTCH WIN32 ${CLIENT_SOURCE_FILES}
                      ${CLIENT_QOBJECT_HEADER_FILES_MOC}
                      ${CLIENT_FORM_HEADER_FILES}
                      ${CLIENT_RESOURCE_FILES_RCC}
+                     ${CLIENT_APPLICATION_ICON_FILE}
 )
 
 # Add the Qt libraries as link dependencies
