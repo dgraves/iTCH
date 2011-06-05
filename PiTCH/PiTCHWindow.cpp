@@ -231,6 +231,7 @@ void PiTCHWindow::processNotification(iTCH::EnvelopePtr envelope)
     setPlayerState(false);
     sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
     sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerButtonsStateRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
     break;
   case iTCH::ServerNotification::TRACKINFOCHANGED:
     sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
@@ -243,63 +244,88 @@ void PiTCHWindow::processNotification(iTCH::EnvelopePtr envelope)
 
 void PiTCHWindow::processResponse(iTCH::EnvelopePtr envelope)
 {
-  assert(envelope->has_response());
-  bool isValid = false;
-  unsigned int seqid = envelope->response().seqid();
-
-  // Find the original request
-  PendingRequests::const_iterator iter = requests_.find(seqid);
-  if (iter == requests_.end())
+  if (envelope->has_response())
   {
-    processProtocolError("Server sent an unrequested response");
-  }
-  else
-  {
-    assert(iter.value()->has_request());
-    const iTCH::ClientRequest &request = iter.value()->request();
+    bool isValid = false;
+    unsigned int seqid = envelope->response().seqid();
 
-    // Make sure envelope contains a server response message with valid values
-    if (iTCH::MessageBuilder::containsValidServerResponse(envelope, request))
+    // Find the original request
+    PendingRequests::const_iterator iter = requests_.find(seqid);
+    if (iter == requests_.end())
     {
-      const iTCH::ServerResponse &response = envelope->response();
-      if (!response.success())
+      processProtocolError("Server sent an unrequested response");
+    }
+    else
+    {
+      assert(iter.value()->has_request());
+      const iTCH::ClientRequest &request = iter.value()->request();
+
+      // Make sure envelope contains a server response message with valid values
+      if (iTCH::MessageBuilder::containsValidServerResponse(envelope, request))
       {
-        // Report failure of a request
-        processProtocolError(QString("%1 request failed: %2")
-          .arg(requestTypeToString(request.type()))
-          .arg(response.error_message().c_str()));
-      }
-      else
-      {
-        switch (response.value().type())
+        const iTCH::ServerResponse &response = envelope->response();
+        if (!response.success())
         {
-        case iTCH::ServerResponse::Value::VOLUME:
-          setSoundVolume(response.value().volume());
-          break;
-        case iTCH::ServerResponse::Value::MUTE:
-          setMute(response.value().mute());
-          break;
-        case iTCH::ServerResponse::Value::POSITION:
-          setPlayerPosition(response.value().position());
-          break;
-        case iTCH::ServerResponse::Value::STATE:
-          setPlayerState(response.value().state() == iTCH::PLAYING);
-          break;
-        case iTCH::ServerResponse::Value::TRACK:
-          setCurrentTrack(response.value().track());
-          break;
-        case iTCH::ServerResponse::Value::BUTTONS:
-          setPlayerButtonsState(response.value().buttons());
-          break;
-        default:
-          processProtocolError("Received unrecognized notification type");
-          break;
+          // Report failure of a request
+          processProtocolError(QString("%1 request failed: %2")
+            .arg(requestTypeToString(request.type()))
+            .arg(response.error_message().c_str()));
+
+          // Apply default value to get request type
+          switch (request.type())
+          {
+          case iTCH::ClientRequest::GET_SOUNDVOLUME:
+            setSoundVolume(0);
+            break;
+          case iTCH::ClientRequest::GET_MUTE:
+            setMute(false);
+            break;
+          case iTCH::ClientRequest::GET_PLAYERPOSITION:
+            setPlayerPosition(0);
+            break;
+          case iTCH::ClientRequest::GET_PLAYERSTATE:
+            setPlayerState(false);
+            break;
+          case iTCH::ClientRequest::GET_CURRENTTRACK:
+            setCurrentTrack(iTCH::Track());
+            break;
+          case iTCH::ClientRequest::GET_PLAYERBUTTONSSTATE:
+            setPlayerButtonsState(iTCH::PlayerButtonsState());
+            break;
+          }
+        }
+        else
+        {
+          switch (response.value().type())
+          {
+          case iTCH::ServerResponse::Value::VOLUME:
+            setSoundVolume(response.value().volume());
+            break;
+          case iTCH::ServerResponse::Value::MUTE:
+            setMute(response.value().mute());
+            break;
+          case iTCH::ServerResponse::Value::POSITION:
+            setPlayerPosition(response.value().position());
+            break;
+          case iTCH::ServerResponse::Value::STATE:
+            setPlayerState(response.value().state() == iTCH::PLAYING);
+            break;
+          case iTCH::ServerResponse::Value::TRACK:
+            setCurrentTrack(response.value().track());
+            break;
+          case iTCH::ServerResponse::Value::BUTTONS:
+            setPlayerButtonsState(response.value().buttons());
+            break;
+          default:
+            processProtocolError("Received unrecognized notification type");
+            break;
+          }
         }
       }
-    }
 
-    // Remove the request from the pending request list, it has been processed
-    requests_.remove(seqid);
+      // Remove the request from the pending request list, it has been processed
+      requests_.remove(seqid);
+    }
   }
 }
 

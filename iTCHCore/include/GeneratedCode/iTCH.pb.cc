@@ -328,31 +328,32 @@ void protobuf_AddDesc_iTCH_2eproto() {
     "TION\020\016\022\026\n\022PUT_PLAYERPOSITION\020\017\022\023\n\017GET_PL"
     "AYERSTATE\020\020\022\024\n\020GET_CURRENTTRACK\020\021\022\027\n\023GET"
     "_CURRENTPLAYLIST\020\022\022\032\n\026GET_PLAYERBUTTONSS"
-    "TATE\020\023\"z\n\022PlayerButtonsState\0224\n\025play_pau"
-    "se_stop_state\030\001 \002(\0162\025.iTCH.PlayButtonSta"
-    "te\022\030\n\020previous_enabled\030\002 \002(\010\022\024\n\014next_ena"
-    "bled\030\003 \002(\010\"\250\001\n\005Track\022\014\n\004name\030\001 \002(\t\022\016\n\006ar"
-    "tist\030\002 \002(\t\022\r\n\005album\030\003 \002(\t\022\020\n\010duration\030\004 "
-    "\002(\r\022\r\n\005genre\030\005 \002(\t\022\014\n\004year\030\006 \002(\r\022\017\n\007bitr"
-    "ate\030\007 \001(\r\022\023\n\013sample_rate\030\010 \001(\r\022\017\n\007commen"
-    "t\030\t \001(\t\022\014\n\004kind\030\n \001(\t\"\303\003\n\016ServerResponse"
-    "\022\020\n\005seqid\030\001 \002(\r:\0010\022\017\n\007success\030\002 \002(\010\022\025\n\re"
-    "rror_message\030\003 \001(\t\022)\n\005value\030\004 \001(\0132\032.iTCH"
-    ".ServerResponse.Value\032\313\002\n\005Value\022-\n\004type\030"
-    "\001 \002(\0162\037.iTCH.ServerResponse.Value.Type\022\016"
-    "\n\006volume\030\002 \001(\r\022\014\n\004mute\030\003 \001(\010\022\020\n\010position"
-    "\030\004 \001(\r\022 \n\005state\030\005 \001(\0162\021.iTCH.PlayerState"
-    "\022\032\n\005track\030\006 \001(\0132\013.iTCH.Track\022\035\n\010playlist"
-    "\030\007 \003(\0132\013.iTCH.Track\022)\n\007buttons\030\010 \001(\0132\030.i"
-    "TCH.PlayerButtonsState\"[\n\004Type\022\n\n\006VOLUME"
-    "\020\000\022\010\n\004MUTE\020\001\022\014\n\010POSITION\020\002\022\t\n\005STATE\020\003\022\t\n"
-    "\005TRACK\020\004\022\014\n\010PLAYLIST\020\005\022\013\n\007BUTTONS\020\006*\037\n\007V"
-    "ersion\022\024\n\020PROTOCOL_VERSION\020\000*D\n\013PlayerSt"
-    "ate\022\013\n\007STOPPED\020\000\022\013\n\007PLAYING\020\001\022\017\n\013FASTFOR"
-    "WARD\020\002\022\n\n\006REWIND\020\003*\202\001\n\017PlayButtonState\022\021"
-    "\n\rPLAY_DISABLED\020\000\022\020\n\014PLAY_ENABLED\020\001\022\021\n\rP"
-    "AUSE_ENABLED\020\002\022\022\n\016PAUSE_DISABLED\020\003\022\020\n\014ST"
-    "OP_ENABLED\020\004\022\021\n\rSTOP_DISABLED\020\005", 2151);
+    "TATE\020\023\"\226\001\n\022PlayerButtonsState\022B\n\025play_pa"
+    "use_stop_state\030\001 \002(\0162\025.iTCH.PlayButtonSt"
+    "ate:\014PLAY_ENABLED\022\037\n\020previous_enabled\030\002 "
+    "\002(\010:\005false\022\033\n\014next_enabled\030\003 \002(\010:\005false\""
+    "\250\001\n\005Track\022\014\n\004name\030\001 \002(\t\022\016\n\006artist\030\002 \002(\t\022"
+    "\r\n\005album\030\003 \002(\t\022\020\n\010duration\030\004 \002(\r\022\r\n\005genr"
+    "e\030\005 \002(\t\022\014\n\004year\030\006 \002(\r\022\017\n\007bitrate\030\007 \001(\r\022\023"
+    "\n\013sample_rate\030\010 \001(\r\022\017\n\007comment\030\t \001(\t\022\014\n\004"
+    "kind\030\n \001(\t\"\303\003\n\016ServerResponse\022\020\n\005seqid\030\001"
+    " \002(\r:\0010\022\017\n\007success\030\002 \002(\010\022\025\n\rerror_messag"
+    "e\030\003 \001(\t\022)\n\005value\030\004 \001(\0132\032.iTCH.ServerResp"
+    "onse.Value\032\313\002\n\005Value\022-\n\004type\030\001 \002(\0162\037.iTC"
+    "H.ServerResponse.Value.Type\022\016\n\006volume\030\002 "
+    "\001(\r\022\014\n\004mute\030\003 \001(\010\022\020\n\010position\030\004 \001(\r\022 \n\005s"
+    "tate\030\005 \001(\0162\021.iTCH.PlayerState\022\032\n\005track\030\006"
+    " \001(\0132\013.iTCH.Track\022\035\n\010playlist\030\007 \003(\0132\013.iT"
+    "CH.Track\022)\n\007buttons\030\010 \001(\0132\030.iTCH.PlayerB"
+    "uttonsState\"[\n\004Type\022\n\n\006VOLUME\020\000\022\010\n\004MUTE\020"
+    "\001\022\014\n\010POSITION\020\002\022\t\n\005STATE\020\003\022\t\n\005TRACK\020\004\022\014\n"
+    "\010PLAYLIST\020\005\022\013\n\007BUTTONS\020\006*\037\n\007Version\022\024\n\020P"
+    "ROTOCOL_VERSION\020\000*D\n\013PlayerState\022\013\n\007STOP"
+    "PED\020\000\022\013\n\007PLAYING\020\001\022\017\n\013FASTFORWARD\020\002\022\n\n\006R"
+    "EWIND\020\003*\202\001\n\017PlayButtonState\022\021\n\rPLAY_DISA"
+    "BLED\020\000\022\020\n\014PLAY_ENABLED\020\001\022\021\n\rPAUSE_ENABLE"
+    "D\020\002\022\022\n\016PAUSE_DISABLED\020\003\022\020\n\014STOP_ENABLED\020"
+    "\004\022\021\n\rSTOP_DISABLED\020\005", 2180);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "iTCH.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -2174,7 +2175,7 @@ PlayerButtonsState::PlayerButtonsState(const PlayerButtonsState& from)
 
 void PlayerButtonsState::SharedCtor() {
   _cached_size_ = 0;
-  play_pause_stop_state_ = 0;
+  play_pause_stop_state_ = 1;
   previous_enabled_ = false;
   next_enabled_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -2211,7 +2212,7 @@ PlayerButtonsState* PlayerButtonsState::New() const {
 
 void PlayerButtonsState::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    play_pause_stop_state_ = 0;
+    play_pause_stop_state_ = 1;
     previous_enabled_ = false;
     next_enabled_ = false;
   }
@@ -2225,7 +2226,7 @@ bool PlayerButtonsState::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .iTCH.PlayButtonState play_pause_stop_state = 1;
+      // required .iTCH.PlayButtonState play_pause_stop_state = 1 [default = PLAY_ENABLED];
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -2245,7 +2246,7 @@ bool PlayerButtonsState::MergePartialFromCodedStream(
         break;
       }
       
-      // required bool previous_enabled = 2;
+      // required bool previous_enabled = 2 [default = false];
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -2261,7 +2262,7 @@ bool PlayerButtonsState::MergePartialFromCodedStream(
         break;
       }
       
-      // required bool next_enabled = 3;
+      // required bool next_enabled = 3 [default = false];
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -2295,18 +2296,18 @@ bool PlayerButtonsState::MergePartialFromCodedStream(
 
 void PlayerButtonsState::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required .iTCH.PlayButtonState play_pause_stop_state = 1;
+  // required .iTCH.PlayButtonState play_pause_stop_state = 1 [default = PLAY_ENABLED];
   if (has_play_pause_stop_state()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->play_pause_stop_state(), output);
   }
   
-  // required bool previous_enabled = 2;
+  // required bool previous_enabled = 2 [default = false];
   if (has_previous_enabled()) {
     ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->previous_enabled(), output);
   }
   
-  // required bool next_enabled = 3;
+  // required bool next_enabled = 3 [default = false];
   if (has_next_enabled()) {
     ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->next_enabled(), output);
   }
@@ -2319,18 +2320,18 @@ void PlayerButtonsState::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* PlayerButtonsState::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required .iTCH.PlayButtonState play_pause_stop_state = 1;
+  // required .iTCH.PlayButtonState play_pause_stop_state = 1 [default = PLAY_ENABLED];
   if (has_play_pause_stop_state()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       1, this->play_pause_stop_state(), target);
   }
   
-  // required bool previous_enabled = 2;
+  // required bool previous_enabled = 2 [default = false];
   if (has_previous_enabled()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->previous_enabled(), target);
   }
   
-  // required bool next_enabled = 3;
+  // required bool next_enabled = 3 [default = false];
   if (has_next_enabled()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->next_enabled(), target);
   }
@@ -2346,18 +2347,18 @@ int PlayerButtonsState::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .iTCH.PlayButtonState play_pause_stop_state = 1;
+    // required .iTCH.PlayButtonState play_pause_stop_state = 1 [default = PLAY_ENABLED];
     if (has_play_pause_stop_state()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->play_pause_stop_state());
     }
     
-    // required bool previous_enabled = 2;
+    // required bool previous_enabled = 2 [default = false];
     if (has_previous_enabled()) {
       total_size += 1 + 1;
     }
     
-    // required bool next_enabled = 3;
+    // required bool next_enabled = 3 [default = false];
     if (has_next_enabled()) {
       total_size += 1 + 1;
     }

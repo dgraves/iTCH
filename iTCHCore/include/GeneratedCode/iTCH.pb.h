@@ -938,21 +938,21 @@ class PlayerButtonsState : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required .iTCH.PlayButtonState play_pause_stop_state = 1;
+  // required .iTCH.PlayButtonState play_pause_stop_state = 1 [default = PLAY_ENABLED];
   inline bool has_play_pause_stop_state() const;
   inline void clear_play_pause_stop_state();
   static const int kPlayPauseStopStateFieldNumber = 1;
   inline iTCH::PlayButtonState play_pause_stop_state() const;
   inline void set_play_pause_stop_state(iTCH::PlayButtonState value);
   
-  // required bool previous_enabled = 2;
+  // required bool previous_enabled = 2 [default = false];
   inline bool has_previous_enabled() const;
   inline void clear_previous_enabled();
   static const int kPreviousEnabledFieldNumber = 2;
   inline bool previous_enabled() const;
   inline void set_previous_enabled(bool value);
   
-  // required bool next_enabled = 3;
+  // required bool next_enabled = 3 [default = false];
   inline bool has_next_enabled() const;
   inline void clear_next_enabled();
   static const int kNextEnabledFieldNumber = 3;
@@ -2005,7 +2005,7 @@ inline ::iTCH::ClientRequest_Value* ClientRequest::release_value() {
 
 // PlayerButtonsState
 
-// required .iTCH.PlayButtonState play_pause_stop_state = 1;
+// required .iTCH.PlayButtonState play_pause_stop_state = 1 [default = PLAY_ENABLED];
 inline bool PlayerButtonsState::has_play_pause_stop_state() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -2016,7 +2016,7 @@ inline void PlayerButtonsState::clear_has_play_pause_stop_state() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void PlayerButtonsState::clear_play_pause_stop_state() {
-  play_pause_stop_state_ = 0;
+  play_pause_stop_state_ = 1;
   clear_has_play_pause_stop_state();
 }
 inline iTCH::PlayButtonState PlayerButtonsState::play_pause_stop_state() const {
@@ -2028,7 +2028,7 @@ inline void PlayerButtonsState::set_play_pause_stop_state(iTCH::PlayButtonState 
   play_pause_stop_state_ = value;
 }
 
-// required bool previous_enabled = 2;
+// required bool previous_enabled = 2 [default = false];
 inline bool PlayerButtonsState::has_previous_enabled() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -2050,7 +2050,7 @@ inline void PlayerButtonsState::set_previous_enabled(bool value) {
   previous_enabled_ = value;
 }
 
-// required bool next_enabled = 3;
+// required bool next_enabled = 3 [default = false];
 inline bool PlayerButtonsState::has_next_enabled() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }

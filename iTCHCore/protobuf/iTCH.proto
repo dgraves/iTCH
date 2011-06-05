@@ -129,9 +129,9 @@ enum PlayButtonState {
 // Message containing the states of all buttons on the player
 message PlayerButtonsState
 {
-  required PlayButtonState play_pause_stop_state = 1;
-  required bool previous_enabled = 2;
-  required bool next_enabled = 3;
+  required PlayButtonState play_pause_stop_state = 1 [default = PLAY_ENABLED];
+  required bool previous_enabled = 2 [default = false];
+  required bool next_enabled = 3 [default = false];
 }
 
 // Message describing a track
