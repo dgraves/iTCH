@@ -113,7 +113,8 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   sequenceId_(0),
   positionInterval_(POSITION_INTERVAL),
   positionIntervalRapid_(POSITION_INTERVAL_RAPID),
-  playing_(false)
+  playing_(false),
+  playerDisconnected_(false)
 {
   ui_->setupUi(this);
   ui_->statusBar->showMessage(tr("Unconnected"));
@@ -195,6 +196,23 @@ void PiTCHWindow::disconnectedFromServer(bool closedByHost, const QString &messa
 
 void PiTCHWindow::processMessage(const iTCH::EnvelopePtr envelope)
 {
+  // If the player was previously disconnected from server, and has now reconnected we need to
+  // renable our state
+  if (playerDisconnected_)
+  {
+    playerDisconnected_ = false;
+
+    setConnectedState();
+
+    // Request current track, sound volume, mute, player state, and player position
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetSoundVolumeRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetMuteRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerStateRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerButtonsStateRequest(nextSequenceId()));
+    sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
+  }
+
   // Determine message type
   switch (envelope->type())
   {
@@ -238,6 +256,7 @@ void PiTCHWindow::processNotification(iTCH::EnvelopePtr envelope)
     break;
   case iTCH::ServerNotification::PLAYERQUITTING:
     // Just stop player without sending requests, requests can cause server to start the player again making it impossible to close the player while the server is active
+    playerDisconnected_ = true;
     setPlayerState(false);
     setDisconnectedState(true);
     break;

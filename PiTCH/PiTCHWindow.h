@@ -110,6 +110,7 @@ private:
   unsigned int      positionIntervalRapid_; // Interval between player time position requests when fast-forward/rewind active
   QTimer            positionTimer_;         // Timer to request player time position
   bool              playing_;
+  bool              playerDisconnected_;    // Indicates that the client is connected to the server, but the player has quit and has no COM connection to server
   iTCH::Track       currentTrack_;
 };
 
