@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/tray" >
+    <qresource prefix="/tray">
         <file>icons/active_connections.svg</file>
         <file>icons/active_noconnections.svg</file>
         <file>icons/inactive_connections.svg</file>
