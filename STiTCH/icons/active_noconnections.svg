@@ -31,7 +31,7 @@
          offset="0.5"
          style="stop-color:#ff7f00;stop-opacity:1;" />
       <stop
-         style="stop-color:#ff9f41;stop-opacity:1;"
+         style="stop-color:#ffbf81;stop-opacity:1;"
          offset="1"
          id="stop5832" />
     </linearGradient>
@@ -72,7 +72,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4908955"
-     inkscape:cx="60.25763"
+     inkscape:cx="-44.37747"
      inkscape:cy="175.54536"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -106,7 +106,7 @@
      id="layer1"
      transform="translate(-20.88226,-685.99656)">
     <g
-       id="g5849">
+       id="g5702">
       <path
          transform="matrix(0.6548679,0.6548679,-0.6775288,0.6775288,270.66944,276.0808)"
          d="m 567.24138,486.84494 a 180.17241,177.58621 0 1 1 -360.34482,0 180.17241,177.58621 0 1 1 360.34482,0 z"
@@ -115,7 +115,7 @@
          sodipodi:cy="486.84494"
          sodipodi:cx="387.06897"
          id="path2393"
-         style="fill:url(#radialGradient5834);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:10.45051192999999900;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         style="fill:url(#radialGradient5834);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:10.45051193;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
          sodipodi:type="arc" />
       <path
          transform="matrix(0.6385968,0.6385968,-0.9257094,0.9257094,443.21596,272.30577)"

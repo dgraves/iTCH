@@ -31,7 +31,7 @@
          offset="0.5"
          style="stop-color:#60ff00;stop-opacity:1;" />
       <stop
-         style="stop-color:#c4ffa1;stop-opacity:1;"
+         style="stop-color:#d8ffc1;stop-opacity:1;"
          offset="1"
          id="stop7303" />
     </linearGradient>
@@ -72,7 +72,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4908955"
-     inkscape:cx="174.6614"
+     inkscape:cx="-34.6088"
      inkscape:cy="175.54536"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -106,16 +106,16 @@
      id="layer1"
      transform="translate(-20.88226,-685.99656)">
     <g
-       id="g8764">
+       id="g4355">
       <path
          transform="matrix(0.6548679,0.6548679,-0.6775288,0.6775288,270.66944,276.0808)"
-         d="m 567.24138,486.84494 c 0,98.07816 -80.66594,177.58621 -180.17241,177.58621 -99.50647,0 -180.17241,-79.50805 -180.17241,-177.58621 0,-98.07816 80.66594,-177.58621 180.17241,-177.58621 99.50647,0 180.17241,79.50805 180.17241,177.58621 z"
+         d="m 567.24138,486.84494 a 180.17241,177.58621 0 1 1 -360.34482,0 180.17241,177.58621 0 1 1 360.34482,0 z"
          sodipodi:ry="177.58621"
          sodipodi:rx="180.17241"
          sodipodi:cy="486.84494"
          sodipodi:cx="387.06897"
          id="path2393"
-         style="fill:url(#radialGradient7305);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:10.45051192999999900;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:url(#radialGradient7305);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:10.45051193;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
          sodipodi:type="arc" />
       <path
          transform="matrix(0.6385968,0.6385968,-0.9257094,0.9257094,443.21596,272.30577)"
@@ -128,7 +128,7 @@
          sodipodi:cy="421.3277"
          sodipodi:cx="325.86206"
          id="path3165"
-         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:7.24298525;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:none;stroke:#000000;stroke-width:7.24298525;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
          sodipodi:type="spiral" />
       <path
          transform="matrix(-0.6413594,-0.6413594,-0.880362,0.880362,762.41648,628.37055)"
@@ -141,12 +141,13 @@
          sodipodi:cy="421.3277"
          sodipodi:cx="325.86206"
          id="path3167"
-         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:7.41117191;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:none;stroke:#000000;stroke-width:7.41117191;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
          sodipodi:type="spiral" />
       <path
          id="path3225"
          d="M 206.92588,960.81978 C 192.52528,862.31212 90.395942,858.3077 90.395942,858.3077"
-         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:9.84449196;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="fill:none;stroke:#000000;stroke-width:9.84449196;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>

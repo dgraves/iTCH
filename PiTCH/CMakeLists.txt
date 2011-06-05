@@ -14,9 +14,14 @@ set(CLIENT_FORM_FILES
     PiTCHWindow.ui
 )
 
+set(CLIENT_RESOURCE_FILES
+    PiTCH.qrc
+)
+
 # Execute Qt code generation tools
 qt4_wrap_cpp(CLIENT_QOBJECT_HEADER_FILES_MOC ${CLIENT_QOBJECT_HEADER_FILES})
 qt4_wrap_ui(CLIENT_FORM_HEADER_FILES ${CLIENT_FORM_FILES})
+qt4_add_resources(CLIENT_RESOURCE_FILES_RCC ${CLIENT_RESOURCE_FILES})
 
 # Make sure Qt generated files are found
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -28,6 +33,7 @@ add_executable(PiTCH WIN32 ${CLIENT_SOURCE_FILES}
                      ${CLIENT_QOBJECT_HEADER_FILES}
                      ${CLIENT_QOBJECT_HEADER_FILES_MOC}
                      ${CLIENT_FORM_HEADER_FILES}
+                     ${CLIENT_RESOURCE_FILES_RCC}
 )
 
 # Add the Qt libraries as link dependencies

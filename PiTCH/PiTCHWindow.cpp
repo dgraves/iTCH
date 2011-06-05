@@ -119,6 +119,9 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   ui_->setupUi(this);
   ui_->statusBar->showMessage(tr("Unconnected"));
 
+  QIcon icon = QIcon(":/app/icons/reco.svg");
+  setWindowIcon(icon);
+
   createStandardIcons();
   setDisconnectedState(false);
 
