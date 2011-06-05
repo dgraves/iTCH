@@ -66,11 +66,12 @@ enum ServerNotification_Type {
   ServerNotification_Type_VOLUMECHANGED = 0,
   ServerNotification_Type_PLAYINGSTARTED = 1,
   ServerNotification_Type_PLAYINGSTOPPED = 2,
-  ServerNotification_Type_TRACKINFOCHANGED = 3
+  ServerNotification_Type_TRACKINFOCHANGED = 3,
+  ServerNotification_Type_PLAYERQUITTING = 4
 };
 bool ServerNotification_Type_IsValid(int value);
 const ServerNotification_Type ServerNotification_Type_Type_MIN = ServerNotification_Type_VOLUMECHANGED;
-const ServerNotification_Type ServerNotification_Type_Type_MAX = ServerNotification_Type_TRACKINFOCHANGED;
+const ServerNotification_Type ServerNotification_Type_Type_MAX = ServerNotification_Type_PLAYERQUITTING;
 const int ServerNotification_Type_Type_ARRAYSIZE = ServerNotification_Type_Type_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ServerNotification_Type_descriptor();
@@ -549,6 +550,7 @@ class ServerNotification : public ::google::protobuf::Message {
   static const Type PLAYINGSTARTED = ServerNotification_Type_PLAYINGSTARTED;
   static const Type PLAYINGSTOPPED = ServerNotification_Type_PLAYINGSTOPPED;
   static const Type TRACKINFOCHANGED = ServerNotification_Type_TRACKINFOCHANGED;
+  static const Type PLAYERQUITTING = ServerNotification_Type_PLAYERQUITTING;
   static inline bool Type_IsValid(int value) {
     return ServerNotification_Type_IsValid(value);
   }

@@ -56,10 +56,11 @@ message Envelope {
 // related to the notification if interested
 message ServerNotification {
   enum Type {
-    VOLUMECHANGED    = 0;    // Sends a volume changed message to client; No response
-    PLAYINGSTARTED   = 1;    // Sends a playing started notification to client; No response
-    PLAYINGSTOPPED   = 2;    // Sends a playing stopped notification to client; No response
-    TRACKINFOCHANGED = 3;    // Sends a notification that the currently playing track's info has changed to client; No response
+    VOLUMECHANGED    = 0;    // Sends a volume changed message to client
+    PLAYINGSTARTED   = 1;    // Sends a playing started notification to client
+    PLAYINGSTOPPED   = 2;    // Sends a playing stopped notification to client
+    TRACKINFOCHANGED = 3;    // Sends a notification that the currently playing track's info has changed to client
+    PLAYERQUITTING   = 4;    // Sends a notification that the music player is quitting an will close the COM connection with the server
   }
 
   required Type type = 1;

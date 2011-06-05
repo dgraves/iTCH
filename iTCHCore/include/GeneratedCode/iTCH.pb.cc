@@ -308,52 +308,52 @@ void protobuf_AddDesc_iTCH_2eproto() {
     "\n\007request\030\003 \001(\0132\023.iTCH.ClientRequest\022&\n\010"
     "response\030\004 \001(\0132\024.iTCH.ServerResponse\"E\n\004"
     "Type\022\026\n\022SERVERNOTIFICATION\020\000\022\021\n\rCLIENTRE"
-    "QUEST\020\001\022\022\n\016SERVERRESPONSE\020\002\"\232\001\n\022ServerNo"
+    "QUEST\020\001\022\022\n\016SERVERRESPONSE\020\002\"\256\001\n\022ServerNo"
     "tification\022+\n\004type\030\001 \002(\0162\035.iTCH.ServerNo"
-    "tification.Type\"W\n\004Type\022\021\n\rVOLUMECHANGED"
+    "tification.Type\"k\n\004Type\022\021\n\rVOLUMECHANGED"
     "\020\000\022\022\n\016PLAYINGSTARTED\020\001\022\022\n\016PLAYINGSTOPPED"
-    "\020\002\022\024\n\020TRACKINFOCHANGED\020\003\"\353\004\n\rClientReque"
-    "st\022\r\n\005seqid\030\001 \002(\r\022&\n\004type\030\002 \002(\0162\030.iTCH.C"
-    "lientRequest.Type\022(\n\005value\030\003 \001(\0132\031.iTCH."
-    "ClientRequest.Value\032\221\001\n\005Value\022,\n\004type\030\001 "
-    "\002(\0162\036.iTCH.ClientRequest.Value.Type\022\016\n\006v"
-    "olume\030\002 \001(\r\022\014\n\004mute\030\003 \001(\010\022\020\n\010position\030\004 "
-    "\001(\r\"*\n\004Type\022\n\n\006VOLUME\020\000\022\010\n\004MUTE\020\001\022\014\n\010POS"
-    "ITION\020\002\"\344\002\n\004Type\022\r\n\tBACKTRACK\020\000\022\017\n\013FASTF"
-    "ORWARD\020\001\022\r\n\tNEXTTRACK\020\002\022\t\n\005PAUSE\020\003\022\010\n\004PL"
-    "AY\020\004\022\r\n\tPLAYPAUSE\020\005\022\021\n\rPREVIOUSTRACK\020\006\022\n"
-    "\n\006RESUME\020\007\022\n\n\006REWIND\020\010\022\010\n\004STOP\020\t\022\023\n\017GET_"
-    "SOUNDVOLUME\020\n\022\023\n\017PUT_SOUNDVOLUME\020\013\022\014\n\010GE"
-    "T_MUTE\020\014\022\014\n\010PUT_MUTE\020\r\022\026\n\022GET_PLAYERPOSI"
-    "TION\020\016\022\026\n\022PUT_PLAYERPOSITION\020\017\022\023\n\017GET_PL"
-    "AYERSTATE\020\020\022\024\n\020GET_CURRENTTRACK\020\021\022\027\n\023GET"
-    "_CURRENTPLAYLIST\020\022\022\032\n\026GET_PLAYERBUTTONSS"
-    "TATE\020\023\"\226\001\n\022PlayerButtonsState\022B\n\025play_pa"
-    "use_stop_state\030\001 \002(\0162\025.iTCH.PlayButtonSt"
-    "ate:\014PLAY_ENABLED\022\037\n\020previous_enabled\030\002 "
-    "\002(\010:\005false\022\033\n\014next_enabled\030\003 \002(\010:\005false\""
-    "\250\001\n\005Track\022\014\n\004name\030\001 \002(\t\022\016\n\006artist\030\002 \002(\t\022"
-    "\r\n\005album\030\003 \002(\t\022\020\n\010duration\030\004 \002(\r\022\r\n\005genr"
-    "e\030\005 \002(\t\022\014\n\004year\030\006 \002(\r\022\017\n\007bitrate\030\007 \001(\r\022\023"
-    "\n\013sample_rate\030\010 \001(\r\022\017\n\007comment\030\t \001(\t\022\014\n\004"
-    "kind\030\n \001(\t\"\303\003\n\016ServerResponse\022\020\n\005seqid\030\001"
-    " \002(\r:\0010\022\017\n\007success\030\002 \002(\010\022\025\n\rerror_messag"
-    "e\030\003 \001(\t\022)\n\005value\030\004 \001(\0132\032.iTCH.ServerResp"
-    "onse.Value\032\313\002\n\005Value\022-\n\004type\030\001 \002(\0162\037.iTC"
-    "H.ServerResponse.Value.Type\022\016\n\006volume\030\002 "
-    "\001(\r\022\014\n\004mute\030\003 \001(\010\022\020\n\010position\030\004 \001(\r\022 \n\005s"
-    "tate\030\005 \001(\0162\021.iTCH.PlayerState\022\032\n\005track\030\006"
-    " \001(\0132\013.iTCH.Track\022\035\n\010playlist\030\007 \003(\0132\013.iT"
-    "CH.Track\022)\n\007buttons\030\010 \001(\0132\030.iTCH.PlayerB"
-    "uttonsState\"[\n\004Type\022\n\n\006VOLUME\020\000\022\010\n\004MUTE\020"
-    "\001\022\014\n\010POSITION\020\002\022\t\n\005STATE\020\003\022\t\n\005TRACK\020\004\022\014\n"
-    "\010PLAYLIST\020\005\022\013\n\007BUTTONS\020\006*\037\n\007Version\022\024\n\020P"
-    "ROTOCOL_VERSION\020\000*D\n\013PlayerState\022\013\n\007STOP"
-    "PED\020\000\022\013\n\007PLAYING\020\001\022\017\n\013FASTFORWARD\020\002\022\n\n\006R"
-    "EWIND\020\003*\202\001\n\017PlayButtonState\022\021\n\rPLAY_DISA"
-    "BLED\020\000\022\020\n\014PLAY_ENABLED\020\001\022\021\n\rPAUSE_ENABLE"
-    "D\020\002\022\022\n\016PAUSE_DISABLED\020\003\022\020\n\014STOP_ENABLED\020"
-    "\004\022\021\n\rSTOP_DISABLED\020\005", 2180);
+    "\020\002\022\024\n\020TRACKINFOCHANGED\020\003\022\022\n\016PLAYERQUITTI"
+    "NG\020\004\"\353\004\n\rClientRequest\022\r\n\005seqid\030\001 \002(\r\022&\n"
+    "\004type\030\002 \002(\0162\030.iTCH.ClientRequest.Type\022(\n"
+    "\005value\030\003 \001(\0132\031.iTCH.ClientRequest.Value\032"
+    "\221\001\n\005Value\022,\n\004type\030\001 \002(\0162\036.iTCH.ClientReq"
+    "uest.Value.Type\022\016\n\006volume\030\002 \001(\r\022\014\n\004mute\030"
+    "\003 \001(\010\022\020\n\010position\030\004 \001(\r\"*\n\004Type\022\n\n\006VOLUM"
+    "E\020\000\022\010\n\004MUTE\020\001\022\014\n\010POSITION\020\002\"\344\002\n\004Type\022\r\n\t"
+    "BACKTRACK\020\000\022\017\n\013FASTFORWARD\020\001\022\r\n\tNEXTTRAC"
+    "K\020\002\022\t\n\005PAUSE\020\003\022\010\n\004PLAY\020\004\022\r\n\tPLAYPAUSE\020\005\022"
+    "\021\n\rPREVIOUSTRACK\020\006\022\n\n\006RESUME\020\007\022\n\n\006REWIND"
+    "\020\010\022\010\n\004STOP\020\t\022\023\n\017GET_SOUNDVOLUME\020\n\022\023\n\017PUT"
+    "_SOUNDVOLUME\020\013\022\014\n\010GET_MUTE\020\014\022\014\n\010PUT_MUTE"
+    "\020\r\022\026\n\022GET_PLAYERPOSITION\020\016\022\026\n\022PUT_PLAYER"
+    "POSITION\020\017\022\023\n\017GET_PLAYERSTATE\020\020\022\024\n\020GET_C"
+    "URRENTTRACK\020\021\022\027\n\023GET_CURRENTPLAYLIST\020\022\022\032"
+    "\n\026GET_PLAYERBUTTONSSTATE\020\023\"\226\001\n\022PlayerBut"
+    "tonsState\022B\n\025play_pause_stop_state\030\001 \002(\016"
+    "2\025.iTCH.PlayButtonState:\014PLAY_ENABLED\022\037\n"
+    "\020previous_enabled\030\002 \002(\010:\005false\022\033\n\014next_e"
+    "nabled\030\003 \002(\010:\005false\"\250\001\n\005Track\022\014\n\004name\030\001 "
+    "\002(\t\022\016\n\006artist\030\002 \002(\t\022\r\n\005album\030\003 \002(\t\022\020\n\010du"
+    "ration\030\004 \002(\r\022\r\n\005genre\030\005 \002(\t\022\014\n\004year\030\006 \002("
+    "\r\022\017\n\007bitrate\030\007 \001(\r\022\023\n\013sample_rate\030\010 \001(\r\022"
+    "\017\n\007comment\030\t \001(\t\022\014\n\004kind\030\n \001(\t\"\303\003\n\016Serve"
+    "rResponse\022\020\n\005seqid\030\001 \002(\r:\0010\022\017\n\007success\030\002"
+    " \002(\010\022\025\n\rerror_message\030\003 \001(\t\022)\n\005value\030\004 \001"
+    "(\0132\032.iTCH.ServerResponse.Value\032\313\002\n\005Value"
+    "\022-\n\004type\030\001 \002(\0162\037.iTCH.ServerResponse.Val"
+    "ue.Type\022\016\n\006volume\030\002 \001(\r\022\014\n\004mute\030\003 \001(\010\022\020\n"
+    "\010position\030\004 \001(\r\022 \n\005state\030\005 \001(\0162\021.iTCH.Pl"
+    "ayerState\022\032\n\005track\030\006 \001(\0132\013.iTCH.Track\022\035\n"
+    "\010playlist\030\007 \003(\0132\013.iTCH.Track\022)\n\007buttons\030"
+    "\010 \001(\0132\030.iTCH.PlayerButtonsState\"[\n\004Type\022"
+    "\n\n\006VOLUME\020\000\022\010\n\004MUTE\020\001\022\014\n\010POSITION\020\002\022\t\n\005S"
+    "TATE\020\003\022\t\n\005TRACK\020\004\022\014\n\010PLAYLIST\020\005\022\013\n\007BUTTO"
+    "NS\020\006*\037\n\007Version\022\024\n\020PROTOCOL_VERSION\020\000*D\n"
+    "\013PlayerState\022\013\n\007STOPPED\020\000\022\013\n\007PLAYING\020\001\022\017"
+    "\n\013FASTFORWARD\020\002\022\n\n\006REWIND\020\003*\202\001\n\017PlayButt"
+    "onState\022\021\n\rPLAY_DISABLED\020\000\022\020\n\014PLAY_ENABL"
+    "ED\020\001\022\021\n\rPAUSE_ENABLED\020\002\022\022\n\016PAUSE_DISABLE"
+    "D\020\003\022\020\n\014STOP_ENABLED\020\004\022\021\n\rSTOP_DISABLED\020\005", 2200);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "iTCH.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -1210,6 +1210,7 @@ bool ServerNotification_Type_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -1221,6 +1222,7 @@ const ServerNotification_Type ServerNotification::VOLUMECHANGED;
 const ServerNotification_Type ServerNotification::PLAYINGSTARTED;
 const ServerNotification_Type ServerNotification::PLAYINGSTOPPED;
 const ServerNotification_Type ServerNotification::TRACKINFOCHANGED;
+const ServerNotification_Type ServerNotification::PLAYERQUITTING;
 const ServerNotification_Type ServerNotification::Type_MIN;
 const ServerNotification_Type ServerNotification::Type_MAX;
 const int ServerNotification::Type_ARRAYSIZE;

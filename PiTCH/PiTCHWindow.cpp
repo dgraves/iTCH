@@ -119,7 +119,7 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   ui_->statusBar->showMessage(tr("Unconnected"));
 
   createStandardIcons();
-  setDisconnectedState();
+  setDisconnectedState(false);
 
   connect(&client_, SIGNAL(hostnameResolved()), this, SLOT(resolvedHostname()));
   connect(&client_, SIGNAL(connected()), this, SLOT(connectedToServer()));
@@ -175,7 +175,7 @@ void PiTCHWindow::disconnectedFromServer(bool closedByHost, const QString &messa
   QString status(tr("Unconnected"));
 
   setPlayerState(false);
-  setDisconnectedState();
+  setDisconnectedState(false);
 
   ui_->networkButton->blockSignals(true);
   ui_->networkButton->setChecked(false);
@@ -220,14 +220,14 @@ void PiTCHWindow::processNotification(iTCH::EnvelopePtr envelope)
     sendTrackedRequest(iTCH::MessageBuilder::makeGetMuteRequest(nextSequenceId()));
     break;
   case iTCH::ServerNotification::PLAYINGSTARTED:
-    // Get the initial time slider position
+    // Get the initial time slider position, current buttons state, and current track
     setPlayerState(true);
     sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
     sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerButtonsStateRequest(nextSequenceId()));
     sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
     break;
   case iTCH::ServerNotification::PLAYINGSTOPPED:
-    // Get the final time slider position
+    // Get the final time slider position, current buttons state, and current track
     setPlayerState(false);
     sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
     sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerButtonsStateRequest(nextSequenceId()));
@@ -235,6 +235,11 @@ void PiTCHWindow::processNotification(iTCH::EnvelopePtr envelope)
     break;
   case iTCH::ServerNotification::TRACKINFOCHANGED:
     sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
+    break;
+  case iTCH::ServerNotification::PLAYERQUITTING:
+    // Just stop player without sending requests, requests can cause server to start the player again making it impossible to close the player while the server is active
+    setPlayerState(false);
+    setDisconnectedState(true);
     break;
   default:
     processProtocolError("Received unrecognized notification type");
@@ -657,7 +662,7 @@ void PiTCHWindow::setConnectedState()
   ui_->playPauseToggleButton->setEnabled(true);
 }
 
-void PiTCHWindow::setDisconnectedState()
+void PiTCHWindow::setDisconnectedState(bool playButtonEnabled)
 {
   currentTrack_.Clear();
   requests_.clear();
@@ -672,7 +677,7 @@ void PiTCHWindow::setDisconnectedState()
   ui_->backButton->setEnabled(false);
   ui_->forwardButton->setEnabled(false);
   ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-  ui_->playPauseToggleButton->setEnabled(false);
+  ui_->playPauseToggleButton->setEnabled(playButtonEnabled);
 
   // Clear the track labels
   ui_->artist->setText("");

@@ -47,6 +47,8 @@ public:
 
   static EnvelopePtr makeTrackInfoChangedNotification();
 
+  static EnvelopePtr makePlayerQuittingNotification();
+
   static bool containsValidServerNotification(const EnvelopePtr envelope);
 
 

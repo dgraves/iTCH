@@ -70,37 +70,26 @@ namespace
 EnvelopePtr MessageBuilder::makeVolumeChangedNotification()
 {
   return makeServerNotification(ServerNotification::VOLUMECHANGED);
-//  ServerNotification *notification = envelope->mutable_notification();
-//  request->mutable_value()->set_type(ServerNotification::Value::VOLUME);
-//  request->mutable_value()->set_volume(volume);
-//  return envelope;
 }
 
 EnvelopePtr MessageBuilder::makePlayingStartedNotification()
 {
   return makeServerNotification(ServerNotification::PLAYINGSTARTED);
-//  ServerNotification *notification = envelope->mutable_notification();
-//  request->mutable_value()->set_type(ServerNotification::Value::TRACK);
-//  request->mutable_value()->set_track(track);
-//  return envelope;
 }
 
 EnvelopePtr MessageBuilder::makePlayingStoppedNotification()
 {
   return makeServerNotification(ServerNotification::PLAYINGSTOPPED);
-//  ServerNotification *notification = envelope->mutable_notification();
-//  request->mutable_value()->set_type(ServerNotification::Value::TRACK);
-//  request->mutable_value()->set_track(track);
-//  return envelope;
 }
 
 EnvelopePtr MessageBuilder::makeTrackInfoChangedNotification()
 {
   return makeServerNotification(ServerNotification::TRACKINFOCHANGED);
-//  ServerNotification *notification = envelope->mutable_notification();
-//  request->mutable_value()->set_type(ServerNotification::Value::TRACK);
-//  request->mutable_value()->set_track(track);
-//  return envelope;
+}
+
+EnvelopePtr MessageBuilder::makePlayerQuittingNotification()
+{
+  return makeServerNotification(ServerNotification::PLAYERQUITTING);
 }
 
 bool MessageBuilder::containsValidServerNotification(const EnvelopePtr envelope)

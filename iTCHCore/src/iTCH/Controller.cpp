@@ -442,7 +442,7 @@ void Controller::destroyInstance()
   if (hasInstance())
   {
     // Need to send stopped notification to clients
-    statusChanged(iTCH::MessageBuilder::makePlayingStoppedNotification());
+    statusChanged(iTCH::MessageBuilder::makePlayerQuittingNotification());
 
     // Disconnect from player
     eventsConnectionPoint_->Unadvise(eventsCookie_);
