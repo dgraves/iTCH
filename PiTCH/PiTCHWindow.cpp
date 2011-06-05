@@ -634,6 +634,7 @@ void PiTCHWindow::setConnectedState()
 void PiTCHWindow::setDisconnectedState()
 {
   currentTrack_.Clear();
+  requests_.clear();
   setPlayerPosition(0);
   setSoundVolume(0);
 
@@ -646,6 +647,10 @@ void PiTCHWindow::setDisconnectedState()
   ui_->forwardButton->setEnabled(false);
   ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
   ui_->playPauseToggleButton->setEnabled(false);
+
+  // Clear the track labels
+  ui_->artist->setText("");
+  ui_->songTitle->setText("");
 }
 
 unsigned long PiTCHWindow::nextSequenceId()
@@ -656,8 +661,16 @@ unsigned long PiTCHWindow::nextSequenceId()
 void PiTCHWindow::sendTrackedRequest(iTCH::EnvelopePtr envelope)
 {
   assert(envelope->has_request());
-  requests_.insert(envelope->request().seqid(), envelope);
-  client_.sendMessage(envelope);
+
+  // Only send request if connected
+  if (client_.isConnected())
+  {
+    // Only add reques to pending request queue if transmission succeeded
+    if (client_.sendMessage(envelope))
+    {
+      requests_.insert(envelope->request().seqid(), envelope);
+    }
+  }
 }
 
 void PiTCHWindow::startPositionTimer(unsigned int interval)

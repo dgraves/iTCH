@@ -60,7 +60,7 @@ public:
 
   void closeConnection();
 
-  void sendMessage(const EnvelopePtr envelope);
+  bool sendMessage(const EnvelopePtr envelope); // Returns true/false to indicate success/failure, and raises a signal with an error message on failure
 
 signals:
   void hostnameResolved();

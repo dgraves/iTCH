@@ -75,7 +75,7 @@ void Client::closeConnection()
   socket_->close();
 }
 
-void Client::sendMessage(const EnvelopePtr envelope)
+bool Client::sendMessage(const EnvelopePtr envelope)
 {
   QByteArray data;
   if (packMessage(&data, envelope))
@@ -83,12 +83,16 @@ void Client::sendMessage(const EnvelopePtr envelope)
     if (socket_->write(data) == -1)
     {
       socketError();
+      return false;
     }
   }
   else
   {
     protocolError(QString("Failed to prepare network message for transmission: %1").arg(envelope->DebugString().c_str()));
+    return false;
   }
+
+  return true;
 }
 
 void Client::resolvedHostname()
