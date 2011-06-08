@@ -2,6 +2,17 @@ cmake_minimum_required(VERSION 2.6.4)
 
 project(iTCH)
 
+set(VERSION "0.7.0")
+set(VERSION_MAJOR "0")
+set(VERSION_MINOR "7")
+set(VERSION_PATCH "0")
+
+if(WIN32 AND NOT UNIX)
+    set(RUNTIME_INSTALL_DIR .)
+else(WIN32 AND NOT UNIX)
+    set(RUNTIME_INSTALL_DIR bin)
+endif(WIN32 AND NOT UNIX)
+
 # Import the protocol buffer related files
 find_package(Protobuf REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIR})
@@ -17,43 +28,49 @@ add_subdirectory(iTCHCore)
 # Select optional programs to build: server/iTunes plug-in and client
 option(BUILD_CLIENT "Build PiTCH client application" TRUE)
 if(BUILD_CLIENT)
-add_subdirectory(PiTCH)
+    add_subdirectory(PiTCH)
 endif(BUILD_CLIENT)
 
 # Server require iTunes Windows COM SDK and is Windows only
 if(WIN32)
-	option(BUILD_SERVER "Build STiTCH server application/plug-in for iTunes" TRUE)
-	if(BUILD_SERVER)
-	add_subdirectory(STiTCH)
-	endif(BUILD_SERVER)
-	
+    option(BUILD_SERVER "Build STiTCH server application/plug-in for iTunes" TRUE)
+    if(BUILD_SERVER)
+        add_subdirectory(STiTCH)
+    endif(BUILD_SERVER)
+endif(WIN32)
+
+
+# Install setup
+if(WIN32 AND NOT UNIX)
 	# Add Qt DLLs to install
     INSTALL(FILES
         "${QT_BINARY_DIR}/QtCore${QT_VERSION_MAJOR}.dll"
         "${QT_BINARY_DIR}/QtGui${QT_VERSION_MAJOR}.dll"
         "${QT_BINARY_DIR}/QtNetwork${QT_VERSION_MAJOR}.dll"
-        DESTINATION bin
+        DESTINATION ${RUNTIME_INSTALL_DIR}
     )
-endif(WIN32)
 
-
-# Select a CPack genetator based on platform
-if(WIN32 AND NOT UNIX)
-    set(CPACK_GENERATOR "NSIS")
+    # Don't put required system libraries in the 'bin' subdir
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${RUNTIME_INSTALL_DIR})
 endif(WIN32 AND NOT UNIX)
+
+include(InstallRequiredSystemLibraries)
 
 
 # CPack setup
-include(InstallRequiredSystemLibraries)
+if(WIN32 AND NOT UNIX)
+    # Select a CPack genetator based on platform
+    set(CPACK_GENERATOR "NSIS")
+endif(WIN32 AND NOT UNIX)
 
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "iTCH - iTCH applications for remotely controlling Apple's iTunes software")
 set(CPACK_PACKAGE_VENDOR "dgraves.org")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/Deployment/About.txt")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Deployment/License.txt")
-set(CPACK_PACKAGE_VERSION "0.7.0")
-set(CPACK_PACKAGE_VERSION_MAJOR "0")
-set(CPACK_PACKAGE_VERSION_MINOR "7")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_PACKAGE_VERSION ${VERSION})
+set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "iTCH")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "iTCH-${CPACK_PACKAGE_VERSION}")
 
@@ -88,7 +105,7 @@ if(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
 endif(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
 
 if(UNIX)
-    set(CPACK_STRIP_FILES "bin/pitch")
+    set(CPACK_STRIP_FILES "${RUNTIME_INSTALL_DIR}/pitch")
     set(CPACK_SOURCE_STRIP_FILES "")
     set(CPACK_PACKAGE_EXECUTABLES "pitch" "PiTCH")
 elseif(WIN32)
@@ -116,7 +133,13 @@ if(CPACK_GENERATOR MATCHES "NSIS")
     set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/Deployment\\iTCHInstall.bmp")
 
     # Use the icon from cmake-gui for add-remove programs
-    set(CPACK_NSIS_INSTALLED_ICON_NAME "PiTCH.exe")
+    if(BUILD_CLIENT)
+        set(CPACK_NSIS_INSTALLED_ICON_NAME "pitch.exe")
+    elseif(BUILD_SERVER)
+        set(CPACK_NSIS_INSTALLED_ICON_NAME "stitch.exe")
+    endif(BUILD_CLIENT)
+
+    set(CPACK_NSIS_EXECUTABLES_DIRECTORY ${RUNTIME_INSTALL_DIR})
 
     set(CPACK_NSIS_PACKAGE_NAME "iTCH")
     set(CPACK_NSIS_DISPLAY_NAME "iTCH")
@@ -131,14 +154,18 @@ endif(CPACK_GENERATOR MATCHES "DEB")
 
 
 # CPack component setup
-set(CPACK_COMPONENT_PITCH_DISPLAY_NAME "PiTCH Application")
-set(CPACK_COMPONENT_PITCH_DESCRIPTION
-    "A client application for the STiTCH plug-in for iTunes, which can send commands to the STiTCH plug-in to control iTunes remotely."  
-)
+if(BUILD_CLIENT)
+    set(CPACK_COMPONENT_PITCH_DISPLAY_NAME "PiTCH Application")
+    set(CPACK_COMPONENT_PITCH_DESCRIPTION
+        "A client application for the STiTCH plug-in for iTunes, which can send commands to the STiTCH plug-in to control iTunes remotely."  
+    )
+endif(BUILD_CLIENT)
 
-set(CPACK_COMPONENT_STITCH_DISPLAY_NAME "STiTCH Plug-in")
-set(CPACK_COMPONENT_STITCH_DESCRIPTION
-    "A plug-in for iTunes, which allows the iTunes player to be remotely controlled with the PiTCH application."
-)
+if(BUILD_SERVER)
+    set(CPACK_COMPONENT_STITCH_DISPLAY_NAME "STiTCH Plug-in")
+    set(CPACK_COMPONENT_STITCH_DESCRIPTION
+        "A plug-in for iTunes, which allows the iTunes player to be remotely controlled with the PiTCH application."
+    )
+endif(BUILD_SERVER)
 
 include(CPack)

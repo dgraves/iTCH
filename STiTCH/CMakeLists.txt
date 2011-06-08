@@ -49,8 +49,7 @@ if(MSVC)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:mainCRTStartup")
 endif(MSVC)
 
-# Install setup
 install(TARGETS stitch 
         RUNTIME
-        DESTINATION bin
+        DESTINATION ${RUNTIME_INSTALL_DIR}
         COMPONENT "STiTCH")

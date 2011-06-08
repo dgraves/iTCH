@@ -55,7 +55,8 @@ if(MSVC)
 endif(MSVC)
 
 # Install setup
+
 install(TARGETS pitch 
         RUNTIME
-        DESTINATION bin
+        DESTINATION ${RUNTIME_INSTALL_DIR}
         COMPONENT "PiTCH")
