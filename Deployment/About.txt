@@ -1,0 +1,12 @@
+About iTCH
+==========
+iTCH allows you to control the Windows version of iTunes from a remote computer.  It consists of an iTunes plug-in (Windows only) and a client application (multi-platform).
+
+The iTunes plug-in, STiTCH, operates as a server application, receiving commands from the client and applying them to iTunes.  STiTCH is a Windows only program that runs in the Windows task tray, and can be configured to display notifications whenever a client connection is accepted.
+
+The client application, PiTCH, is capable of remotely controlling iTunes.  It provides controls for displaying and manipulating player state.  PiTCH supports both Windows and Linux/UNIX operating systems.
+
+Components of the iTCH project make use of the Qt cross-platform application and UI framework (LGPL version) and the Protocol Buffers library.  The STiTCH plug-in for iTunes uses the iTunes COM for Windows SDK.
+
+The iTCH project is made available under the MIT License.  See License.txt for details.
+

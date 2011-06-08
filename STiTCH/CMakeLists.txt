@@ -30,7 +30,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 # Add the iTCHCore include path
 include_directories(../iTCHCore/include)
 
-add_executable(STiTCH WIN32 ${SERVER_SOURCE_FILES}
+add_executable(stitch WIN32 ${SERVER_SOURCE_FILES}
                       ${SERVER_QOBJECT_HEADER_FILES}
                       ${SERVER_QOBJECT_HEADER_FILES_MOC}
                       ${SERVER_FORM_HEADER_FILES}
@@ -39,9 +39,18 @@ add_executable(STiTCH WIN32 ${SERVER_SOURCE_FILES}
 )
 
 # Add the Qt libraries as link dependencies
-target_link_libraries(STiTCH iTCHCore iTCHCoreCOM ${QT_LIBRARIES} ${PROTOBUF_LIBRARY})
+target_link_libraries(stitch iTCHCore iTCHCoreCOM ${QT_LIBRARIES} ${PROTOBUF_LIBRARY})
+
+# Add a label for the IDE
+set_target_properties(stitch PROPERTIES PROJECT_LABEL "STiTCH")
 
 # Use main instead of WinMain for VisualStudio
 if(MSVC)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:mainCRTStartup")
 endif(MSVC)
+
+# Install setup
+install(TARGETS stitch 
+        RUNTIME
+        DESTINATION bin
+        COMPONENT "STiTCH")

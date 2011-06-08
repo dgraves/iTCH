@@ -35,7 +35,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 # Add the iTCHCore include path
 include_directories(../iTCHCore/include)
 
-add_executable(PiTCH WIN32 ${CLIENT_SOURCE_FILES}
+add_executable(pitch WIN32 ${CLIENT_SOURCE_FILES}
                      ${CLIENT_QOBJECT_HEADER_FILES}
                      ${CLIENT_QOBJECT_HEADER_FILES_MOC}
                      ${CLIENT_FORM_HEADER_FILES}
@@ -43,10 +43,19 @@ add_executable(PiTCH WIN32 ${CLIENT_SOURCE_FILES}
                      ${CLIENT_APPLICATION_ICON_FILE}
 )
 
+# Add a label for the IDE
+set_target_properties(pitch PROPERTIES PROJECT_LABEL "PiTCH")
+
 # Add the Qt libraries as link dependencies
-target_link_libraries(PiTCH iTCHCore ${QT_LIBRARIES} ${PROTOBUF_LIBRARY})
+target_link_libraries(pitch iTCHCore ${QT_LIBRARIES} ${PROTOBUF_LIBRARY})
 
 # Use main instead of WinMain for VisualStudio
 if(MSVC)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:mainCRTStartup")
 endif(MSVC)
+
+# Install setup
+install(TARGETS pitch 
+        RUNTIME
+        DESTINATION bin
+        COMPONENT "PiTCH")
