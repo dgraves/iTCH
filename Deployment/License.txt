@@ -1,4 +1,4 @@
-The iTCH software has been made freely available and is licensed with the Open Source MIT License.
+iTCH is an open source project made freely available under the terms of the Open Source Initiative approved MIT License.
 
 Copyright (c) 2007-2011 Dustin Graves
 

@@ -32,7 +32,7 @@ and libraries:
     http://connect.apple.com
 
 Access to the iTunes COM for Windows SDK requires a free Apple
-Developer Connection account, which can be created at the ADC
+Developer Connection (ADC) account, which can be created at the ADC
 website (http://developer.apple.com).  After creating an
 account, go to http://connect.apple.com, click on the "Developer
 Tools" link found in the Downloads menu.  Then search for 
@@ -40,29 +40,33 @@ Tools" link found in the Downloads menu.  Then search for
 file.
 
 
-Building the code
-=================
+Building the software
+=====================
 Preparing to build the client application or plug-in:
-Before building the code, the Qt and Protocol Buffers must be
-installed.  These can be compiled and installed from source, or
+Before compiling the code, the Qt and Protocol Buffers libraries must
+be installed.  These can be compiled and installed from source, or
 installed from pre-compiled binaries.  Refer to the installation
 instruction for both libraries for the appropriate installation
 procedure.
 
 Additional preparation for building the plug-in:
-After the Qt and Protocol Buffers dependencies are installed,
-the "iTunes COM for Windows SDK" source code should be added to
-the iTCH distribution.  This is done by extracting the directory
-found within "iTunes COM for Windows SDK" zip file to the root
-directory of the iTCH distribution.  The "iTunes COM for Windows
-SDK" directory should be named iTunesCOMWindowsSDK.
+For Windows, After the Qt and Protocol Buffers dependencies are
+installed, the "iTunes COM for Windows SDK" source code should be
+added to the iTCH distribution.  This is done by extracting the
+directory found within the "iTunes COM for Windows SDK" zip file to
+the root directory of the iTCH distribution.  The "iTunes COM for
+Windows SDK" directory should be named "iTunesCOMWindowsSDK".
 
+Generating build files:
 With the Qt and Protocol Buffers dependencies installed, and the
 "iTunes COM for Windows SDK" source code copied to the root iTCH
 directory (windows only), CMake should be used to generate the
 appropriate build files for your preferred build environment.
 You must specify the locations of the Qt and Protocol Buffers
 header and library files as part of the CMake configuration
-process.  Once CMake has generated the build files for you build
+process.
+
+Performing the build:
+Once CMake has generated the build files for you build
 environment, the iTCH programs can be built from within that
 environment.
