@@ -18,7 +18,7 @@ find_package(Protobuf REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIR})
 
 # Import Qt 4 related headers, libraries, and tools
-find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
+find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork QtSvg REQUIRED)
 include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
 
@@ -47,6 +47,18 @@ if(WIN32 AND NOT UNIX)
         "${QT_BINARY_DIR}/QtCore${QT_VERSION_MAJOR}.dll"
         "${QT_BINARY_DIR}/QtGui${QT_VERSION_MAJOR}.dll"
         "${QT_BINARY_DIR}/QtNetwork${QT_VERSION_MAJOR}.dll"
+        "${QT_BINARY_DIR}/QtSvg${QT_VERSION_MAJOR}.dll"
+        DESTINATION ${RUNTIME_INSTALL_DIR}
+    )
+
+    INSTALL(FILES
+        "${QT_PLUGINS_DIR}/iconengines/qsvgicon${QT_VERSION_MAJOR}.dll"
+        DESTINATION plugins/iconengines
+    )
+
+    # Add Qt configuration file to specify plugins location
+    INSTALL(FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/Deployment/qt.conf"
         DESTINATION ${RUNTIME_INSTALL_DIR}
     )
 
