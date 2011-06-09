@@ -39,7 +39,10 @@ add_executable(stitch WIN32 ${SERVER_SOURCE_FILES}
 )
 
 # Add the Qt libraries as link dependencies
-target_link_libraries(stitch iTCHCore iTCHCoreCOM ${QT_LIBRARIES} ${PROTOBUF_LIBRARY})
+target_link_libraries(stitch iTCHCore iTCHCoreCOM ${QT_LIBRARIES}
+                      optimized ${PROTOBUF_LIBRARY}
+                      debug ${PROTOBUF_LIBRARY_DEBUG}
+)
 
 # Add a label for the IDE
 set_target_properties(stitch PROPERTIES PROJECT_LABEL "STiTCH")

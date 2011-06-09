@@ -47,7 +47,10 @@ add_executable(pitch WIN32 ${CLIENT_SOURCE_FILES}
 set_target_properties(pitch PROPERTIES PROJECT_LABEL "PiTCH")
 
 # Add the Qt libraries as link dependencies
-target_link_libraries(pitch iTCHCore ${QT_LIBRARIES} ${PROTOBUF_LIBRARY})
+target_link_libraries(pitch iTCHCore ${QT_LIBRARIES}
+                      optimized ${PROTOBUF_LIBRARY}
+                      debug ${PROTOBUF_LIBRARY_DEBUG}
+)
 
 # Use main instead of WinMain for VisualStudio
 if(MSVC)
