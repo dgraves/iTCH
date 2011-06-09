@@ -538,7 +538,8 @@ void PiTCHWindow::networkButtonToggled(bool isChecked)
     {
       // Attempt the server connection
       ui_->statusBar->showMessage(tr("Looking up host..."));
-      client_.openConnection(dialog.getNetworkInfo());
+      serverInfo_ = dialog.getNetworkInfo();
+      client_.openConnection(serverInfo_);
     }
   }
   else
