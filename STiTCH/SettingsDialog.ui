@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>STiTCHDialog</class>
- <widget class="QDialog" name="STiTCHDialog">
+ <class>SettingsDialog</class>
+ <widget class="QDialog" name="SettingsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -387,7 +387,7 @@
           <item row="2" column="1">
            <widget class="QSpinBox" name="maxLogEntriesSpinBox">
             <property name="suffix">
-             <string> </string>
+             <string/>
             </property>
             <property name="minimum">
              <number>8</number>
@@ -496,7 +496,7 @@
   <connection>
    <sender>portSpinBox</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>serverSettingsChanged()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -512,7 +512,7 @@
   <connection>
    <sender>interfaceComboBox</sender>
    <signal>currentIndexChanged(int)</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>serverSettingsChanged()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -528,7 +528,7 @@
   <connection>
    <sender>disconnectButton</sender>
    <signal>clicked()</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>disconnectButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -544,7 +544,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>clicked(QAbstractButton*)</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>apply(QAbstractButton*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -560,7 +560,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -576,7 +576,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -592,7 +592,7 @@
   <connection>
    <sender>actionSettings</sender>
    <signal>triggered()</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>showNormal()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -608,7 +608,7 @@
   <connection>
    <sender>actionConnect</sender>
    <signal>triggered()</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>connectController()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -624,7 +624,7 @@
   <connection>
    <sender>actionDisconnect</sender>
    <signal>triggered()</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>disconnectController()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -640,7 +640,7 @@
   <connection>
    <sender>connectPlayerButton</sender>
    <signal>clicked()</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>connectController()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -656,7 +656,7 @@
   <connection>
    <sender>disconnectPlayerButton</sender>
    <signal>clicked()</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>disconnectController()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -672,7 +672,7 @@
   <connection>
    <sender>maxLogEntriesSpinBox</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>STiTCHDialog</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>setMaxLogEntries(int)</slot>
    <hints>
     <hint type="sourcelabel">

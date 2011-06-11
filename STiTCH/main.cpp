@@ -23,7 +23,7 @@
 #include <QtGui/QApplication>
 #include <QtGui/QSystemTrayIcon>
 #include <QtGui/QMessageBox>
-#include "STiTCHDialog.h"
+#include "SettingsDialog.h"
 
 int main(int argc, char *argv[])
 {
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
   QApplication::setQuitOnLastWindowClosed(false);
 
-  STiTCHDialog d;
+  SettingsDialog d;
   d.show();
   return a.exec();
 }

@@ -28,12 +28,12 @@
 #include <QtNetwork/QNetworkInterface>
 #include "iTCH/Connection.h"
 #include "iTCH/MessageBuilder.h"
-#include "STiTCHDialog.h"
-#include "ui_STiTCHDialog.h"
+#include "SettingsDialog.h"
+#include "ui_SettingsDialog.h"
 
-STiTCHDialog::STiTCHDialog(QWidget *parent) :
+SettingsDialog::SettingsDialog(QWidget *parent) :
   QDialog(parent),
-  ui_(new Ui::STiTCHDialog)
+  ui_(new Ui::SettingsDialog)
 {
   ui_->setupUi(this);
 
@@ -63,7 +63,7 @@ STiTCHDialog::STiTCHDialog(QWidget *parent) :
   trayIcon_->show();
 }
 
-STiTCHDialog::~STiTCHDialog()
+SettingsDialog::~SettingsDialog()
 {
   QList<iTCH::Connection *> keys = connectionIndexes_.keys();
   for (QList<iTCH::Connection *>::iterator iter = keys.begin(); iter != keys.end(); ++iter)
@@ -87,13 +87,13 @@ STiTCHDialog::~STiTCHDialog()
   delete ui_;
 }
 
-void STiTCHDialog::closeEvent(QCloseEvent *e)
+void SettingsDialog::closeEvent(QCloseEvent *e)
 {
   hide();
   e->ignore();
 }
 
-void STiTCHDialog::changeEvent(QEvent *e)
+void SettingsDialog::changeEvent(QEvent *e)
 {
   QDialog::changeEvent(e);
   switch (e->type())
@@ -106,7 +106,7 @@ void STiTCHDialog::changeEvent(QEvent *e)
   }
 }
 
-void STiTCHDialog::addConnectionToList(iTCH::Connection *connection)
+void SettingsDialog::addConnectionToList(iTCH::Connection *connection)
 {
   QStandardItem *item = new QStandardItem(0, 2);
   item->setData(QVariant::fromValue(connection));
@@ -123,7 +123,7 @@ void STiTCHDialog::addConnectionToList(iTCH::Connection *connection)
   setIcon();
 }
 
-void STiTCHDialog::removeConnectionFromList(iTCH::Connection *connection)
+void SettingsDialog::removeConnectionFromList(iTCH::Connection *connection)
 {
   QMap<iTCH::Connection *, QModelIndex>::iterator index = connectionIndexes_.find(connection);
   if (index != connectionIndexes_.end())
@@ -136,7 +136,7 @@ void STiTCHDialog::removeConnectionFromList(iTCH::Connection *connection)
   setIcon();
 }
 
-void STiTCHDialog::setupServer()
+void SettingsDialog::setupServer()
 {
   QString ifstring = ui_->interfaceComboBox->currentText();
   QHostAddress iface = (ifstring == "Any") ? QHostAddress::Any : QHostAddress(ifstring);
@@ -168,7 +168,7 @@ void STiTCHDialog::setupServer()
   setIcon();
 }
 
-void STiTCHDialog::setIcon()
+void SettingsDialog::setIcon()
 {
   // Default to the server error icon
   QIcon icon = QIcon(":/tray/icons/noserver.svg");
@@ -205,14 +205,14 @@ void STiTCHDialog::setIcon()
   setWindowIcon(icon);
 }
 
-void STiTCHDialog::appendLogMessage(const QString &message)
+void SettingsDialog::appendLogMessage(const QString &message)
 {
   ui_->logTextEdit->append(QString("(%1) %2")
                            .arg(QDateTime::currentDateTime().toString("hh:mm:ss.zzz ap"))
                            .arg(message));
 }
 
-void STiTCHDialog::connectionReceived(iTCH::Connection *connection)
+void SettingsDialog::connectionReceived(iTCH::Connection *connection)
 {
   addConnectionToList(connection);
 
@@ -226,7 +226,7 @@ void STiTCHDialog::connectionReceived(iTCH::Connection *connection)
   }
 }
 
-void STiTCHDialog::connectionLost(iTCH::Connection *connection, bool closedByHost, const QString &message)
+void SettingsDialog::connectionLost(iTCH::Connection *connection, bool closedByHost, const QString &message)
 {
   removeConnectionFromList(connection);
 
@@ -247,7 +247,7 @@ void STiTCHDialog::connectionLost(iTCH::Connection *connection, bool closedByHos
   }
 }
 
-void STiTCHDialog::processMessage(iTCH::Connection *connection, const iTCH::EnvelopePtr envelope)
+void SettingsDialog::processMessage(iTCH::Connection *connection, const iTCH::EnvelopePtr envelope)
 {
   // Attempt to recreate an inactive instance, if configuration dictates
   if (!controller_.hasInstance() && ui_->activationCheckBox->isChecked())
@@ -265,7 +265,7 @@ void STiTCHDialog::processMessage(iTCH::Connection *connection, const iTCH::Enve
   }
 }
 
-void STiTCHDialog::processProtocolError(iTCH::Connection *connection, const QString &message)
+void SettingsDialog::processProtocolError(iTCH::Connection *connection, const QString &message)
 {
   appendLogMessage(QString("%1 %2 -> %3")
     .arg(tr("Error communication with client: Invalid message ->"))
@@ -273,7 +273,7 @@ void STiTCHDialog::processProtocolError(iTCH::Connection *connection, const QStr
     .arg(message));
 }
 
-void STiTCHDialog::createdInstance()
+void SettingsDialog::createdInstance()
 {
   appendLogMessage(tr("Created connection to iTunes"));
   ui_->actionConnect->setEnabled(false);
@@ -283,7 +283,7 @@ void STiTCHDialog::createdInstance()
   setIcon();
 }
 
-void STiTCHDialog::destroyedInstance()
+void SettingsDialog::destroyedInstance()
 {
   appendLogMessage(tr("Destroyed connection to iTunes"));
   ui_->actionConnect->setEnabled(true);
@@ -293,7 +293,7 @@ void STiTCHDialog::destroyedInstance()
   setIcon();
 }
 
-void STiTCHDialog::sendMessage(iTCH::EnvelopePtr envelope)
+void SettingsDialog::sendMessage(iTCH::EnvelopePtr envelope)
 {
   QList<iTCH::Connection *> connections = connectionIndexes_.keys();
   for (QList<iTCH::Connection *>::iterator iter = connections.begin(); iter != connections.end(); ++iter)
@@ -302,24 +302,24 @@ void STiTCHDialog::sendMessage(iTCH::EnvelopePtr envelope)
   }
 }
 
-void STiTCHDialog::processComError(const QString &message)
+void SettingsDialog::processComError(const QString &message)
 {
   appendLogMessage(QString("%1 %2")
     .arg(tr("Error communicating with iTunes:"))
     .arg(message));
 }
 
-void STiTCHDialog::connectController()
+void SettingsDialog::connectController()
 {
   controller_.createInstance();
 }
 
-void STiTCHDialog::disconnectController()
+void SettingsDialog::disconnectController()
 {
   controller_.destroyInstance();
 }
 
-void STiTCHDialog::serverSettingsChanged()
+void SettingsDialog::serverSettingsChanged()
 {
   QString ifstring = ui_->interfaceComboBox->currentText();
   QHostAddress iface = (ifstring == "Any") ? QHostAddress::Any : QHostAddress(ifstring);
@@ -343,7 +343,7 @@ void STiTCHDialog::serverSettingsChanged()
   }
 }
 
-void STiTCHDialog::disconnectButtonClicked()
+void SettingsDialog::disconnectButtonClicked()
 {
   // Remove all selected connections from the list and from the server
   QModelIndexList indexes = ui_->connectionsList->selectionModel()->selectedRows();
@@ -355,7 +355,7 @@ void STiTCHDialog::disconnectButtonClicked()
   }
 }
 
-void STiTCHDialog::updateDisconnectButton()
+void SettingsDialog::updateDisconnectButton()
 {
   if (ui_->connectionsList->selectionModel()->hasSelection())
   {
@@ -367,23 +367,23 @@ void STiTCHDialog::updateDisconnectButton()
   }
 }
 
-void STiTCHDialog::setMaxLogEntries(int maxEntries)
+void SettingsDialog::setMaxLogEntries(int maxEntries)
 {
   ui_->logTextEdit->document()->setMaximumBlockCount(maxEntries);
 }
 
-void STiTCHDialog::accept()
+void SettingsDialog::accept()
 {
   setupServer();
   close();
 }
 
-void STiTCHDialog::reject()
+void SettingsDialog::reject()
 {
   close();
 }
 
-void STiTCHDialog::apply(QAbstractButton *button)
+void SettingsDialog::apply(QAbstractButton *button)
 {
   // Determine if apply button was clicked and apply the server settings
   if (ui_->buttonBox->buttonRole(button) == QDialogButtonBox::ApplyRole)
@@ -392,7 +392,7 @@ void STiTCHDialog::apply(QAbstractButton *button)
   }
 }
 
-void STiTCHDialog::iconActivated(QSystemTrayIcon::ActivationReason reason)
+void SettingsDialog::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
   switch (reason)
   {
@@ -404,7 +404,7 @@ void STiTCHDialog::iconActivated(QSystemTrayIcon::ActivationReason reason)
   }
 }
 
-void STiTCHDialog::createTrayIcon()
+void SettingsDialog::createTrayIcon()
 {
   trayIconMenu_ = new QMenu(this);
   trayIconMenu_->addAction(ui_->actionSettings);
@@ -418,7 +418,7 @@ void STiTCHDialog::createTrayIcon()
   trayIcon_->setContextMenu(trayIconMenu_);
 }
 
-void STiTCHDialog::initializeConnectionList()
+void SettingsDialog::initializeConnectionList()
 {
   // Setup the list columns
   model_ = new QStandardItemModel(0, 2, this);
@@ -429,7 +429,7 @@ void STiTCHDialog::initializeConnectionList()
   ui_->connectionsList->setModel(model_);
 }
 
-void STiTCHDialog::fillInterfaceBox()
+void SettingsDialog::fillInterfaceBox()
 {
   // Clear any existing interfaces from the box (for regenerating list when a device becomes enabled/disabled)
   ui_->interfaceComboBox->clear();

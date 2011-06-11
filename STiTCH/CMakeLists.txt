@@ -1,14 +1,14 @@
 set(SERVER_QOBJECT_HEADER_FILES
-    STiTCHDialog.h
+    SettingsDialog.h
 )
 
 set(SERVER_SOURCE_FILES
-    STiTCHDialog.cpp
+    SettingsDialog.cpp
     main.cpp
 )
 
 set(SERVER_FORM_FILES
-    STiTCHDialog.ui
+    SettingsDialog.ui
 )
 
 set(SERVER_RESOURCE_FILES

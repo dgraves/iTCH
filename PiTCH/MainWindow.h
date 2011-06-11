@@ -96,7 +96,7 @@ private:
   typedef QMap<unsigned int, iTCH::EnvelopePtr> PendingRequests;
 
 private:
-  Ui::MainWindow  *ui_;
+  Ui::MainWindow   *ui_;
   iTCH::Client      client_;
   iTCH::NetworkInfo serverInfo_;
   unsigned int      autoConnectInterval_;

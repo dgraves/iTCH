@@ -20,8 +20,8 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#ifndef STITCHDIALOG_H
-#define STITCHDIALOG_H
+#ifndef SETTINGSDIALOG_H
+#define SETTINGSDIALOG_H
 
 #include <QtGui/QDialog>
 #include <QtGui/QStandardItemModel>
@@ -38,17 +38,17 @@ namespace iTCH {
 }
 
 namespace Ui {
-  class STiTCHDialog;
+  class SettingsDialog;
 }
 
-class STiTCHDialog : public QDialog
+class SettingsDialog : public QDialog
 {
   Q_OBJECT
 
 public:
-  STiTCHDialog(QWidget *parent = 0);
+  SettingsDialog(QWidget *parent = 0);
 
-  virtual ~STiTCHDialog();
+  virtual ~SettingsDialog();
 
 protected:
   void closeEvent(QCloseEvent *e);
@@ -97,7 +97,7 @@ private:
   void fillInterfaceBox();
 
 private:
-  Ui::STiTCHDialog                      *ui_;
+  Ui::SettingsDialog                    *ui_;
   iTCH::Server                           server_;
   iTCH::Controller                       controller_;
   QSystemTrayIcon                       *trayIcon_;
