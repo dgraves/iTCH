@@ -22,9 +22,9 @@
 */
 #include <QtCore/QTime>
 #include <QtNetwork/QHostInfo>
-#include "PiTCHNetworkDialog.h"
-#include "PiTCHWindow.h"
-#include "ui_PiTCHWindow.h"
+#include "NetworkDialog.h"
+#include "MainWindow.h"
+#include "ui_MainWindow.h"
 
 namespace
 {
@@ -111,9 +111,9 @@ namespace
   }
 } // End of anonymous namespace
 
-PiTCHWindow::PiTCHWindow(QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
-  ui_(new Ui::PiTCHWindow),
+  ui_(new Ui::MainWindow),
   serverInfo_(QHostInfo::localHostName(), 8049),
   buttonHeld_(false),
   buttonHeldDelay_(BUTTON_HELD_DELAY),
@@ -139,13 +139,13 @@ PiTCHWindow::PiTCHWindow(QWidget *parent) :
   connect(&client_, SIGNAL(protocolError(QString)), this, SLOT(processProtocolError(QString)));
 }
 
-PiTCHWindow::~PiTCHWindow()
+MainWindow::~MainWindow()
 {
   client_.closeConnection();
   delete ui_;
 }
 
-void PiTCHWindow::changeEvent(QEvent *e)
+void MainWindow::changeEvent(QEvent *e)
 {
   QMainWindow::changeEvent(e);
   switch (e->type())
@@ -158,13 +158,13 @@ void PiTCHWindow::changeEvent(QEvent *e)
   }
 }
 
-void PiTCHWindow::resolvedHostname()
+void MainWindow::resolvedHostname()
 {
   // Host was found, now QTcpSocket is connecting
   ui_->statusBar->showMessage(tr("Connecting..."));
 }
 
-void PiTCHWindow::connectedToServer()
+void MainWindow::connectedToServer()
 {
   ui_->statusBar->showMessage(QString("%1 %2")
     .arg(tr("Connected to"))
@@ -181,7 +181,7 @@ void PiTCHWindow::connectedToServer()
   sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
 }
 
-void PiTCHWindow::disconnectedFromServer(bool closedByHost, const QString &message)
+void MainWindow::disconnectedFromServer(bool closedByHost, const QString &message)
 {
   QString status(tr("Unconnected"));
 
@@ -204,7 +204,7 @@ void PiTCHWindow::disconnectedFromServer(bool closedByHost, const QString &messa
   }
 }
 
-void PiTCHWindow::processMessage(const iTCH::EnvelopePtr envelope)
+void MainWindow::processMessage(const iTCH::EnvelopePtr envelope)
 {
   // If the player was previously disconnected from server, and has now reconnected we need to
   // renable our state
@@ -237,7 +237,7 @@ void PiTCHWindow::processMessage(const iTCH::EnvelopePtr envelope)
   }
 }
 
-void PiTCHWindow::processNotification(iTCH::EnvelopePtr envelope)
+void MainWindow::processNotification(iTCH::EnvelopePtr envelope)
 {
   assert(envelope->has_notification());
   switch (envelope->notification().type())
@@ -276,7 +276,7 @@ void PiTCHWindow::processNotification(iTCH::EnvelopePtr envelope)
   }
 }
 
-void PiTCHWindow::processResponse(iTCH::EnvelopePtr envelope)
+void MainWindow::processResponse(iTCH::EnvelopePtr envelope)
 {
   if (envelope->has_response())
   {
@@ -363,11 +363,11 @@ void PiTCHWindow::processResponse(iTCH::EnvelopePtr envelope)
   }
 }
 
-void PiTCHWindow::processProtocolError(const QString &message)
+void MainWindow::processProtocolError(const QString &message)
 {
 }
 
-void PiTCHWindow::timeSliderPressed()
+void MainWindow::timeSliderPressed()
 {
   // Stop the position timer while dragging the slider
   if (playing_)
@@ -376,7 +376,7 @@ void PiTCHWindow::timeSliderPressed()
   }
 }
 
-void PiTCHWindow::timeSliderReleased()
+void MainWindow::timeSliderReleased()
 {
   // Stop the position timer while dragging the slider
   if (playing_)
@@ -385,20 +385,20 @@ void PiTCHWindow::timeSliderReleased()
   }
 }
 
-void PiTCHWindow::timeSliderValueChanged(int value)
+void MainWindow::timeSliderValueChanged(int value)
 {
   sendTrackedRequest(iTCH::MessageBuilder::makePutPlayerPositionRequest(nextSequenceId(), value));
   setPlayerPosition(value);
 }
 
-void PiTCHWindow::backButtonPressed()
+void MainWindow::backButtonPressed()
 {
   connect(&buttonTimer_, SIGNAL(timeout()), this, SLOT(rewindTimeout()));
   buttonTimer_.setSingleShot(true);
   buttonTimer_.start(buttonHeldDelay_);
 }
 
-void PiTCHWindow::backButtonReleased()
+void MainWindow::backButtonReleased()
 {
   buttonTimer_.stop();
   buttonTimer_.disconnect();
@@ -436,7 +436,7 @@ void PiTCHWindow::backButtonReleased()
   }
 }
 
-void PiTCHWindow::rewindTimeout()
+void MainWindow::rewindTimeout()
 {
   buttonHeld_ = true;
   sendTrackedRequest(iTCH::MessageBuilder::makeRewindRequest(nextSequenceId()));
@@ -453,14 +453,14 @@ void PiTCHWindow::rewindTimeout()
   }
 }
 
-void PiTCHWindow::forwardButtonPressed()
+void MainWindow::forwardButtonPressed()
 {
   connect(&buttonTimer_, SIGNAL(timeout()), this, SLOT(fastForwardTimeout()));
   buttonTimer_.setSingleShot(true);
   buttonTimer_.start(buttonHeldDelay_);
 }
 
-void PiTCHWindow::forwardButtonReleased()
+void MainWindow::forwardButtonReleased()
 {
   buttonTimer_.stop();
   buttonTimer_.disconnect();
@@ -498,7 +498,7 @@ void PiTCHWindow::forwardButtonReleased()
   }
 }
 
-void PiTCHWindow::fastForwardTimeout()
+void MainWindow::fastForwardTimeout()
 {
   buttonHeld_ = true;
   sendTrackedRequest(iTCH::MessageBuilder::makeFastForwardRequest(nextSequenceId()));
@@ -515,31 +515,31 @@ void PiTCHWindow::fastForwardTimeout()
   }
 }
 
-void PiTCHWindow::playPauseButtonClicked()
+void MainWindow::playPauseButtonClicked()
 {
   sendTrackedRequest(iTCH::MessageBuilder::makePlayPauseRequest(nextSequenceId()));
 }
 
-void PiTCHWindow::minVolumeButtonClicked()
+void MainWindow::minVolumeButtonClicked()
 {
   ui_->volumeSlider->setValue(0);
 }
 
-void PiTCHWindow::maxVolumeButtonClicked()
+void MainWindow::maxVolumeButtonClicked()
 {
   ui_->volumeSlider->setValue(100);
 }
 
-void PiTCHWindow::volumeSliderValueChanged(int value)
+void MainWindow::volumeSliderValueChanged(int value)
 {
   sendTrackedRequest(iTCH::MessageBuilder::makePutSoundVolumeRequest(nextSequenceId(), value));
 }
 
-void PiTCHWindow::networkButtonToggled(bool isChecked)
+void MainWindow::networkButtonToggled(bool isChecked)
 {
   if (isChecked)
   {
-    PiTCHNetworkDialog dialog(serverInfo_, this);
+    NetworkDialog dialog(serverInfo_, this);
 
     if (QDialog::Accepted == dialog.exec())
     {
@@ -555,14 +555,14 @@ void PiTCHWindow::networkButtonToggled(bool isChecked)
   }
 }
 
-void PiTCHWindow::setSoundVolume(int newVolume)
+void MainWindow::setSoundVolume(int newVolume)
 {
   ui_->volumeSlider->blockSignals(true);
   ui_->volumeSlider->setValue(newVolume);
   ui_->volumeSlider->blockSignals(false);
 }
 
-void PiTCHWindow::setMute(bool isMute)
+void MainWindow::setMute(bool isMute)
 {
   if (isMute)
   {
@@ -571,7 +571,7 @@ void PiTCHWindow::setMute(bool isMute)
   }
 }
 
-void PiTCHWindow::setPlayerPosition(int newPosition)
+void MainWindow::setPlayerPosition(int newPosition)
 {
   // Don't update slider while it is being dragged
   if (!ui_->timeSlider->isSliderDown())
@@ -585,7 +585,7 @@ void PiTCHWindow::setPlayerPosition(int newPosition)
   ui_->timeRemaining->setText(QString("-%1").arg(secondsToTimePositionString(currentTrack_.duration() - newPosition)));
 }
 
-void PiTCHWindow::setPlayerState(bool playing)
+void MainWindow::setPlayerState(bool playing)
 {
   if (playing_ != playing)
   {
@@ -602,7 +602,7 @@ void PiTCHWindow::setPlayerState(bool playing)
   }
 }
 
-void PiTCHWindow::setPlayerButtonsState(const iTCH::PlayerButtonsState &buttons)
+void MainWindow::setPlayerButtonsState(const iTCH::PlayerButtonsState &buttons)
 {
   ui_->backButton->setEnabled(buttons.previous_enabled());
   ui_->forwardButton->setEnabled(buttons.next_enabled());
@@ -636,7 +636,7 @@ void PiTCHWindow::setPlayerButtonsState(const iTCH::PlayerButtonsState &buttons)
   }
 }
 
-void PiTCHWindow::setCurrentTrack(const iTCH::Track &track)
+void MainWindow::setCurrentTrack(const iTCH::Track &track)
 {
   currentTrack_.CopyFrom(track);
 
@@ -672,12 +672,12 @@ void PiTCHWindow::setCurrentTrack(const iTCH::Track &track)
   ui_->timeSlider->setMaximum(track.duration());
 }
 
-void PiTCHWindow::requestPlayerPosition()
+void MainWindow::requestPlayerPosition()
 {
   sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
 }
 
-void PiTCHWindow::createStandardIcons()
+void MainWindow::createStandardIcons()
 {
   ui_->backButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
   ui_->playPauseToggleButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
@@ -687,7 +687,7 @@ void PiTCHWindow::createStandardIcons()
   ui_->networkButton->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
 }
 
-void PiTCHWindow::setConnectedState()
+void MainWindow::setConnectedState()
 {
   ui_->timeSlider->setEnabled(true);
   ui_->volumeSlider->setEnabled(true);
@@ -701,7 +701,7 @@ void PiTCHWindow::setConnectedState()
   ui_->playPauseToggleButton->setEnabled(true);
 }
 
-void PiTCHWindow::setDisconnectedState(bool playButtonEnabled)
+void MainWindow::setDisconnectedState(bool playButtonEnabled)
 {
   currentTrack_.Clear();
   requests_.clear();
@@ -725,12 +725,12 @@ void PiTCHWindow::setDisconnectedState(bool playButtonEnabled)
   ui_->trackInfo->setSongTitle("");
 }
 
-unsigned long PiTCHWindow::nextSequenceId()
+unsigned long MainWindow::nextSequenceId()
 {
   return ++sequenceId_;
 }
 
-void PiTCHWindow::sendTrackedRequest(iTCH::EnvelopePtr envelope)
+void MainWindow::sendTrackedRequest(iTCH::EnvelopePtr envelope)
 {
   assert(envelope->has_request());
 
@@ -745,7 +745,7 @@ void PiTCHWindow::sendTrackedRequest(iTCH::EnvelopePtr envelope)
   }
 }
 
-void PiTCHWindow::startPositionTimer(unsigned int interval)
+void MainWindow::startPositionTimer(unsigned int interval)
 {
   // Start the timer to peridoically request time slider position
   if (!positionTimer_.isActive())
@@ -755,7 +755,7 @@ void PiTCHWindow::startPositionTimer(unsigned int interval)
   }
 }
 
-void PiTCHWindow::stopPositionTimer()
+void MainWindow::stopPositionTimer()
 {
   if (positionTimer_.isActive())
   {

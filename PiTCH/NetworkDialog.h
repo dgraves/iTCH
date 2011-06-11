@@ -20,22 +20,22 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#ifndef PITCHNETWORKDIALOG_H
-#define PITCHNETWORKDIALOG_H
+#ifndef NETWORKDIALOG_H
+#define NETWORKDIALOG_H
 
 #include <QtGui/QDialog>
 #include "iTCH/NetworkInfo.h"
 
 namespace Ui {
-  class PiTCHNetworkDialog;
+  class NetworkDialog;
 }
 
-class PiTCHNetworkDialog : public QDialog {
+class NetworkDialog : public QDialog {
   Q_OBJECT
 public:
-  PiTCHNetworkDialog(const iTCH::NetworkInfo &info, bool autoConnect, unsigned int autoConnectInterval = 10, QWidget *parent = 0);
+  NetworkDialog(const iTCH::NetworkInfo &info, bool autoConnect, unsigned int autoConnectInterval = 10, QWidget *parent = 0);
 
-  virtual ~PiTCHNetworkDialog();
+  virtual ~NetworkDialog();
 
   void setNetworkInfo(const iTCH::NetworkInfo &info);
 
@@ -53,7 +53,7 @@ protected:
   void changeEvent(QEvent *e);
 
 private:
-  Ui::PiTCHNetworkDialog *ui_;
+  Ui::NetworkDialog *ui_;
 };
 
 #endif // PITCHNETWORKDIALOG_H

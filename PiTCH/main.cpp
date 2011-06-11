@@ -21,12 +21,12 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #include <QtGui/QApplication>
-#include "PiTCHWindow.h"
+#include "MainWindow.h"
 
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
-  PiTCHWindow w;
+  MainWindow w;
   w.show();
   return a.exec();
 }

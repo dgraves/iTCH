@@ -20,8 +20,8 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#ifndef PITCHWINDOW_H
-#define PITCHWINDOW_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QtCore/QTimer>
 #include <QtCore/QMap>
@@ -32,17 +32,17 @@
 
 namespace Ui
 {
-  class PiTCHWindow;
+  class MainWindow;
 }
 
-class PiTCHWindow : public QMainWindow
+class MainWindow : public QMainWindow
 {
   Q_OBJECT
 
 public:
-  PiTCHWindow(QWidget *parent = 0);
+  MainWindow(QWidget *parent = 0);
 
-  virtual ~PiTCHWindow();
+  virtual ~MainWindow();
 
 protected:
   void changeEvent(QEvent *e);
@@ -96,7 +96,7 @@ private:
   typedef QMap<unsigned int, iTCH::EnvelopePtr> PendingRequests;
 
 private:
-  Ui::PiTCHWindow  *ui_;
+  Ui::MainWindow  *ui_;
   iTCH::Client      client_;
   iTCH::NetworkInfo serverInfo_;
   unsigned int      autoConnectInterval_;

@@ -20,12 +20,12 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#include "PiTCHNetworkDialog.h"
-#include "ui_PiTCHNetworkDialog.h"
+#include "NetworkDialog.h"
+#include "ui_NetworkDialog.h"
 
-PiTCHNetworkDialog::PiTCHNetworkDialog(const iTCH::NetworkInfo &info, bool autoConnect, unsigned int autoConnectInterval, QWidget *parent) :
+NetworkDialog::NetworkDialog(const iTCH::NetworkInfo &info, bool autoConnect, unsigned int autoConnectInterval, QWidget *parent) :
   QDialog(parent),
-  ui_(new Ui::PiTCHNetworkDialog)
+  ui_(new Ui::NetworkDialog)
 {
   ui_->setupUi(this);
   setNetworkInfo(info);
@@ -33,43 +33,43 @@ PiTCHNetworkDialog::PiTCHNetworkDialog(const iTCH::NetworkInfo &info, bool autoC
   setAutoConnectInterval(autoConnectInterval);
 }
 
-PiTCHNetworkDialog::~PiTCHNetworkDialog()
+NetworkDialog::~NetworkDialog()
 {
   delete ui_;
 }
 
-void PiTCHNetworkDialog::setNetworkInfo(const iTCH::NetworkInfo &info)
+void NetworkDialog::setNetworkInfo(const iTCH::NetworkInfo &info)
 {
   ui_->hostnameLineEdit->setText(info.getHostname());
   ui_->portSpinBox->setValue(info.getPort());
 }
 
-void PiTCHNetworkDialog::setAutoConnect(bool autoConnect)
+void NetworkDialog::setAutoConnect(bool autoConnect)
 {
   ui_->networkBox->setChecked(autoConnect);
 }
 
-void PiTCHNetworkDialog::setAutoConnectInterval(unsigned int interval)
+void NetworkDialog::setAutoConnectInterval(unsigned int interval)
 {
   ui_->intervalSpinBox->setValue(interval);
 }
 
-iTCH::NetworkInfo PiTCHNetworkDialog::getNetworkInfo() const
+iTCH::NetworkInfo NetworkDialog::getNetworkInfo() const
 {
   return iTCH::NetworkInfo(ui_->hostnameLineEdit->text(), ui_->portSpinBox->value());
 }
 
-bool PiTCHNetworkDialog::getAutoConnect() const
+bool NetworkDialog::getAutoConnect() const
 {
   return ui_->networkBox->isChecked();
 }
 
-unsigned int PiTCHNetworkDialog::getAutoConnectInterval() const
+unsigned int NetworkDialog::getAutoConnectInterval() const
 {
   return ui_->intervalSpinBox->value();
 }
 
-void PiTCHNetworkDialog::changeEvent(QEvent *e)
+void NetworkDialog::changeEvent(QEvent *e)
 {
   QDialog::changeEvent(e);
   switch (e->type())

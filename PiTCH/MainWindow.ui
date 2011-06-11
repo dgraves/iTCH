@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PiTCHWindow</class>
- <widget class="QMainWindow" name="PiTCHWindow">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -209,7 +209,7 @@
   <connection>
    <sender>backButton</sender>
    <signal>pressed()</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>backButtonPressed()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -225,7 +225,7 @@
   <connection>
    <sender>backButton</sender>
    <signal>released()</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>backButtonReleased()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -241,7 +241,7 @@
   <connection>
    <sender>playPauseToggleButton</sender>
    <signal>clicked()</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>playPauseButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -257,7 +257,7 @@
   <connection>
    <sender>forwardButton</sender>
    <signal>pressed()</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>forwardButtonPressed()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -273,7 +273,7 @@
   <connection>
    <sender>forwardButton</sender>
    <signal>released()</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>forwardButtonReleased()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -289,7 +289,7 @@
   <connection>
    <sender>maxVolumeButton</sender>
    <signal>clicked()</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>maxVolumeButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -305,7 +305,7 @@
   <connection>
    <sender>volumeSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>volumeSliderValueChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -321,7 +321,7 @@
   <connection>
    <sender>timeSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>timeSliderValueChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -337,7 +337,7 @@
   <connection>
    <sender>networkButton</sender>
    <signal>toggled(bool)</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>networkButtonToggled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -353,7 +353,7 @@
   <connection>
    <sender>minVolumeButton</sender>
    <signal>clicked()</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>minVolumeButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -369,7 +369,7 @@
   <connection>
    <sender>timeSlider</sender>
    <signal>sliderPressed()</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>timeSliderPressed()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -385,7 +385,7 @@
   <connection>
    <sender>timeSlider</sender>
    <signal>sliderReleased()</signal>
-   <receiver>PiTCHWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>timeSliderReleased()</slot>
    <hints>
     <hint type="sourcelabel">
