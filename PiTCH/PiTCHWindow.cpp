@@ -28,6 +28,13 @@
 
 namespace
 {
+  // Form indexes for stacked widget
+  enum
+  {
+    BANNER_FORM = 0,
+    TRACKINFO_FORM = 1
+  };
+
   // Default timer values
   enum
   {
@@ -632,25 +639,34 @@ void PiTCHWindow::setPlayerButtonsState(const iTCH::PlayerButtonsState &buttons)
 void PiTCHWindow::setCurrentTrack(const iTCH::Track &track)
 {
   currentTrack_.CopyFrom(track);
-  ui_->songTitle->setText(track.name().c_str());
 
+  // Build the song title string from track name and album name
+  QString songTitle;
   if (!track.artist().empty() && !track.album().empty())
   {
-    ui_->artist->setText(QString("%1 -- %2")
+    songTitle = QString("%1 -- %2")
       .arg(track.artist().c_str())
-      .arg(track.album().c_str()));
+      .arg(track.album().c_str());
   }
   else if (!track.artist().empty())
   {
-    ui_->artist->setText(track.artist().c_str());
+    songTitle = track.artist().c_str();
   }
   else if (!track.album().empty())
   {
-    ui_->artist->setText(track.album().c_str());
+    songTitle = track.album().c_str();
+  }
+
+  // If no song title or artist name specified, show the banner
+  if (songTitle.isEmpty() && track.artist().empty())
+  {
+    ui_->trackInfoDisplay->setCurrentIndex(BANNER_FORM);
   }
   else
   {
-    ui_->artist->setText("");
+    ui_->trackInfoDisplay->setCurrentIndex(TRACKINFO_FORM);
+    ui_->trackInfo->setSongTitle(track.name().c_str());
+    ui_->trackInfo->setArtist(songTitle);
   }
 
   ui_->timeSlider->setMaximum(track.duration());
@@ -692,6 +708,8 @@ void PiTCHWindow::setDisconnectedState(bool playButtonEnabled)
   setPlayerPosition(0);
   setSoundVolume(0);
 
+  ui_->trackInfoDisplay->setCurrentIndex(BANNER_FORM);
+
   ui_->timeSlider->setEnabled(false);
   ui_->volumeSlider->setEnabled(false);
   ui_->minVolumeButton->setEnabled(false);
@@ -703,8 +721,8 @@ void PiTCHWindow::setDisconnectedState(bool playButtonEnabled)
   ui_->playPauseToggleButton->setEnabled(playButtonEnabled);
 
   // Clear the track labels
-  ui_->artist->setText("");
-  ui_->songTitle->setText("");
+  ui_->trackInfo->setArtist("");
+  ui_->trackInfo->setSongTitle("");
 }
 
 unsigned long PiTCHWindow::nextSequenceId()

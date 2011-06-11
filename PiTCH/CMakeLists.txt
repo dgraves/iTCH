@@ -1,15 +1,21 @@
 set(CLIENT_QOBJECT_HEADER_FILES
+    BannerForm.h
+    TrackInfoForm.h
     PiTCHNetworkDialog.h
     PiTCHWindow.h
 )
 
 set(CLIENT_SOURCE_FILES
+    BannerForm.cpp
+    TrackInfoForm.cpp
     PiTCHNetworkDialog.cpp
     PiTCHWindow.cpp
     main.cpp
 )
 
 set(CLIENT_FORM_FILES
+    BannerForm.ui
+    TrackInfoForm.ui
     PiTCHNetworkDialog.ui
     PiTCHWindow.ui
 )

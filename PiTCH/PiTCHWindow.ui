@@ -35,27 +35,7 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0" colspan="3">
-       <widget class="QLabel" name="songTitle">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="3">
-       <widget class="QLabel" name="artist">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
+      <item row="1" column="0">
        <widget class="QLabel" name="timeElapsed">
         <property name="text">
          <string>0:00</string>
@@ -65,7 +45,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
+      <item row="1" column="2">
        <widget class="QLabel" name="timeRemaining">
         <property name="text">
          <string>-0:00</string>
@@ -75,7 +55,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="1" column="1">
        <widget class="QSlider" name="timeSlider">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -86,6 +66,12 @@
         <property name="invertedControls">
          <bool>false</bool>
         </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="3">
+       <widget class="QStackedWidget" name="trackInfoDisplay">
+        <widget class="BannerForm" name="banner"/>
+        <widget class="TrackInfoForm" name="trackInfo"/>
        </widget>
       </item>
      </layout>
@@ -195,6 +181,20 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>BannerForm</class>
+   <extends>QWidget</extends>
+   <header>BannerForm.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TrackInfoForm</class>
+   <extends>QWidget</extends>
+   <header>TrackInfoForm.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>timeSlider</tabstop>
   <tabstop>backButton</tabstop>
