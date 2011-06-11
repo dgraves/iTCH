@@ -68,7 +68,7 @@
      <item>
       <widget class="QGroupBox" name="connectionBox">
        <property name="title">
-        <string>Auto-Connect</string>
+        <string>Attempt auto-reconnect on connection loss</string>
        </property>
        <property name="checkable">
         <bool>true</bool>

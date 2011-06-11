@@ -78,10 +78,14 @@ protected slots:
   void setPlayerState(bool playing);
   void setPlayerButtonsState(const iTCH::PlayerButtonsState &buttons);
   void setCurrentTrack(const iTCH::Track &);
+
+  // Slote to handle signals from timers
   void requestPlayerPosition();
+  void autoConnectCountDown();
 
 private:
   void createStandardIcons();
+  void openConnection();
   void setDisconnectedState(bool playButtonEnabled);    // Disable controls when disconnected from player (could be connected to server with no player -> play/pause button enabled, or disconnected from server -> play/pause button disabled)
   void setConnectedState();                             // Enabled controls when connected
   unsigned long nextSequenceId();                       // Retrieve next valid sequence ID for request messages
@@ -90,6 +94,8 @@ private:
   void processResponse(iTCH::EnvelopePtr envelope);
   void startPositionTimer(unsigned int interval);
   void stopPositionTimer();
+  void startAutoConnect();
+  void stopAutoConnect();
 
 private:
   // Map of client requests, keyed by sequence ID
@@ -99,8 +105,10 @@ private:
   Ui::MainWindow   *ui_;
   iTCH::Client      client_;
   iTCH::NetworkInfo serverInfo_;
-  unsigned int      autoConnectInterval_;
   bool              autoConnect_;
+  unsigned int      autoConnectInterval_;   // Interval between auto-connect attempts in seconds
+  unsigned int      autoConnectCount_;      // Count-down from auto-connect interval to zero, in seconds
+  QTimer            autoConnectTimer_;
   bool              buttonHeld_;
   unsigned int      buttonHeldDelay_;
   QTimer            buttonTimer_;

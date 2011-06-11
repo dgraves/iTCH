@@ -46,7 +46,7 @@ void NetworkDialog::setNetworkInfo(const iTCH::NetworkInfo &info)
 
 void NetworkDialog::setAutoConnect(bool autoConnect)
 {
-  ui_->networkBox->setChecked(autoConnect);
+  ui_->connectionBox->setChecked(autoConnect);
 }
 
 void NetworkDialog::setAutoConnectInterval(unsigned int interval)
@@ -61,7 +61,7 @@ iTCH::NetworkInfo NetworkDialog::getNetworkInfo() const
 
 bool NetworkDialog::getAutoConnect() const
 {
-  return ui_->networkBox->isChecked();
+  return ui_->connectionBox->isChecked();
 }
 
 unsigned int NetworkDialog::getAutoConnectInterval() const

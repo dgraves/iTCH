@@ -28,19 +28,21 @@
 
 namespace
 {
+  // Default timer values
+  enum
+  {
+    SERVER_PORT             = 8049,
+    AUTOCONNECT_INTERVAL    = 10,   // Seconds
+    BUTTON_HELD_DELAY       = 500,  // Milliseconds
+    POSITION_INTERVAL       = 1000, // Milliseconds
+    POSITION_INTERVAL_RAPID = 250   // Milliseconds
+  };
+
   // Form indexes for stacked widget
   enum
   {
     BANNER_FORM = 0,
     TRACKINFO_FORM = 1
-  };
-
-  // Default timer values
-  enum
-  {
-    BUTTON_HELD_DELAY = 500,
-    POSITION_INTERVAL = 1000,
-    POSITION_INTERVAL_RAPID = 250
   };
 
   // Create formatted time string for time elapsed/remaining display
@@ -114,7 +116,9 @@ namespace
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui_(new Ui::MainWindow),
-  serverInfo_(QHostInfo::localHostName(), 8049),
+  serverInfo_(QHostInfo::localHostName(), SERVER_PORT),
+  autoConnect_(false),
+  autoConnectInterval_(AUTOCONNECT_INTERVAL),
   buttonHeld_(false),
   buttonHeldDelay_(BUTTON_HELD_DELAY),
   sequenceId_(0),
@@ -172,6 +176,10 @@ void MainWindow::connectedToServer()
 
   setConnectedState();
 
+  ui_->networkButton->blockSignals(true);
+  ui_->networkButton->setChecked(true);
+  ui_->networkButton->blockSignals(false);
+
   // Request current track, sound volume, mute, player state, and player position
   sendTrackedRequest(iTCH::MessageBuilder::makeGetCurrentTrackRequest(nextSequenceId()));
   sendTrackedRequest(iTCH::MessageBuilder::makeGetSoundVolumeRequest(nextSequenceId()));
@@ -201,6 +209,10 @@ void MainWindow::disconnectedFromServer(bool closedByHost, const QString &messag
     ui_->statusBar->showMessage(QString("%1: %2").arg(status).arg(message));
 
     // Start auto-connect
+    if (autoConnect_)
+    {
+      startAutoConnect();
+    }
   }
 }
 
@@ -539,14 +551,26 @@ void MainWindow::networkButtonToggled(bool isChecked)
 {
   if (isChecked)
   {
-    NetworkDialog dialog(serverInfo_, this);
+    // Stop auto connect if it is active
+    stopAutoConnect();
+
+    NetworkDialog dialog(serverInfo_, autoConnect_, autoConnectInterval_, this);
 
     if (QDialog::Accepted == dialog.exec())
     {
-      // Attempt the server connection
-      ui_->statusBar->showMessage(tr("Looking up host..."));
       serverInfo_ = dialog.getNetworkInfo();
-      client_.openConnection(serverInfo_);
+      autoConnect_ = dialog.getAutoConnect();
+      autoConnectInterval_ = dialog.getAutoConnectInterval();
+
+      // Attempt the server connection
+      openConnection();
+    }
+    else
+    {
+      // Reset checked state
+      ui_->networkButton->blockSignals(true);
+      ui_->networkButton->setChecked(false);
+      ui_->networkButton->blockSignals(false);
     }
   }
   else
@@ -677,6 +701,20 @@ void MainWindow::requestPlayerPosition()
   sendTrackedRequest(iTCH::MessageBuilder::makeGetPlayerPositionRequest(nextSequenceId()));
 }
 
+void MainWindow::autoConnectCountDown()
+{
+  if (--autoConnectCount_ > 0)
+  {
+    ui_->statusBar->showMessage(QString(tr("Attempting auto-connect in %1 seconds")).arg(autoConnectCount_));
+  }
+  else
+  {
+    // Stop auto connect if it is active
+    stopAutoConnect();
+    openConnection();
+  }
+}
+
 void MainWindow::createStandardIcons()
 {
   ui_->backButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
@@ -685,6 +723,15 @@ void MainWindow::createStandardIcons()
   ui_->minVolumeButton->setIcon(style()->standardIcon(QStyle::SP_MediaVolumeMuted));
   ui_->maxVolumeButton->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
   ui_->networkButton->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
+}
+
+void MainWindow::openConnection()
+{
+  if (!client_.isOpen())
+  {
+    ui_->statusBar->showMessage(tr("Looking up host..."));
+    client_.openConnection(serverInfo_);
+  }
 }
 
 void MainWindow::setConnectedState()
@@ -761,5 +808,29 @@ void MainWindow::stopPositionTimer()
   {
     positionTimer_.stop();
     positionTimer_.disconnect();
+  }
+}
+
+void MainWindow::startAutoConnect()
+{
+  // Start if not active, reset if active
+  if (!autoConnectTimer_.isActive())
+  {
+    connect(&autoConnectTimer_, SIGNAL(timeout()), this, SLOT(autoConnectCountDown()));
+  }
+
+  autoConnectCount_ = autoConnectInterval_;
+  autoConnectTimer_.start(1000);
+}
+
+void MainWindow::stopAutoConnect()
+{
+  if (autoConnectTimer_.isActive())
+  {
+    // Clear the status message - if auto-connect was active, client is not connected
+    ui_->statusBar->showMessage(tr("Unconnected"));
+
+    autoConnectTimer_.stop();
+    autoConnectTimer_.disconnect();
   }
 }
