@@ -1,7 +1,7 @@
 #ifndef TRACKINFOFORM_H
 #define TRACKINFOFORM_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 namespace Ui {
   class TrackInfoForm;

@@ -20,5 +20,5 @@ void TrackInfoForm::setArtist(const QString &artist)
 
 void TrackInfoForm::setSongTitle(const QString &title)
 {
-  ui_->songTitle->setText(QString("<b>%1</b>").arg(title));
+  ui_->songTitle->setText(title);
 }

@@ -1,23 +1,25 @@
 set(CLIENT_QOBJECT_HEADER_FILES
     BannerForm.h
-    TrackInfoForm.h
     NetworkDialog.h
     MainWindow.h
+    ScrollingLabel.h
+    TrackInfoForm.h
 )
 
 set(CLIENT_SOURCE_FILES
     BannerForm.cpp
-    TrackInfoForm.cpp
     NetworkDialog.cpp
     MainWindow.cpp
     main.cpp
+    ScrollingLabel.cpp
+    TrackInfoForm.cpp
 )
 
 set(CLIENT_FORM_FILES
     BannerForm.ui
-    TrackInfoForm.ui
     NetworkDialog.ui
     MainWindow.ui
+    TrackInfoForm.ui
 )
 
 set(CLIENT_RESOURCE_FILES

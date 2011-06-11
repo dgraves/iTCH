@@ -1,7 +1,7 @@
 #ifndef BANNERFORM_H
 #define BANNERFORM_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 namespace Ui {
   class BannerForm;
