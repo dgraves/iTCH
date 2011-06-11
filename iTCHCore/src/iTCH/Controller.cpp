@@ -197,7 +197,7 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
 {
   if (!hasInstance())
   {
-    connection->sendMessage(MessageBuilder::makeFailedResponse(request.seqid(),
+    generatedResponse(connection, MessageBuilder::makeFailedResponse(request.seqid(),
       "Server is not connected to an iTunes instace"));
   }
 
@@ -207,43 +207,43 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
   {
   case ClientRequest::BACKTRACK:                        // No value is returned
     result = itunes_->BackTrack();
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::FASTFORWARD:                      // No value is returned
     result = itunes_->FastForward();
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::NEXTTRACK:                        // No value is returned
     result = itunes_->NextTrack();
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::PAUSE:                            // No value is returned
     result = itunes_->Pause();
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::PLAY:                             // No value is returned
     result = itunes_->Play();
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::PLAYPAUSE:                        // No value is returned
     result = itunes_->PlayPause();
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::PREVIOUSTRACK:                    // No value is returned
     result = itunes_->PreviousTrack();
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::RESUME:                           // No value is returned
     result = itunes_->Resume();
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::REWIND:                           // No value is returned
     result = itunes_->Rewind();
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::STOP:                             // No value is returned
     result = itunes_->Stop();
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::GET_SOUNDVOLUME:                  // Returns a long (0-100%)
     {
@@ -251,18 +251,18 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
       result = itunes_->get_SoundVolume(&volume);
       if (result == S_OK)
       {
-        connection->sendMessage(iTCH::MessageBuilder::makeSoundVolumeResponse(
+        generatedResponse(connection, iTCH::MessageBuilder::makeSoundVolumeResponse(
           request.seqid(), volume));
       }
       else
       {
-        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+        generatedResponse(connection, createNoValueResponse(request.seqid(), result));
       }
     }
     break;
   case ClientRequest::PUT_SOUNDVOLUME:                  // Takes a long (0-100%); No value is returned
     result = itunes_->put_SoundVolume(request.value().volume());
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::GET_MUTE:                         // Returns a bool
     {
@@ -270,18 +270,18 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
       result = itunes_->get_Mute(&isMute);
       if (result == S_OK)
       {
-        connection->sendMessage(iTCH::MessageBuilder::makeMuteResponse(
+        generatedResponse(connection, iTCH::MessageBuilder::makeMuteResponse(
           request.seqid(), isMute == VARIANT_TRUE ? true : false));
       }
       else
       {
-        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+        generatedResponse(connection, createNoValueResponse(request.seqid(), result));
       }
     }
     break;
   case ClientRequest::PUT_MUTE:                         // Takes a bool; No value is returned
     result = itunes_->put_Mute(request.value().mute());
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::GET_PLAYERPOSITION:               // Returns a long (0-100%)
     {
@@ -289,18 +289,18 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
       result = itunes_->get_PlayerPosition(&position);
       if (result == S_OK)
       {
-        connection->sendMessage(iTCH::MessageBuilder::makePlayerPositionResponse(
+        generatedResponse(connection, iTCH::MessageBuilder::makePlayerPositionResponse(
           request.seqid(), position));
       }
       else
       {
-        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+        generatedResponse(connection, createNoValueResponse(request.seqid(), result));
       }
     }
     break;
   case ClientRequest::PUT_PLAYERPOSITION:               // Takes a long (0-100%); No value is returned
     result = itunes_->put_PlayerPosition(request.value().position());
-    connection->sendMessage(createNoValueResponse(request.seqid(), result));
+    generatedResponse(connection, createNoValueResponse(request.seqid(), result));
     break;
   case ClientRequest::GET_PLAYERSTATE:                  // Returns an iTCHPlayerState enumeration value (generated from ITPlayserState)
     {
@@ -308,12 +308,12 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
       result = itunes_->get_PlayerState(&state);
       if (result == S_OK)
       {
-        connection->sendMessage(iTCH::MessageBuilder::makePlayerStateResponse(
+        generatedResponse(connection, iTCH::MessageBuilder::makePlayerStateResponse(
           request.seqid(), convertState(state)));
       }
       else
       {
-        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+        generatedResponse(connection, createNoValueResponse(request.seqid(), result));
       }
     }
     break;
@@ -330,12 +330,12 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
           iittrack->Release();
         }
 
-        connection->sendMessage(iTCH::MessageBuilder::makeCurrentTrackResponse(
+        generatedResponse(connection, iTCH::MessageBuilder::makeCurrentTrackResponse(
           request.seqid(), track));
       }
       else
       {
-        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+        generatedResponse(connection, createNoValueResponse(request.seqid(), result));
       }
     }
     break;
@@ -355,17 +355,17 @@ void Controller::processRequest(const ClientRequest &request, Connection *connec
         buttons.set_next_enabled(nextEnabled == VARIANT_TRUE ? true : false);
         buttons.set_play_pause_stop_state(convertPlayButtonState(playPauseStopState));
 
-        connection->sendMessage(iTCH::MessageBuilder::makePlayerButtonsStateResponse(
+        generatedResponse(connection, iTCH::MessageBuilder::makePlayerButtonsStateResponse(
           request.seqid(), buttons));
       }
       else
       {
-        connection->sendMessage(createNoValueResponse(request.seqid(), result));
+        generatedResponse(connection, createNoValueResponse(request.seqid(), result));
       }
     }
     break;
   default:
-    connection->sendMessage(iTCH::MessageBuilder::makeFailedResponse(request.seqid(), "Unrecognized request"));
+    generatedResponse(connection, iTCH::MessageBuilder::makeFailedResponse(request.seqid(), "Unrecognized request"));
     break;
   }
 }

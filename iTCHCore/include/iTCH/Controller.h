@@ -64,8 +64,9 @@ public:
 signals:
   void createdInstance();
   void destroyedInstance();
-  void statusChanged(const iTCH::EnvelopePtr envelope);  // Status message to send to clients
-  void comError(const QString &message);                 // Error message to send when a COM error occurs
+  void statusChanged(const iTCH::EnvelopePtr envelope);                                    // Status message to send to all clients
+  void generatedResponse(iTCH::Connection *connection, const iTCH::EnvelopePtr envelope);  // Response to send to specified client
+  void comError(const QString &message);                                                   // Error message to send when a COM error occurs
 
 protected slots:
   // Slots to handle events from iTunes - called by EventSink friend class

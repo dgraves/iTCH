@@ -50,6 +50,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   connect(&controller_, SIGNAL(createdInstance()), this, SLOT(createdInstance()));
   connect(&controller_, SIGNAL(destroyedInstance()), this, SLOT(destroyedInstance()));
   connect(&controller_, SIGNAL(statusChanged(iTCH::EnvelopePtr)), this, SLOT(sendMessage(iTCH::EnvelopePtr)));
+  connect(&controller_, SIGNAL(generatedResponse(iTCH::Connection*,iTCH::EnvelopePtr)), this, SLOT(sendMessage(iTCH::Connection*,iTCH::EnvelopePtr)));
   connect(ui_->connectionsList->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateDisconnectButton()));
   connect(ui_->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
   connect(trayIcon_, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
@@ -257,18 +258,38 @@ void SettingsDialog::processMessage(iTCH::Connection *connection, const iTCH::En
 
   if (controller_.hasInstance() && iTCH::MessageBuilder::containsValidClientRequest(envelope))
   {
+    if (ui_->logAllCheckBox->isChecked())
+    {
+      appendLogMessage(QString("%1 %2 -> %3")
+        .arg(tr("Message from client"))
+        .arg(connection->getAddress())
+        .arg(envelope->DebugString().c_str()));
+    }
+
     controller_.processRequest(envelope->request(), connection);
   }
   else
   {
-    // Send error response to client
+    if (ui_->logAllCheckBox->isChecked())
+    {
+      appendLogMessage(QString("%1 %2 -> %3")
+        .arg(tr("Invalid message from client"))
+        .arg(connection->getAddress())
+        .arg(envelope->DebugString().c_str()));
+    }
+
+    // Send error response to client if an invalid request was received
+    if (envelope->has_request())
+    {
+      connection->sendMessage(iTCH::MessageBuilder::makeFailedResponse(envelope->request().seqid(), "Request is invalid"));
+    }
   }
 }
 
 void SettingsDialog::processProtocolError(iTCH::Connection *connection, const QString &message)
 {
   appendLogMessage(QString("%1 %2 -> %3")
-    .arg(tr("Error communication with client: Invalid message ->"))
+    .arg(tr("Error communicating with client"))
     .arg(connection->getAddress())
     .arg(message));
 }
@@ -295,11 +316,31 @@ void SettingsDialog::destroyedInstance()
 
 void SettingsDialog::sendMessage(iTCH::EnvelopePtr envelope)
 {
+  if (ui_->logAllCheckBox->isChecked())
+  {
+    appendLogMessage(QString("%1 -> %3")
+      .arg(tr("Message to all clients"))
+      .arg(envelope->DebugString().c_str()));
+  }
+
   QList<iTCH::Connection *> connections = connectionIndexes_.keys();
   for (QList<iTCH::Connection *>::iterator iter = connections.begin(); iter != connections.end(); ++iter)
   {
     (*iter)->sendMessage(envelope);
   }
+}
+
+void SettingsDialog::sendMessage(iTCH::Connection *connection, iTCH::EnvelopePtr envelope)
+{
+  if (ui_->logAllCheckBox->isChecked())
+  {
+    appendLogMessage(QString("%1 %2 -> %3")
+      .arg(tr("Message to client"))
+      .arg(connection->getAddress())
+      .arg(envelope->DebugString().c_str()));
+  }
+
+  connection->sendMessage(envelope);
 }
 
 void SettingsDialog::processComError(const QString &message)
