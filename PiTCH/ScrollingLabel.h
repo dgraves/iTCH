@@ -51,6 +51,8 @@ protected:
 private:
   void computeScroll();
   int computePosition();
+  void startScroll();
+  void stopScroll();
 
 private:
   bool    scroll_;          // Scrolling is enabled or disabled, based on length of text

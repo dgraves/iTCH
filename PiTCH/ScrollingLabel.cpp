@@ -60,7 +60,11 @@ int ScrollingLabel::getScrollDelay() const
 
 void ScrollingLabel::setText(const QString &newText)
 {
+  // Disable scrolling when new text is specified
+  stopScroll();
+
   QLabel::setText(newText);
+
   textWidth_ = fontMetrics().width(text());
   computeScroll();
 }
@@ -119,26 +123,12 @@ void ScrollingLabel::computeScroll()
   if (textWidth_ > width())
   {
     // If not already scrolling, we need to start
-    if (!scroll_)
-    {
-      scroll_ = true;
-
-      scrollText_ = QString("%1%2%1").arg(text()).arg(SCROLL_TEXT_GAP);
-      scrollTextWidth_ = fontMetrics().width(scrollText_);
-      resetPosition_ = textWidth_ + fontMetrics().width(SCROLL_TEXT_GAP);
-
-      scrollTime_.start();
-      scrollTimer_.start(DEFAULT_SCROLL_TIMEOUT);
-    }
+    startScroll();
   }
   else
   {
     // If scrolling, we need to stop
-    if (scroll_)
-    {
-      scroll_ = false;
-      scrollTimer_.stop();
-    }
+    stopScroll();
   }
 }
 
@@ -166,5 +156,29 @@ int ScrollingLabel::computePosition()
     {
       return position;
     }
+  }
+}
+
+void ScrollingLabel::startScroll()
+{
+  if (!scroll_)
+  {
+    scroll_ = true;
+
+    scrollText_ = QString("%1%2%1").arg(text()).arg(SCROLL_TEXT_GAP);
+    scrollTextWidth_ = fontMetrics().width(scrollText_);
+    resetPosition_ = textWidth_ + fontMetrics().width(SCROLL_TEXT_GAP);
+
+    scrollTime_.start();
+    scrollTimer_.start(DEFAULT_SCROLL_TIMEOUT);
+  }
+}
+
+void ScrollingLabel::stopScroll()
+{
+  if (scroll_)
+  {
+    scroll_ = false;
+    scrollTimer_.stop();
   }
 }
