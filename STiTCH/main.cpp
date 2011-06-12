@@ -29,6 +29,10 @@ int main(int argc, char *argv[])
 {
   Q_INIT_RESOURCE(STiTCH);
 
+  QCoreApplication::setOrganizationName("Dustin Graves");
+  QCoreApplication::setOrganizationDomain("dgraves.org");
+  QCoreApplication::setApplicationName("STiTCH");
+
   QApplication a(argc, argv);
 
   if (!QSystemTrayIcon::isSystemTrayAvailable())

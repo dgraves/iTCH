@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #include <QtCore/QTime>
+#include <QtCore/QSettings>
 #include <QtNetwork/QHostInfo>
 #include "NetworkDialog.h"
 #include "MainWindow.h"
@@ -129,11 +130,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   ui_->setupUi(this);
   ui_->statusBar->showMessage(tr("Unconnected"));
+  setWindowIcon(QIcon(":/app/icons/reco.svg"));
 
-  QIcon icon = QIcon(":/app/icons/reco.svg");
-  setWindowIcon(icon);
-
+  loadSettings();
   createStandardIcons();
+
   setDisconnectedState(false);
 
   connect(&client_, SIGNAL(hostnameResolved()), this, SLOT(resolvedHostname()));
@@ -146,6 +147,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
   client_.closeConnection();
+  saveSettings();
   delete ui_;
 }
 
@@ -833,4 +835,38 @@ void MainWindow::stopAutoConnect()
     autoConnectTimer_.stop();
     autoConnectTimer_.disconnect();
   }
+}
+
+void MainWindow::saveSettings()
+{
+  QSettings settings;
+
+  settings.beginGroup("mainwindow");
+  settings.setValue("size", size());
+  settings.setValue("pos", pos());
+  settings.endGroup();
+
+  settings.beginGroup("network");
+  settings.setValue("serverName", serverInfo_.getHostname());
+  settings.setValue("serverPort", serverInfo_.getPort());
+  settings.setValue("autoConnect", autoConnect_);
+  settings.setValue("autoConnectInterval", autoConnectInterval_);
+  settings.endGroup();
+}
+
+void MainWindow::loadSettings()
+{
+  QSettings settings;
+
+  settings.beginGroup("mainwindow");
+  resize(settings.value("size", size()).toSize());
+  move(settings.value("pos", QPoint(50, 50)).toPoint());
+  settings.endGroup();
+
+  settings.beginGroup("network");
+  serverInfo_.setHostname(settings.value("serverName", serverInfo_.getHostname()).toString());
+  serverInfo_.setPort(settings.value("serverPort", serverInfo_.getPort()).toUInt());
+  autoConnect_ = settings.value("autoConnect", autoConnect_).toBool();
+  autoConnectInterval_ = settings.value("autoConnectInterval", autoConnectInterval_).toUInt();
+  settings.endGroup();
 }

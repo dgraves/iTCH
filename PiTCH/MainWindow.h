@@ -96,6 +96,8 @@ private:
   void stopPositionTimer();
   void startAutoConnect();
   void stopAutoConnect();
+  void saveSettings();
+  void loadSettings();
 
 private:
   // Map of client requests, keyed by sequence ID

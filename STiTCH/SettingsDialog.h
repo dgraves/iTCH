@@ -96,6 +96,8 @@ private:
   void createTrayIcon();
   void initializeConnectionList();
   void fillInterfaceBox();
+  void saveSettings();
+  void loadSettings();
 
 private:
   Ui::SettingsDialog                    *ui_;

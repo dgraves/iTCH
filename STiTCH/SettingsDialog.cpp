@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #include <QtCore/QList>
+#include <QtCore/QSettings>
 #include <QtGui/QStandardItem>
 #include <QtGui/QMessageBox>
 #include <QtGui/QMenu>
@@ -40,6 +41,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   createTrayIcon();
   initializeConnectionList();
   fillInterfaceBox();
+
+  loadSettings();
   setMaxLogEntries(ui_->maxLogEntriesSpinBox->value());  // Default number of log entries
 
   connect(&server_, SIGNAL(connectionReceived(iTCH::Connection*)), this, SLOT(connectionReceived(iTCH::Connection*)));
@@ -81,6 +84,8 @@ SettingsDialog::~SettingsDialog()
   {
     controller_.destroyInstance();
   }
+
+  saveSettings();
 
   trayIcon_->hide();
   delete trayIconMenu_;
@@ -494,4 +499,61 @@ void SettingsDialog::fillInterfaceBox()
       }
     }
   }
+}
+
+
+void SettingsDialog::saveSettings()
+{
+  QSettings settings;
+
+  settings.beginGroup("settingsdialog");
+  settings.setValue("size", size());
+  settings.setValue("pos", pos());
+  settings.endGroup();
+
+  settings.beginGroup("network");
+  settings.setValue("port", ui_->portSpinBox->value());
+  settings.setValue("interface", ui_->interfaceComboBox->currentText());
+  settings.endGroup();
+
+  settings.beginGroup("activity");
+  settings.setValue("notifyOnConnect", ui_->connectCheckBox->isChecked());
+  settings.setValue("notifyOnDisconnect", ui_->disconnectCheckBox->isChecked());
+  settings.setValue("notifyDuration", ui_->durationSpinBox->value());
+  settings.setValue("reconnectOnCommand", ui_->activationCheckBox->isChecked());
+  settings.endGroup();
+
+  settings.beginGroup("log");
+  settings.setValue("maxEntries", ui_->maxLogEntriesSpinBox->value());
+  settings.setValue("logAllCommunication", ui_->logAllCheckBox->isChecked());
+  settings.endGroup();
+}
+
+void SettingsDialog::loadSettings()
+{
+  QSettings settings;
+
+  settings.beginGroup("settingsdialog");
+  resize(settings.value("size", size()).toSize());
+  move(settings.value("pos", QPoint(50, 50)).toPoint());
+  settings.endGroup();
+
+  settings.beginGroup("network");
+  ui_->portSpinBox->setValue(settings.value("port", ui_->portSpinBox->value()).toInt());
+  QString interface = settings.value("interface", ui_->interfaceComboBox->currentText()).toString();
+  int index = ui_->interfaceComboBox->findText(interface);
+  ui_->interfaceComboBox->setCurrentIndex(index == -1 ? 0 : index);
+  settings.endGroup();
+
+  settings.beginGroup("activity");
+  ui_->connectCheckBox->setChecked(settings.value("notifyOnConnect", ui_->connectCheckBox->isChecked()).toBool());
+  ui_->disconnectCheckBox->setChecked(settings.value("notifyOnDisconnect", ui_->disconnectCheckBox->isChecked()).toBool());
+  ui_->durationSpinBox->setValue(settings.value("notifyDuration", ui_->durationSpinBox->value()).toInt());
+  ui_->activationCheckBox->setChecked(settings.value("reconnectOnCommand", ui_->activationCheckBox->isChecked()).toBool());
+  settings.endGroup();
+
+  settings.beginGroup("log");
+  ui_->maxLogEntriesSpinBox->setValue(settings.value("maxEntries", ui_->maxLogEntriesSpinBox->value()).toInt());
+  ui_->logAllCheckBox->setChecked(settings.value("logAllCommunication", ui_->logAllCheckBox->isChecked()).toBool());
+  settings.endGroup();
 }
