@@ -438,12 +438,25 @@ void SettingsDialog::apply(QAbstractButton *button)
   }
 }
 
+void SettingsDialog::showWindow()
+{
+  if (isVisible())
+  {
+    activateWindow();
+    raise();
+  }
+  else
+  {
+    show();
+  }
+}
+
 void SettingsDialog::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
   switch (reason)
   {
   case QSystemTrayIcon::DoubleClick:
-    setVisible(true);
+    showWindow();
     break;
   default:
     break;

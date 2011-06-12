@@ -90,6 +90,7 @@ protected slots:
   void accept();
   void reject();
   void apply(QAbstractButton *button);
+  void showWindow();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
 private:

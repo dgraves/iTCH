@@ -593,7 +593,7 @@
    <sender>actionSettings</sender>
    <signal>triggered()</signal>
    <receiver>SettingsDialog</receiver>
-   <slot>showNormal()</slot>
+   <slot>showWindow()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
