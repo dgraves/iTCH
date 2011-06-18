@@ -1,0 +1,29 @@
+# This file is configured at cmake time, and loaded at cpack time.
+# To pass variables to cpack from cmake, they must be configured
+# in this file.  
+if(CPACK_GENERATOR MATCHES "NSIS")
+    set(CPACK_NSIS_INSTALL_ROOT "@CPACK_NSIS_INSTALL_ROOT@")
+
+    # set the install/unistall icon used for the installer itself
+    # There is a bug in NSI that does not handle full unix paths properly.
+    set(CPACK_NSIS_MUI_ICON "@iTCH_SOURCE_DIR@/Deployment\\iTCH.ico")
+    set(CPACK_NSIS_MUI_UNIICON "@iTCH_SOURCE_DIR@/Deployment\\iTCH.ico")
+
+    # set the package header icon for MUI
+    set(CPACK_PACKAGE_ICON "@iTCH_SOURCE_DIR@/Deployment\\iTCHInstall.bmp")
+
+    # Use the icon from cmake-gui for add-remove programs
+    set(CPACK_NSIS_INSTALLED_ICON_NAME "@CPACK_NSIS_INSTALLED_ICON_NAME@")
+    
+    set(CPACK_NSIS_EXECUTABLES_DIRECTORY @RUNTIME_INSTALL_DIR@)
+
+    set(CPACK_NSIS_PACKAGE_NAME "@CPACK_NSIS_PACKAGE_NAME@")
+    set(CPACK_NSIS_DISPLAY_NAME "@CPACK_NSIS_PACKAGE_NAME@")
+    set(CPACK_NSIS_HELP_LINK "https://github.com/dgraves/iTCH/issues")
+    set(CPACK_NSIS_URL_INFO_ABOUT "http://www.dgraves.org")
+    set(CPACK_NSIS_CONTACT @CPACK_PACKAGE_CONTACT@)
+endif(CPACK_GENERATOR MATCHES "NSIS")
+
+if(CPACK_GENERATOR MATCHES "DEB")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER @CPACK_DEBIAN_PACKAGE_MAINTAINER@) #required
+endif(CPACK_GENERATOR MATCHES "DEB")

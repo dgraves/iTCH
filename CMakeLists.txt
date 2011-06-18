@@ -70,11 +70,6 @@ include(InstallRequiredSystemLibraries)
 
 
 # CPack setup
-if(WIN32 AND NOT UNIX)
-    # Select a CPack genetator based on platform
-    set(CPACK_GENERATOR "NSIS")
-endif(WIN32 AND NOT UNIX)
-
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "iTCH - iTCH applications for remotely controlling Apple's iTunes software")
 set(CPACK_PACKAGE_VENDOR "dgraves.org")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/Deployment/About.txt")
@@ -103,9 +98,21 @@ endif(NOT DEFINED CPACK_SYSTEM_NAME)
 if(${CPACK_SYSTEM_NAME} MATCHES Windows)
     if(CMAKE_CL_64)
         set(CPACK_SYSTEM_NAME win64)
+        set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+        set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} (Win64)")
+        set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION} (Win64)")
     else(CMAKE_CL_64)
         set(CPACK_SYSTEM_NAME win32)
+        set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
+        set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+        set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
     endif(CMAKE_CL_64)
+    
+    if(BUILD_CLIENT)
+        set(CPACK_NSIS_INSTALLED_ICON_NAME "pitch.exe")
+    elseif(BUILD_SERVER)
+        set(CPACK_NSIS_INSTALLED_ICON_NAME "stitch.exe")
+    endif(BUILD_CLIENT)
 endif(${CPACK_SYSTEM_NAME} MATCHES Windows)
 
 if(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
@@ -120,49 +127,16 @@ if(UNIX)
     set(CPACK_STRIP_FILES "${RUNTIME_INSTALL_DIR}/pitch")
     set(CPACK_SOURCE_STRIP_FILES "")
     set(CPACK_PACKAGE_EXECUTABLES "pitch" "PiTCH")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Dustin Graves")
 elseif(WIN32)
     # STiTCH is only available for Windows
     set(CPACK_PACKAGE_EXECUTABLES "pitch" "PiTCH" "stitch" "STiTCH")
 endif(UNIX)
 
-if(CPACK_GENERATOR MATCHES "NSIS")
-    if(CMAKE_CL_64)
-        set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
-        set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} (Win64)")
-        set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION} (Win64)")
-    else(CMAKE_CL_64)
-        set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
-        set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
-        set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
-    endif(CMAKE_CL_64)
-
-    # set the install/unistall icon used for the installer itself
-    # There is a bug in NSI that does not handle full unix paths properly.
-    set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/Deployment\\iTCH.ico")
-    set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}/Deployment\\iTCH.ico")
-
-    # set the package header icon for MUI
-    set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/Deployment\\iTCHInstall.bmp")
-
-    # Use the icon from cmake-gui for add-remove programs
-    if(BUILD_CLIENT)
-        set(CPACK_NSIS_INSTALLED_ICON_NAME "pitch.exe")
-    elseif(BUILD_SERVER)
-        set(CPACK_NSIS_INSTALLED_ICON_NAME "stitch.exe")
-    endif(BUILD_CLIENT)
-
-    set(CPACK_NSIS_EXECUTABLES_DIRECTORY ${RUNTIME_INSTALL_DIR})
-
-    set(CPACK_NSIS_PACKAGE_NAME "iTCH")
-    set(CPACK_NSIS_DISPLAY_NAME "iTCH")
-    set(CPACK_NSIS_HELP_LINK "https://github.com/dgraves/iTCH/issues")
-    set(CPACK_NSIS_URL_INFO_ABOUT "http://www.dgraves.org")
-    set(CPACK_NSIS_CONTACT ${CPACK_PACKAGE_CONTACT})
-endif(CPACK_GENERATOR MATCHES "NSIS")
-
-if(CPACK_GENERATOR MATCHES "DEB")
-    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Dustin Graves") #required
-endif(CPACK_GENERATOR MATCHES "DEB")
+# Set the options file that needs to be included inside CMakeCPackOptions.cmake
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/CMakeCPackOptions.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/CMakeCPackOptions.cmake" @ONLY)
+set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/CMakeCPackOptions.cmake")
 
 
 # CPack component setup
