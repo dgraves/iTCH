@@ -125,6 +125,19 @@
              </spacer>
             </item>
             <item>
+             <widget class="QPushButton" name="blockButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="toolTip">
+               <string>Block the selected clients</string>
+              </property>
+              <property name="text">
+               <string>Block</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="disconnectButton">
               <property name="enabled">
                <bool>false</bool>
@@ -287,62 +300,79 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <widget class="QGroupBox" name="pinGroupBox">
+        <widget class="QGroupBox" name="aclGroupBox">
          <property name="title">
-          <string>Require PIN Authentication</string>
+          <string>Use Access Control List</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
          </property>
          <property name="checked">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
-           <widget class="QLabel" name="pinLabel">
-            <property name="text">
-             <string>PIN:</string>
-            </property>
+           <widget class="QComboBox" name="aclModeBox">
+            <item>
+             <property name="text">
+              <string extracomment="Blacklist">Do not allow connections from these IP addresses</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string extracomment="Whitelist">Only allow connections from these IP addresses</string>
+             </property>
+            </item>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="pinLineEdit">
-            <property name="text">
-             <string>12345</string>
-            </property>
-            <property name="maxLength">
-             <number>32</number>
-            </property>
+          <item row="1" column="0">
+           <widget class="QStackedWidget" name="aclStackedWidget">
+            <widget class="AclWidget" name="blacklistPage"/>
+            <widget class="AclWidget" name="whitelistPage"/>
            </widget>
           </item>
-          <item row="0" column="2">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
+          <item row="2" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="aclAddButton">
+              <property name="toolTip">
+               <string>Add a new IP address to the list</string>
+              </property>
+              <property name="text">
+               <string>Add</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="aclRemoveButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="toolTip">
+               <string>Remove the selected IP Addresses from the list</string>
+              </property>
+              <property name="text">
+               <string>Remove</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -471,6 +501,14 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AclWidget</class>
+   <extends>QWidget</extends>
+   <header>AclWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>portSpinBox</tabstop>
   <tabstop>interfaceComboBox</tabstop>
@@ -484,8 +522,6 @@
   <tabstop>activationCheckBox</tabstop>
   <tabstop>connectPlayerButton</tabstop>
   <tabstop>disconnectPlayerButton</tabstop>
-  <tabstop>pinGroupBox</tabstop>
-  <tabstop>pinLineEdit</tabstop>
   <tabstop>logTextEdit</tabstop>
   <tabstop>maxLogEntriesSpinBox</tabstop>
   <tabstop>saveLogButton</tabstop>
@@ -685,6 +721,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>blockButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>blockButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>326</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>aclAddButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>aclAddButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>aclRemoveButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>aclRemoveButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>329</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>aclModeBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>aclStackedWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>198</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>198</x>
+     <y>198</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>serverSettingsChanged()</slot>
@@ -693,5 +793,9 @@
   <slot>connectController()</slot>
   <slot>disconnectController()</slot>
   <slot>setMaxLogEntries(int)</slot>
+  <slot>blockButtonClicked()</slot>
+  <slot>aclAddButtonClicked()</slot>
+  <slot>aclRemoveButtonClicked()</slot>
+  <slot>updateAclRemoveButton()</slot>
  </slots>
 </ui>

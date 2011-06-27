@@ -1,8 +1,10 @@
 set(SERVER_QOBJECT_HEADER_FILES
+    AclWidget.h
     SettingsDialog.h
 )
 
 set(SERVER_SOURCE_FILES
+    AclWidget.cpp
     SettingsDialog.cpp
     main.cpp
 )

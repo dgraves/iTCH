@@ -28,6 +28,7 @@
 #include <QtGui/QSystemTrayIcon>
 #include <QtCore/QModelIndex>
 #include <QtCore/QMap>
+#include <QtCore/QSet>
 #include "iTCH/Server.h"
 #include "iTCH/Controller.h"
 
@@ -84,8 +85,12 @@ protected slots:
   void connectController();
   void disconnectController();
   void serverSettingsChanged();
+  void blockButtonClicked();
   void disconnectButtonClicked();
-  void updateDisconnectButton();
+  void updateBlockDisconnectButtons();
+  void aclAddButtonClicked();
+  void aclRemoveButtonClicked();
+  void updateAclRemoveButton();
   void setMaxLogEntries(int maxEntries);
   void accept();
   void reject();
@@ -108,6 +113,8 @@ private:
   QMenu                                 *trayIconMenu_;
   QStandardItemModel                    *model_;
   QMap<iTCH::Connection *, QModelIndex>  connectionIndexes_;    // Map connections to items in connection list; quick lookup for list item removal when connection closes
+  QSet<QString>                          blacklist_;            // List of IP address that are not allowed to connect to the server
+  QSet<QString>                          whitelist_;            // List of the only IP addresses that are not allowed to connect to the server
 };
 
 #endif // STITCHDIALOG_H

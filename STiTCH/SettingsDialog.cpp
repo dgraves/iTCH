@@ -22,15 +22,22 @@
 */
 #include <QtCore/QList>
 #include <QtCore/QSettings>
-#include <QtGui/QStandardItem>
+#include <QtGui/QCloseEvent>
+#include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
 #include <QtGui/QMenu>
-#include <QtGui/QCloseEvent>
+#include <QtGui/QStandardItem>
 #include <QtNetwork/QNetworkInterface>
 #include "iTCH/Connection.h"
 #include "iTCH/MessageBuilder.h"
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
+
+enum AclMode
+{
+  BlackList = 0,
+  WhiteList = 1
+};
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
   QDialog(parent),
@@ -54,7 +61,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   connect(&controller_, SIGNAL(destroyedInstance()), this, SLOT(destroyedInstance()));
   connect(&controller_, SIGNAL(statusChanged(iTCH::EnvelopePtr)), this, SLOT(sendMessage(iTCH::EnvelopePtr)));
   connect(&controller_, SIGNAL(generatedResponse(iTCH::Connection*,iTCH::EnvelopePtr)), this, SLOT(sendMessage(iTCH::Connection*,iTCH::EnvelopePtr)));
-  connect(ui_->connectionsList->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateDisconnectButton()));
+  connect(ui_->connectionsList->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateBlockDisconnectButtons()));
+  connect(ui_->blacklistPage->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateAclRemoveButton()));
+  connect(ui_->whitelistPage->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateAclRemoveButton()));
+  connect(ui_->aclModeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAclRemoveButton()));
   connect(ui_->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
   connect(trayIcon_, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
@@ -389,6 +399,35 @@ void SettingsDialog::serverSettingsChanged()
   }
 }
 
+void SettingsDialog::blockButtonClicked()
+{
+  // Update access control lists with selected connections and disconnect all selected connections
+  QModelIndexList indexes = ui_->connectionsList->selectionModel()->selectedRows();
+  for (QModelIndexList::iterator index = indexes.begin(); index != indexes.end(); ++index)
+  {
+    QStandardItem *item = model_->item((*index).row());
+    iTCH::Connection *connection = item->data().value<iTCH::Connection *>();
+
+    QString address = connection->getAddress();
+
+    // Add to blacklist
+    if (!blacklist_.contains(address))
+    {
+      blacklist_.insert(address);
+      ui_->blacklistPage->insertAddress(address);
+    }
+
+    // Remove from whitelist
+    if (whitelist_.contains(address))
+    {
+      whitelist_.remove(address);
+      ui_->whitelistPage->removeAddress(address);
+    }
+
+    server_.closeConnection(connection);
+  }
+}
+
 void SettingsDialog::disconnectButtonClicked()
 {
   // Remove all selected connections from the list and from the server
@@ -401,15 +440,111 @@ void SettingsDialog::disconnectButtonClicked()
   }
 }
 
-void SettingsDialog::updateDisconnectButton()
+void SettingsDialog::updateBlockDisconnectButtons()
 {
   if (ui_->connectionsList->selectionModel()->hasSelection())
   {
+    ui_->blockButton->setEnabled(true);
     ui_->disconnectButton->setEnabled(true);
   }
   else
   {
+    ui_->blockButton->setEnabled(false);
     ui_->disconnectButton->setEnabled(false);
+  }
+}
+
+// Add and remove funtions for performing the same operation on different lists
+namespace
+{
+  inline void addToAclList(QWidget *parent, QSet<QString> *list, AclWidget *widget)
+  {
+    QString address;
+
+    // Get the IP address
+    for (;;)
+    {
+      address = QInputDialog::getText(parent, "IP Address Entry", "Enter IP Address to be added:");
+      QHostAddress validator(address);
+
+      if (!validator.isNull())
+      {
+        break;
+      }
+
+      QMessageBox::critical(parent, "Invalid Address", "The specified IP address is not valid.");
+    }
+
+    if (!address.isEmpty())
+    {
+      list->insert(address);
+      widget->insertAddress(address);
+    }
+  }
+
+  inline void removeFromAclList(QSet<QString> *list, AclWidget *widget)
+  {
+    QStringList addresses = widget->getSelectedAddresses();
+    for (QStringList::iterator iter = addresses.begin(); iter != addresses.end(); ++iter)
+    {
+      list->remove(*iter);
+    }
+
+    widget->removeSelectedAddresses();
+  }
+}
+
+void SettingsDialog::aclAddButtonClicked()
+{
+  // Determine the ACL type
+  if (ui_->aclModeBox->currentIndex() == BlackList)
+  {
+    // Add to blacklist
+    addToAclList(this, &blacklist_, ui_->blacklistPage);
+  }
+  else
+  {
+    // Add to whitelist
+    addToAclList(this, &whitelist_, ui_->whitelistPage);
+  }
+}
+
+void SettingsDialog::aclRemoveButtonClicked()
+{
+  // Determine the ACL type
+  if (ui_->aclModeBox->currentIndex() == BlackList)
+  {
+    // Remove from blacklist
+    removeFromAclList(&blacklist_, ui_->blacklistPage);
+  }
+  else
+  {
+    // Remove to whitelist
+    removeFromAclList(&whitelist_, ui_->whitelistPage);
+  }
+}
+
+void SettingsDialog::updateAclRemoveButton()
+{
+  AclWidget *list = NULL;
+
+  // Determine the ACL type
+  if (ui_->aclModeBox->currentIndex() == BlackList)
+  {
+    list = ui_->blacklistPage;
+  }
+  else
+  {
+    list = ui_->whitelistPage;
+  }
+
+  if (list->selectionModel()->hasSelection())
+  {
+    ui_->aclRemoveButton->setEnabled(true);
+  }
+  else
+  {
+    ui_->aclRemoveButton->setEnabled(false);
   }
 }
 
